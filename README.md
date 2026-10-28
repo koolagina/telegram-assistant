@@ -55,4 +55,4 @@
 
 Actions → **Yandex Disk read-only check** → Run workflow: одно ручное metadata-чтение без списка файлов/изменений. Использует repository Secret YANDEX_DISK_TOKEN, без передачи в Codex. [Фактический результат](docs/YANDEX_CONNECTION.md): повторный run 40646446786 SUCCESS/read_verified, metadata корня прочитаны; первый HTTP401 устранён. Учебные файлы/Почта/запись ещё не проверены. Публикация среды не нужна.
 
-Read-only metadata discovery доступно отдельным manual workflow **Yandex approved resource metadata**. Реальный результат: папка материалов доступна, совпадение имени журнала не найдено; точное расположение уточняется. Никаких файлов не скачано/не изменено. См. docs/YANDEX_CONNECTION.md.
+Read-only metadata discovery доступно отдельным manual workflow **Yandex approved resource metadata**. Первый personal-files scan не нашёл книгу. После уточнения общей ссылки journal найден в public-resource metadata (1 XLSX + 5 DOCX), размер/MD5 совпадают с загруженной копией. Никаких файлов не скачано/не изменено. См. docs/YANDEX_CONNECTION.md.
