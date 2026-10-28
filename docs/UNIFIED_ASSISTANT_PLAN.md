@@ -294,3 +294,8 @@ Content evidence binding реализован локально,9tests/полны
 ## 27. Policy-gated report read — 28.10.2026
 
 Локальный ReportReader связывает trusted report ownership с действующей policy, повторной сверкой и отдельными projections.13tests/полныйPython250 PASS. Owner full read сохранён, студент self-only, второйteacher только grants. Real identities/links persistence/transports не подключены. Следующий независимый шаг — безопасный локальный рендеринг запроса/ответа, не реальные отправки. Контракт ACCESS_POLICY.md.
+
+
+## 28. Локальные команды отчёта — 28.10.2026
+
+In-process progress/report готовят ограниченные plain-text ответы с purpose-bound current policy.10tests/полныйPython260 PASS. Нет sends/API/deploy; bare /progress ещё требует trusted self-list resolver/pagination. Контракт REPORT_REQUESTS.md.

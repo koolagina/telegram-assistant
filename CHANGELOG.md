@@ -1,3 +1,8 @@
+# Prepare policy-gated local report replies — 28.10.2026
+
+- Локальные progress/report requests, purpose narrowing, bounded Unicode plain-text replies; без отправки/доставки.
+- 10 новых tests, полныйPython260 PASS; Node не перезапускался, GAS неизменён. Production не подключён.
+
 # Policy-gated local report retrieval — 28.10.2026
 
 - ReportReader: trusted ownership links, current policy before/after load, student/teacher projections, revoke/rebind protection, uniform safe denial.

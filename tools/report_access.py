@@ -53,12 +53,17 @@ class ReportReader:
             return 'student'
         raise ReportAccessError('Report unavailable')
 
-    def read(self,report_id,context):
+    def read(self,report_id,context,*,purpose=None):
         try:
             if not identifier(report_id) or report_id not in self._links:
                 raise ReportAccessError('Report unavailable')
             link=self._links[report_id]
-            self._mode(link,context)  # Deny before loading any report payload.
+            if purpose not in (None,'progress.self','student.report'):
+                raise ReportAccessError('Report unavailable')
+            initial_mode=self._mode(link,context)  # Deny before loading payload.
+            required_mode={'progress.self':'student','student.report':'teacher'}.get(purpose)
+            if required_mode is not None and initial_mode!=required_mode:
+                raise ReportAccessError('Report unavailable')
             row=self._load(link.check_id)
             if (type(row) is not dict or row.get('status')!='done' or type(row.get('result')) is not dict):
                 raise ReportAccessError('Report unavailable')
@@ -69,6 +74,8 @@ class ReportReader:
                 raise ReportAccessError('Report unavailable')
             # Recheck current binding/grants after storage access, including role downgrade.
             mode=self._mode(link,context)
+            if required_mode is not None and mode!=required_mode:
+                raise ReportAccessError('Report unavailable')
             result=_pick(report,('assignment_id','status','credit_written'))
             result['requirements']=[]
             for item in report['requirements']:

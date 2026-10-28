@@ -238,3 +238,6 @@ content_evidence.py проверяет source-bound Finding/Citation и exact qu
 
 
 report_access.py выдаёт только policy-gated projections (13tests, полныйPython250). ReportLink и Context создаёт trusted server registry/authadapter, не Telegram text/LLM/request payload. Проверять current policy перед payload и после него, final send отдельно; student projection без internal notes/evidence. Unknown/denied одинаковы. Ни registry persistence, ни authentication/real transports модуль не реализует. Не обходить ReportReader прямым MaterialCatalog.result в публичном endpoint.
+
+
+report_requests.py — локальная подготовка /progress REPORT_ID и /report REPORT_ID (10tests, полныйPython260), не реальные bot handlers/send. purpose ReportReader только сужает права; source text не задаёт role/identity/recipient. PreparedReply не credential/receipt: перед send заново проверять policy, parse_mode=None, link previews disabled; не печатать private text в логи. Bare /progress resolver/pagination и transport остаются неподключёнными.

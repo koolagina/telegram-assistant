@@ -4,7 +4,7 @@
 
 ## Актуальная проверка материалов
 
-`tools/report_access.py` связывает локальные отчёты с academic policy: студент только своё, преподаватель по grant, владельцу явно разрешённое полное чтение; отзыв прав проверяется при каждом запросе. **250 Python PASS**, включая 13 новых tests; Node не перезапускался (последний101 PASS). Это локальная модель: реальные identity/transport/журнал и semantic grading не подключены. [Контракт доступа](docs/ACCESS_POLICY.md), [пример проверки](docs/REVIEW_DEMO.md).
+Локальные `/progress REPORT_ID` и `/report REPORT_ID` готовят policy-gated plain-text ответы через `tools/report_requests.py`; ничего не отправляют. **260 Python PASS**, включая 10 новых tests; Node не перезапускался (последний101 PASS). Эти команды ещё не включены в боте, реальные identity/transport/журнал и semantic grading не подключены. [Контракт](docs/REPORT_REQUESTS.md).
 
 ## ВАЖНО: статус исходников
 
