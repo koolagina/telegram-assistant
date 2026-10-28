@@ -4,7 +4,7 @@
 
 ## Актуальная проверка материалов
 
-Сквозной локальный кандидат: версии требований, PPTX review, private durable report links/policy, self-only список и кнопки. Проверено **301 Python +101 Node PASS**. `python tools/assistant_demo.py` запускает полный пример без сети и реальных данных. [Состояние и ограничения](docs/LOCAL_ASSISTANT_STATUS.md), [демонстрация](docs/LOCAL_ASSISTANT_DEMO.md). Реальные команды бота, аккаунты, API и запись оценок не подключены; semantic reviewer/порог принятия не реализованы.
+Локальный Telegram report adapter строит context из private from/chat IDs только для доверенного polling transport и вызывает policy-gated requests/callbacks. **313 Python +101 Node PASS**. Реальный HTTP/authentication/offset/ack/send transport и semantic grading не подключены. Полный offline пример: `bash tools/check-local.sh`. [Состояние](docs/LOCAL_ASSISTANT_STATUS.md), [контракт](docs/REPORT_REQUESTS.md).
 
 ## ВАЖНО: статус исходников
 

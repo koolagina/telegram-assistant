@@ -27,9 +27,9 @@ START=NOW-dt.timedelta(days=1);END=NOW+dt.timedelta(days=1)
 def synthetic_policy(bindings=None):
     return AccessPolicy(teachers=(Teacher('owner'),),students=(Student('student-a'),Student('student-b')),
         bindings=bindings if bindings is not None else (
-            Binding('telegram','student-a','student','student-a',frozenset({'progress.self'}),confirmed=True),
-            Binding('telegram','student-b','student','student-b',frozenset({'progress.self'}),confirmed=True),
-            Binding('telegram','owner','teacher','owner',frozenset({'student.report'}),confirmed=True)),
+            Binding('telegram','103','student','student-a',frozenset({'progress.self'}),confirmed=True),
+            Binding('telegram','104','student','student-b',frozenset({'progress.self'}),confirmed=True),
+            Binding('telegram','101','teacher','owner',frozenset({'student.report'}),confirmed=True)),
         enrollments=(Enrollment('enrollment-a','student-a','discipline','group',START,END),
                      Enrollment('enrollment-b','student-b','discipline','group',START,END)),
         academic_read_grants=(AcademicReadGrant('owner-full','owner',START,END),))
@@ -73,11 +73,11 @@ class SyntheticAssistantSession:
         # Fresh durable ownership snapshot for each new request/click.
         return ReportReader(self.registry.snapshot(),policy_provider=lambda:self.policy,load_result=self.catalog.result,clock=lambda:NOW)
     def request(self,subject,command):
-        return prepare_report_reply(self.reader(),Context('telegram',subject,authenticated=True,private=True),command)
+        return prepare_report_reply(self.reader(),Context('telegram',{'student-a':'103','student-b':'104','owner':'101'}.get(subject,subject),authenticated=True,private=True),command)
     def callback(self,subject,data):
-        return prepare_progress_callback(self.reader(),Context('telegram',subject,authenticated=True,private=True),data)
+        return prepare_progress_callback(self.reader(),Context('telegram',{'student-a':'103','student-b':'104','owner':'101'}.get(subject,subject),authenticated=True,private=True),data)
     def revoke_student_a(self):
-        self.policy=synthetic_policy(tuple(replace(binding,active=False) if binding.subject=='student-a' else binding for binding in self.policy.bindings.values()))
+        self.policy=synthetic_policy(tuple(replace(binding,active=False) if binding.subject=='103' else binding for binding in self.policy.bindings.values()))
 
 
 def run_assistant_demo():

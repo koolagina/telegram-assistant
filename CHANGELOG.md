@@ -1,3 +1,9 @@
+# Trusted-input Telegram report adapter — 28.10.2026
+
+- Private numeric from/chat identity parsing, bot-owned callbacks и reports-only routing через существующую current policy; без настоящего API/offset/ack/send.
+- Ambiguous message+edited update defect воспроизведён и исправлен.11adapter+1integration tests, полныйPython313 PASS.
+- Реальные credentials/authentication/bindings/transport/deploy отсутствуют, GAS неизменён.
+
 # Durable local assistant integration — 28.10.2026
 
 - ReportRegistry: immutable ownership/check links с безопасным retry публикации после partial failure.

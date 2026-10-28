@@ -9,7 +9,7 @@
 | Хранилище результатов | MaterialCatalog SQLite, immutable done, needs_recheck | Реальный ingestion/backup runtime; done не означает принятую отработку |
 | Принадлежность | ReportRegistry private SQLite, immutable links, unique check, retry | Trusted publication adapter для реальных submission/enrollment |
 | Права | AccessPolicy, PolicyStore version snapshots/CAS/no older fallback | Реальная authentication и административная процедура подтверждения/отзыва |
-| Запросы | Self list/page/buttons, teacher report, current-policy gating | Telegram/ChatGPT/email endpoints, sends/receipts/delivery |
+| Запросы | Self list/page/buttons, teacher report, current-policy gating, verified-input TG parser | Проверка происхождения TG source/HTTP client, endpoints, sends/receipts/delivery |
 | Учебный журнал | Read-only локальное чтение структуры XLSX | Полный расчёт успеваемости, синхронизация отметок, запись реального журнала |
 | Production | Исходники и локальные тесты | Разрешённая sandbox-приёмка, bindings, rollout |
 
@@ -28,7 +28,7 @@ python tools/review_demo.py
 python tools/assistant_demo.py
 ```
 
-Подтверждено: **301 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
+Подтверждено: **313 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
 
 ## Данные и восстановление
 
@@ -44,3 +44,5 @@ Backup/restore нескольких DB должен быть согласова�
 2. Подключить trusted ingestion и актуальные материалы, утвердить полноту критериев. Проходной порог нужен до автоматического принятия; сейчас все отчёты требуют преподавателя.
 3. Добавить transport с повторной проверкой прав перед фактической отправкой, безопасным форматированием, различением prepared/API success/delivery и восстановлением частичных сбоев.
 4. Провести отдельно разрешённую интеграционную приёмку на test bot/resources, затем согласованный rollout. Реальные письма, изменения журнала и production не входят в текущие локальные действия.
+
+Telegram adapter принимает только инъецируемый trusted verified polling transport; произвольный JSON не аутентифицируется. Новый модуль не выполняет getUpdates/offset/ack и не подключён к существующему poller. Fake numeric subjects демонстрации не являются реальными bindings.

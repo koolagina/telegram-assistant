@@ -56,3 +56,12 @@ class AssistantDemoTests(unittest.TestCase):
         self.session.ingest(40)
         self.assertEqual(len(self.session.registry.snapshot()),1)
         self.assertEqual(self.session.catalog.db.execute('SELECT count(*) FROM checks').fetchone()[0],1)
+
+    def test_injected_verified_polling_adapter_uses_durable_current_policy(self):
+        from telegram_report_adapter import TelegramReportAdapter
+        self.session.ingest(40)
+        envelope={'ok':True,'result':[{'update_id':1,'message':{'message_id':1,'date':1793160000,'from':{'id':103,'is_bot':False},'chat':{'id':103,'type':'private'},'text':'/progress'}}]}
+        adapter=TelegramReportAdapter(reader_factory=self.session.reader,bot_id=9001,fetch_verified_updates=lambda:envelope)
+        self.assertEqual(adapter.prepare_batch()[0].reply.status,'prepared')
+        self.session.revoke_student_a();self.session.restart_storage()
+        self.assertEqual(adapter.prepare_batch()[0].reply.status,'unavailable')

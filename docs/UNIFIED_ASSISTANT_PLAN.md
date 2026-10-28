@@ -314,3 +314,8 @@ Immutable inline button model/callback preparation готовы,8tests/полн�
 ## 31. Durable integration — 28.10.2026
 
 Private ownership registry и versioned policy persistence реализованы; stale writes не отменяют revoke. Integrated synthetic assistant demo проходит ingest/navigation/restart/forwarded denial/revoke и до/после commit failures.23новыхtests/301Python+101Node PASS. Прямые runtime adapters/authentication/semantic evaluator/test rollout ещё не подключены. Точные пределы LOCAL_ASSISTANT_STATUS.md.
+
+
+## 32. Verified-input TG report adapter — 28.10.2026
+
+Private sender/chat identity и bot-owned callback parser/routing реализованы для injected trusted API source;11adapter+1durable-policy integration tests/Python313 PASS. Real source verification/HTTP/offset/ack/delivery остаются отдельными слоями. GAS не менялся, никакого API/deploy. Контракт REPORT_REQUESTS.md.

@@ -1,3 +1,17 @@
+# Telegram report adapter: trusted polling input — 28.10.2026
+
+Добавлен tools/telegram_report_adapter.py. Инъецируемый fetch_verified_updates — только доверенный серверный Bot API transport с проверенным TLS/ботом; настоящий HTTP-клиент/проверка происхождения/secret handling не реализованы. Структура ok/result и имя класса не доказывают authenticity. Нельзя подключать public JSON body, LLM args или непроверенный webhook к этому callable. Поддержан только reports-only разбор verified polling input, без изменения действующего GAS poller/webhook.
+
+Для message используются числовые from.id и chat.id: только private, равные положительные integer IDs, from.is_bot=false, валидные message id/date. Username, display name и student/teacher ID из текста не назначают роль; binding ищется по каноническому str(from.id) в текущей policy. Callback требует private message для фактического нажавшего from.id и сообщения от configured bot id с is_bot=true. Inline/inaccessible(date0)/group/mismatched sender callbacks не маршрутизируются. Обрабатываются только progress/report commands и progress callbacks; прочие команды/edited messages остаются другим обработчикам.
+
+До чтения payload проверяются API envelope, batch≤100, update integer IDs/uniqueness и ровно один update payload key. Найден и воспроизведён отдельным красным тестом случай message+edited_message: теперь двусмысленная пачка отклоняется. Prepared TelegramPreparation содержит update/chat/reply/callback-query reference, но не API success/delivered. Нет offset/ack/durable update queue/outbox/sendMessage/answerCallbackQuery или reconnect/retry. Повторная пачка заново проверяет current policy, но не является реализованной дедупликацией будущей отправки; future transport обязан reprepare непосредственно перед send и отдельно вести durable delivery state.
+
+11 adapter tests +1 integrated durable-policy test, полный Python **313 PASS**. Первый запуск без модуля красный; ambiguity test red→green. Проверены private/canonical sender vs username, group/mismatch/bot/bool IDs, teacher spoof attempt, bot-owned callback, forwarded foreign reference, API failure/duplicate IDs/ambiguity, edited/unsupported/inaccessible/inline updates, source failure sanitization и current revoke. Integrated assistant session использует явно fake numeric Telegram subjects103/104/101, не настоящие IDs. Никаких реальных Telegram API/аккаунтов/сообщений/почты/журнала/deploy.
+
+Реальную authentication/adapters нельзя считать готовыми: transport verification и административная верификация account binding ещё требуют подключения к отдельной test environment. Локальная часть только корректно строит Context из уже доверенного источника и вызывает существующую policy. Полноценная semantic evaluation/порог принятия не реализованы.
+
+---
+
 # Durable links/policy и сквозной локальный сценарий — 28.10.2026
 
 Добавлены tools/report_registry.py и tools/policy_store.py, отдельные private SQLite WAL/FULL файлы (directory0700/file0600, symlink/foreign schema/namespace mismatch refusal). Существующие MaterialCatalog schema, Google Sheets и GAS snapshots не менялись.
