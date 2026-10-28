@@ -1,5 +1,11 @@
 # Changelog
 
+## Read-only metadata inventory Яндекса — 2026-10-28
+
+- Добавлены отдельный manual workflow и bounded поиск spreadsheet metadata по имени; папка проверяется без чтения содержимого. Нет downloads/writes/публикации имён/путей.
+- 8 новых tests, полный Python 154 PASS. Real run 40647021089: materials readable, journal not_found_in_scan (0, scan_complete), OAuth работает.
+- Запрошено расположение журнала; публичный доступ не нужен. Node не запускался, GAS не менялся.
+
 ## Проверка Яндекс Диска через GitHub Actions — 2026-10-28
 
 - Добавлен ручной fixed metadata GET с repository Secret, без auto triggers, файловых списков и изменений; timeout 2 минуты.

@@ -1,3 +1,11 @@
+# Read-only метаданные журнала/материалов — 28.10.2026
+
+Подготовлен manual workflow yandex-resource-inventory.yml и bounded inventory module. Только metadata, fixed API host/GET, без публичных списков имён/путей, downloads и writes; неоднозначность/неполный scan закрыты. 8 новых synthetic tests, весь Python **154 PASS**; GAS/Node не менялись и Node не запускался.
+
+Run [40647021089](https://github.com/koolagina/telegram-assistant/actions/runs/40647021089) завершился за несколько секунд: папка материалов доступна, журнал с загруженным именем не найден среди доступных spreadsheet metadata (0, scan_complete=true). Токен работает; failure относится к отсутствию целевого совпадения. Реальная книга не скачивалась/не менялась. Уточняется точное имя/папка; публичный доступ к студенческому журналу не запрашивается. Docs: YANDEX_CONNECTION.md.
+
+---
+
 # Проверка токена Яндекс Диска через GitHub Actions — 28.10.2026
 
 Добавлены tools/yandex_disk_probe.py, 8 синтетических tests и ручной workflow .github/workflows/yandex-disk-read-check.yml. Один GET запрашивает только type корня Диска, redirect запрещён, секрет/response body не печатаются. Нет автоматического расписания и внешних записей. Локально **146 Python PASS**; Node не перезапускался.

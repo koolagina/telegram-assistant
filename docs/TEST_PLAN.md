@@ -1,3 +1,9 @@
+# Поиск согласованных ресурсов Диска — 28.10.2026
+
+Добавлено 8 синтетических inventory tests: pagination, точное/пробельное имя, несколько копий без выбора первой, scan limit без ложной полноты, missing, invalid URL/records/duplicates и безопасный CLI. После красного запуска до модуля все **154 Python PASS** (146 прежних + 8). Реальный Actions run 40647021089: folder_readable, journal not_found_in_scan/0 matches, scan_complete=true, no downloads/writes. Conclusion failure означает отсутствие найденного журнала, не неработающий OAuth. Точное имя/расположение запрошено; повторного scan без новых данных нет. Node не запускался (GAS не менялся). Подробности — YANDEX_CONNECTION.md.
+
+---
+
 # Яндекс Диск / GitHub Actions — 28.10.2026
 
 8 новых mock tests для yandex_disk_probe.py PASS; полный Python suite **146 PASS**. Проверены fixed read-only GET, отсутствие/формат токена, redirect отказ, 401/403/network/JSON/size и минимальный sanitized CLI. Реальный manual GitHub Actions run 40645632279 выполнен один раз: runner/checkout SUCCESS, probe **FAIL token_rejected/HTTP401**; secret передан, доступ к Диску не подтверждён. Не считать локальные 146 PASS успешной авторизацией Яндекса. Node в этом этапе не запускался (GAS не менялся). Результат и безопасные дальнейшие шаги — [YANDEX_CONNECTION.md](YANDEX_CONNECTION.md).
