@@ -53,4 +53,4 @@
 
 ## Проверка GitHub Secret для Яндекс Диска
 
-Actions → **Yandex Disk read-only check** → Run workflow: одно ручное metadata-чтение без списка файлов/изменений. Использует repository Secret YANDEX_DISK_TOKEN, без передачи в Codex. [Фактический результат](docs/YANDEX_CONNECTION.md): запуск выполнен, Яндекс отклонил токен HTTP401; доступ пока не подтверждён. Публикация среды не нужна.
+Actions → **Yandex Disk read-only check** → Run workflow: одно ручное metadata-чтение без списка файлов/изменений. Использует repository Secret YANDEX_DISK_TOKEN, без передачи в Codex. [Фактический результат](docs/YANDEX_CONNECTION.md): повторный run 40646446786 SUCCESS/read_verified, metadata корня прочитаны; первый HTTP401 устранён. Учебные файлы/Почта/запись ещё не проверены. Публикация среды не нужна.

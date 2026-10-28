@@ -6,7 +6,7 @@
 
 `tools/yandex_disk_probe.py` выполняет один HTTPS GET к фиксированному endpoint cloud-api.yandex.net/v1/disk/resources с path=disk:/ и fields=type. Запрашивается только тип корневого ресурса; списки файлов, имена, содержимое и журнал не читаются. Перенаправления запрещены, TLS verification сохраняется, timeout 20 секунд, ответ ограничен 16 KiB. В stdout только whitelist статуса и writes_performed=false; ни header/token, ни API body/URL ошибки не печатаются. Это проверка одной операции чтения, не доказательство полного набора OAuth scopes и не доступ к безопасной записи XLSX.
 
-## Фактически выполненный запуск
+## Первый запуск — исторический отказ
 
 [Run 40645632279](https://github.com/koolagina/telegram-assistant/actions/runs/40645632279), исходный commit bf44528, manual dispatch на main.
 
@@ -18,7 +18,7 @@
 
 GitHub API не дал текущей integration читать список repository Secrets (403), но это не помешало dispatch и передаче секрета внутри Actions. Дополнительные GitHub credentials не запрашивались. Токен Яндекса в Codex не переносился.
 
-## Следующее действие
+## Действие после первого отказа — выполнено пользователем
 
 В GitHub открыть Settings → Secrets and variables → Actions → YANDEX_DISK_TOKEN → Update и сохранить корректное значение OAuth token. Не ClientID, не Client secret, не полный URL и не слово OAuth с префиксом. При необходимости получить свежий токен существующего приложения с cloud_api:disk.read. Значение вводить только в защищённое поле, не присылать в чат/скриншотах.
 
@@ -27,3 +27,10 @@ GitHub API не дал текущей integration читать список repo
 ## Локальные проверки
 
 `tests/test_yandex_disk_probe.py`: **8 PASS** — fixed GET/headers, отсутствие секрета, invalid input, redirect refusal, HTTP401/403, network/unknown HTTP, неверный/большой body, безопасный CLI. Первый запуск был красным до реализации модуля. Полный Python suite: **146 PASS** (138 прежних + 8 probe). В реальном GitHub Actions mock не используется: подтверждён именно отказ 401. Текущий Node suite в этом этапе не перезапускался, GAS-код не менялся.
+
+
+## Актуальная повторная проверка — SUCCESS, 28.10.2026
+
+По просьбе пользователя выполнен один новый manual run после изменения секрета: [40646446786](https://github.com/koolagina/telegram-assistant/actions/runs/40646446786), commit 18c7865. GitHub Actions завершился SUCCESS; probe вернула read_verified, writes_performed=false. Это реальное подтверждение возможности прочитать metadata type корня Диска с текущим GitHub Secret. Предыдущий HTTP401 устранён для этой операции.
+
+Сам токен не извлекался в Codex. Список файлов и учебный журнал не читались/не менялись. Доступ к конкретным папкам/книге, полный набор OAuth scopes, почта, безопасная запись XLSX и постоянная синхронизация этим тестом не проверены. Следующий возможный этап — отдельная read-only проверка согласованного ресурса через Actions, а не перенос токена в чат или публикация среды.
