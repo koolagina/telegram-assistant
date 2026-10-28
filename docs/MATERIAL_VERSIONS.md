@@ -115,3 +115,15 @@
 Дальше — безопасная фиксация решения о содержательных критериях и полный отчёт с evidence; автоматическое принятие без порога не включать. Неизвестные правила не угадывать.
 
 ---
+
+# Проверка цитат для содержательных наблюдений — 28.10.2026
+
+Добавлен tools/content_evidence.py: принимает Finding от будущего trusted reviewer и проверяет check_id, material_version, submission SHA, requirement index и каждую Citation(part,start,end,quote). Offset — Python Unicode character index в извлечённом тексте слайда, не байты/координаты изображения. Part должен существовать, диапазон — быть непустым/в пределах текста, quote — точно совпадать. Stance supported/contradicted требует цитаты; uncertain может явно остаться без неё. Повторные/неизвестные индексы, bool offsets/indices, невалидные структуры и неподходящие версии отклоняются. Findings канонически сортируются, чтобы retry порядка не менял result; evaluator identity включает reviewer version и сами findings.
+
+Наблюдения добавляются отдельно как content_observation со status needs_review. Они не перезаписывают structural met/not_met и не создают grade/pass/credit. Сохранённый local done по-прежнему содержит needs_teacher_review. Quote подтверждает только происхождение фрагмента: не научную правильность, не полноту, не авторство. Подделать содержательный вывод с настоящей цитатой всё ещё возможно — это граница будущей semantic evaluation, а не решённая этим модулем задача.
+
+9 новых synthetic evidence tests (первый запуск красный без модуля) + 2 offline demo tests; полный Python **237 PASS**. Проверены точная quote, выдуманный текст/смещение/part, старая версия работы/критериев, дубли/неизвестные criteria, отсутствие evidence, сохранение без автопринятия, versioned identity и порядок повторов. Реальные студенческие работы, AI API и внешние сервисы не использовались. Node не перезапускался, GAS не менялся (последний101 PASS).
+
+Нет генератора научных выводов/LLM клиента, утверждённого semantic validator, проверки авторства, real account binding, Telegram/mail transport или записи XLSX. Этот этап готовит проверяемый формат наблюдений, а не завершает автоматическую проверку содержания. Приватные quotes/comments не печатать в общие логи и не выдавать без academic policy. Локальный полный сценарий реализован: `python tools/review_demo.py`, отчёт docs/REVIEW_DEMO.md. Он создаёт только искусственные Word/PPTX в памяти, временную удаляемую SQLite, использует явно демонстрационный validator/reviewer, проверяет39/40слайдов и точную quote. Сеть в demo test запрещена моками. Submission revision ID связан с хешем работы. Никакого real semantic grading этот demo не подтверждает; следующим этапом остаётся semantic evaluation.
+
+---

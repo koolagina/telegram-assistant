@@ -284,3 +284,8 @@ Manifest-based count и versioned evidence report реализованы лок�
 ## 25. Version-bound structural criterion — 28.10.2026
 
 Runtime override дефект исправлен тестом: snapshot criteria определяет минимум, mismatch отклоняется. Source-bound suggestions извлекают подтверждённую формулировку minimum40 из локальногоM04, но остаются review. 10 новыхtests/полныйPython226 PASS. Полноценный semantic validator, содержание/порог принятия и production ещё не подключены. Контракт MATERIAL_VERSIONS.md.
+
+
+## 26. Проверяемые цитаты наблюдений — 28.10.2026
+
+Content evidence binding реализован локально,9tests/полныйPython237 PASS: requirement/check/material/work identity и exact slide quotes. Это не scientific grading, не авторство и не автоматический плюс. Все observations требуют review; следующие шаги — локальный demo/report и отдельно semantic evaluator. Подробности MATERIAL_VERSIONS.md.

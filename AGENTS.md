@@ -232,3 +232,6 @@ node tests/audit.cjs
 
 
 Текущее правило assignment_review: minimum/index только из plan.rules.structural_checks (один slide_count criterion), runtime args лишь проверяются на совпадение; старые rules без machine criterion требуют review. Нельзя подставлять default40 или override1. material_criteria выдаёт source-bound suggestion с quote/paragraph index, всегда requires_review; не использовать как автоматическое approved rubric. Новые10tests, полныйPython226 PASS; M04 local40 подтверждён только для upload. Форматы Sheets/SQLite не менялись.
+
+
+content_evidence.py проверяет source-bound Finding/Citation и exact quote offsets, не генерирует и не подтверждает научную правильность (9tests, полныйPython237). Observation status всегда needs_review; нельзя превращать supported в принятый ДЗ или переписывать им structural status. Quotes/comments приватны, выдача требует academic policy. Semantic evaluator и внешние сервисы не подключены.

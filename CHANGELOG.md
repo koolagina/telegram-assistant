@@ -1,3 +1,8 @@
+# Validate content observation citations — 28.10.2026
+
+- Finding/Citation binding к current plan/work и точным slide text offsets; отдельные needs_review наблюдения без grades/credit/перезаписи structural статуса.
+- 9 evidence tests +2 demo tests; полныйPython237 PASS. Node не перезапускался, GAS неизменён. Semantic generation/production отсутствуют.
+
 # Bind slide criteria to versioned rules — 28.10.2026
 
 - Исправлена воспроизводимая подмена minimum runtime параметром: структурный criterion читается из versioned rules; legacy params только сверяются.
