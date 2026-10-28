@@ -21,12 +21,17 @@ class NoRedirect(HTTPRedirectHandler):
         raise ProbeError('redirect_refused')
 
 
-def probe(token, *, opener=None):
+def validate_token(token):
     if not isinstance(token, str) or not token.strip():
         raise ProbeError('secret_unavailable')
     token = token.strip()
     if not token.isascii() or any(c.isspace() or ord(c) < 33 for c in token) or len(token) > 4096:
         raise ProbeError('secret_format_invalid')
+    return token
+
+
+def probe(token, *, opener=None):
+    token = validate_token(token)
     request = Request(ENDPOINT, headers={'Authorization': 'OAuth ' + token, 'Accept': 'application/json'}, method='GET')
     open_url = opener or build_opener(NoRedirect()).open
     try:

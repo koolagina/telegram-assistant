@@ -1,0 +1,35 @@
+name: Yandex approved resource metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      journal_filename:
+        description: Approved journal filename (metadata search only)
+        required: true
+        type: string
+      materials_url:
+        description: Approved public materials folder URL (metadata only)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: yandex-resource-inventory
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Checkout reviewed code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Read approved resource metadata without printing file lists
+        env:
+          YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
+        run: python3 -E -s tools/yandex_resource_inventory.py
