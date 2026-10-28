@@ -334,3 +334,8 @@ Inbox/current policy/dispatch связаны reports-only worker; markfailure re
 ## 35. Owner decision queue — 29.10.2026
 
 Read-only /decisions с3sources/filters/5item pages/details и partial warnings реализован;34decision tests+2worker regressions,Python400/Node101 PASS. Локальные review/dispatch DB читаются с current gates; consultations требуют normalized dated feed. Реальные actions/deploy не выполнялись. Следующие отдельные компоненты — live consultation feed и authoritative human/operator resolutions с отдельными подтверждениями; не перезаписывать immutable history или unknown outcome ради скрытия case. DECISION_QUEUE.md.
+
+
+## 36. Явные планы решений по консультациям — 29.10.2026
+
+Локальные core/UI/demo готовы: 30 новых tests,430Python/101Node PASS. План approve/reject/propose после explicit confirm, revision/token/idempotency/restart/rollback; предложение не снимает исходный hold. Это synthetic SQLite store, не authoritative Sheet. Handlers нельзя использовать как read-only prepare_fresh. Следующие этапы: trusted live consultation feed/полнота НВГУ, отдельные dispatcher/executor с reconciliation, student agreement on proposal, затем разрешённая sandbox-приёмка. Рабочие ресурсы сохранены. Контракт CONSULTATION_ACTIONS.md.

@@ -265,3 +265,6 @@ report_worker.py — bounded reports-only queue step (10tests, итого51но�
 
 
 /decisions реализован локально в decision_queue/sources/requests (34tests+2worker regressions;Python400/Node101). personal.read на configured owner до/после source reads, reviews ещё student.report+original relation. Источники только trusted local snapshots; ConsultationBatch обязан сохранять true observed_at/complete, не time-of-click. Никаких approve/reject/grade/send/retry/hide действий из очереди. Worker/adapter decision factory optional; без неё route не активируется. Active inflight не считать failure/orphan автоматически и не блокировать работу peer: остаётся pending, monitor proof нужен отдельно. Existing Sheets/GAS/immutable report history не менялись; контракт DECISION_QUEUE.md.
+
+
+consultation_actions/requests/demo.py — offline SQLite sandbox plans only (30tests). preview/confirm/cancel пишут локальные intents/plans; НЕ вызывать из read-only ReportWorker prepare_fresh или sender retry. Не считать локальную смену статуса исполненной Calendar/Sheet операцией. Ни real executor, ни live dispatcher, ни student agreement on proposed time нет. Весь store только trusted synthetic fixtures; reference не authorization. Контракт docs/CONSULTATION_ACTIONS.md; real execution требует отдельного разрешения и claim/reconcile защиты от частичных сбоев.

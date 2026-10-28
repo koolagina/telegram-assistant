@@ -1,3 +1,23 @@
+# Подтверждение консультаций — локальная модель, 29.10.2026
+
+Добавлены tools/consultation_actions.py, consultation_requests.py, consultation_demo.py и 30 tests. Карточка → preview → отдельное подтверждение/отмена, пять минут на intent; права/занятость/полнота/владение проверяются повторно. Предложение времени не снимает старый резерв; согласие студента и реальный перенос пока отсутствуют. Approve/reject сохраняют только план update/delete того же owned event + два notification-намерения, не выполняют API. Локальные статусы не являются authoritative Sheet. Контракт [CONSULTATION_ACTIONS.md](CONSULTATION_ACTIONS.md), [пример](CONSULTATION_ACTIONS_DEMO.md).
+
+Тесты сначала падали без модулей. Дополнительно воспроизведён и исправлен пропуск повторной проверки доступа студента после calendar snapshot. Durable local transaction обеспечивает один plan при повторном/одновременном click и restart, rollback при ошибке записи. Локальные handlers намеренно не подключены к read-only ReportWorker/Telegram adapter: для исполнения нужны отдельный dispatcher и executor с uncertain-outcome recovery, настоящая identity, live snapshot и проверенная полнота НВГУ. GAS, таблицы, календарь, отправки, webhook, триггеры и настройки среды не менялись.
+
+Полная локальная приёмка: **430 Python PASS +101 Node PASS** (64 existing +37 consultations), `bash tools/check-local.sh`; новый synthetic consultation demo также выполнен отдельно и добавлен в общий скрипт. Никаких установок, токенов и реальных API.
+
+| Дефект/риск | Причина | Защита | Тест/результат | Остаток |
+|---|---|---|---|---|
+| Дубли решения/плана | Повторный click/restart/два worker | durable token + revision + SQLite transaction | sequential/restart/concurrent connections PASS | Реальный executor ещё нужен |
+| Частичное локальное решение | Статус сохранён отдельно от plan | atomic status/intent/plan | insert failure rollback/retry PASS | Между внешними сервисами нет общей транзакции |
+| Отозван доступ студента во время preview/confirm | Проверка только перед snapshot | повтор eligibility и owner gate после snapshot | red→green regression PASS | Trusted live identity callback не подключён |
+| Консультация поверх занятий | Stale/incomplete busy snapshot или конфликт после preview | проверка полноты/диапазона/возраста/overlap перед сохранением | new conflict/stale/partial/future/coverage PASS | После локального плана Calendar может измениться: executor обязан перепроверять |
+| Удаление чужого event | Совпадение названия вместо ownership | exact event ID + trusted relation + expected original times | missing/foreign/duplicate hold PASS | Настоящий ownership ledger ещё не привязан |
+| Перенос без согласия студента | Proposal трактуется как подтверждение | сохранение исходного резерва, notification plan only | proposal retains start/status, calendar=None PASS | Student agreement workflow не реализован |
+
+
+---
+
 # Единая очередь решений владельца — 29.10.2026
 
 Реализованы tools/decision_queue.py, decision_sources.py, decision_requests.py и decision_demo.py. `/decisions` показывает consultations/reviews/technical с counters, filters,5items/page, overdue/today priority в Asia/Yekaterinburg и version-bound detail callbacks. Данные пересобираются по текущим источникам; отдельной копии задач/новых Google Sheets статусов нет. Всё read-only: никакого подтверждения встречи, grade/credit/send/retry/скрытия исходного unresolved case.

@@ -1,3 +1,9 @@
+# 29.10.2026 — локальные планы решений по консультациям
+
+- Добавлены offline core/UI/demo и 30 тестов: preview/explicit confirm/cancel, revision/expiry/owner gates, same-event calendar plan, два уведомления-намерения, предложение без снятия резерва.
+- Durable atomic plan/status/intent, повторы/две connection/restart без дубля, rollback при частичном сбое SQLite. Регрессия: доступ студента повторно проверяется после чтения занятости.
+- Ни реальных API, ни production/deploy; авторитетные Sheets/GAS сохранены. Live dispatcher, executor и согласие студента на перенос — следующие отдельные этапы. Документация: docs/CONSULTATION_ACTIONS.md.
+
 # Owner decision queue — 29.10.2026
 
 - Current-source read-only owner dashboard: consultations/reviews/technical, dates/filters/pagination/detail/version references, partial source warnings.

@@ -7,3 +7,4 @@ node tests/run-current.cjs
 "${KULAGINA_PYTHON:-python3}" tools/review_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/assistant_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/decision_demo.py
+"${KULAGINA_PYTHON:-python3}" tools/consultation_demo.py
