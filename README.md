@@ -30,3 +30,10 @@
 ## Подготовка синхронизации НВГУ с Calendar
 
 Используются существующие `tools/nvsu_preview.py` и `tools/nvsu_sync.py`; добавлены Google transport, SQLite-журнал и read-only CLI `tools/nvsu_calendar.py`. Реальное подключение ещё не проверено; бот и триггеры не изменены. [Предварительный план и команды](docs/NVSU_CONNECTION_PLAN.md), [результаты проверок](docs/TEST_PLAN.md). Offline tests требуют только Python; Google transport — отдельный venv с `requirements-calendar.txt`.
+
+
+## Локальное чтение учебного журнала без подключения Яндекса
+
+`python tools/gradebook_read.py PATH_TO_LOCAL_XLSX` печатает только структурный отчёт без имён и оценок. Модуль не вычисляет формулы, не записывает файл и не определяет student identity. Данные загруженного журнала не хранятся в Git. [Аудит и ограничения reader](docs/GRADEBOOK_STRUCTURE_AUDIT.md), [единый план](docs/UNIFIED_ASSISTANT_PLAN.md).
+
+Полный локальный Python suite: `python -m unittest discover -s tests -p 'test_*.py'` — 80 PASS; текущий бот: `node tests/run-current.cjs` — 101 PASS. Это не проверка реальных API или развёртывания.

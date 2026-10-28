@@ -32,6 +32,7 @@
 | НВГУ в Apps Script | fetchTimetable_, checkTimetable_, sendTimetablePage_ | Текстовый снимок и эвристика навигации; не равны проверенному Python parser |
 | Проверенный разбор НВГУ | tools/nvsu_preview.py | Локальный HTML parser и read-only CLI, проверяющий выбранную дату/неделю |
 | Модель синхронизации | tools/nvsu_sync.py | План обновлений и протокольная модель; Google transport — tools/nvsu_google.py, durable state — tools/nvsu_state.py |
+| Локальное чтение XLSX | tools/gradebook_read.py | Только структура/кеши/даты локальной копии; raw cells приватны, CLI без значений, нет записи и академической identity |
 
 Python parser/sync ещё не подключены к Apps Script. tools/nvsu_calendar.py готовит read-only план; Google-адаптер по умолчанию запрещает запись, tools/nvsu_state.py хранит SQLite ledger/checkpoints. Локальные HTTP-моки не подтверждают реальную Google-интеграцию. Не запускать execute_plan или подтверждение владения ручными событиями без соответствующего разрешения.
 
@@ -157,8 +158,8 @@ setupAutomation описывает следующие триггеры; их р�
 # Текущий кандидат 2.0.5: сохранённые сценарии и консультации
 node tests/run-current.cjs
 
-# Python parser, read-only preview и sync protocol model
-python -m unittest discover -s tests -p 'test_nvsu*.py'
+# Python: НВГУ и read-only XLSX (только синтетические fixtures в тестах)
+python -m unittest discover -s tests -p 'test_*.py'
 
 # История: по умолчанию regression.cjs проверяет 2.0.4
 node --test tests/regression.cjs
