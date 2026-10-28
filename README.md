@@ -36,9 +36,11 @@
 
 `python tools/gradebook_read.py PATH_TO_LOCAL_XLSX` печатает только структурный отчёт без имён и оценок. Модуль не вычисляет формулы, не записывает файл и не определяет student identity. Данные загруженного журнала не хранятся в Git. [Аудит и ограничения reader](docs/GRADEBOOK_STRUCTURE_AUDIT.md), [единый план](docs/UNIFIED_ASSISTANT_PLAN.md).
 
-Полный локальный Python suite: `python -m unittest discover -s tests -p 'test_*.py'` — 110 PASS (НВГУ, XLSX, academic policy); текущий бот: `node tests/run-current.cjs` — 101 PASS. Это не проверка реальных API или развёртывания.
+Полный локальный Python suite: `python -m unittest discover -s tests -p 'test_*.py'` — 116 PASS (НВГУ, XLSX, academic policy); текущий бот: `node tests/run-current.cjs` — 101 PASS. Это не проверка реальных API или развёртывания.
 
 
 ## Локальная академическая policy
 
-`tools/assistant_access.py` — проверка прав двух преподавателей, собственных данных студента и временного замещения по конкретной лекции. [Контракт и границы доверия](docs/ACCESS_POLICY.md). Это не authentication и не включённый режим бота: настоящий registry и transport adapters отсутствуют. Полный Python suite — **110 PASS**, из них 30 policy; текущий бот — 101 PASS. Сеть и реальные данные не используются.
+`tools/assistant_access.py` — проверка прав двух преподавателей, собственных данных студента и временного замещения по конкретной лекции. [Контракт и границы доверия](docs/ACCESS_POLICY.md). Это не authentication и не включённый режим бота: настоящий registry и transport adapters отсутствуют. Полный Python suite — **116 PASS**, из них 36 policy; текущий бот — 101 PASS. Сеть и реальные данные не используются.
+
+Пользователю предусмотрено явное полное академическое чтение (AcademicReadGrant), включая расписание второго преподавателя и все известные учебные данные студентов; второму преподавателю оно автоматически не передаётся. Это ещё не live-привязка аккаунта.

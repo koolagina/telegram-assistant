@@ -8,7 +8,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from assistant_access import (
     AccessPolicy, Binding, Context, Enrollment, Lecture, Student, Teacher,
-    TeachingGrant, SubstitutionGrant, PolicyError,
+    TeachingGrant, SubstitutionGrant, AcademicReadGrant, PolicyError,
 )
 
 NOW = dt.datetime(2026, 10, 28, 10, 0, tzinfo=dt.timezone(dt.timedelta(hours=5)))
@@ -255,6 +255,57 @@ class PolicyTests(unittest.TestCase):
                         replace(self.bindings[0], channel=[])]:
             with self.assertRaises(PolicyError):
                 self.policy(bindings=(binding,))
+
+    def test_explicit_full_academic_read_covers_other_schedule_and_students(self):
+        grant = AcademicReadGrant('full-read', 'teacher-a', START, END)
+        policy = self.policy(academic_read_grants=(grant,))
+        self.assertTrue(self.allowed('schedule.read', 'teacher-b', policy=policy))
+        self.assertTrue(self.allowed('student.report', 'enrollment-b', policy=policy))
+        self.assertFalse(self.allowed('schedule.read', 'teacher-a', subject='002', policy=policy))
+        self.assertFalse(self.allowed('student.report', 'enrollment-a', subject='002', policy=policy))
+
+    def test_full_academic_read_includes_history_not_nonexistent_records(self):
+        grant = AcademicReadGrant('full-read', 'teacher-a', START, END)
+        old = replace(self.enrollments[1], active=False, valid_until=NOW)
+        policy = self.policy(academic_read_grants=(grant,), enrollments=(self.enrollments[0], old),
+                             students=(self.students[0], replace(self.students[1], active=False)))
+        self.assertTrue(self.allowed('student.report', 'enrollment-b', policy=policy))
+        self.assertFalse(self.allowed('student.report', 'missing', policy=policy))
+        self.assertFalse(self.allowed('schedule.read', 'missing', policy=policy))
+
+    def test_full_read_does_not_grant_writes_codes_or_private_data(self):
+        grant = AcademicReadGrant('full-read', 'teacher-a', START, END)
+        policy = self.policy(academic_read_grants=(grant,))
+        for action, target in [('personal.read', 'teacher-b'), ('lecture.open', 'lecture-b'),
+                               ('lecture.code.read', 'lecture-b'), ('journal.write', 'enrollment-b'),
+                               ('mail.send', 'enrollment-b'), ('owner.approve', 'teacher-b')]:
+            self.assertFalse(self.allowed(action, target, policy=policy))
+        self.assertFalse(self.allowed('progress.self', 'student-b', subject='003', policy=policy))
+
+    def test_full_read_expiry_revoke_and_auth_checks_still_apply(self):
+        for grant in [AcademicReadGrant('expired', 'teacher-a', START, NOW),
+                      AcademicReadGrant('revoked', 'teacher-a', START, END, active=False)]:
+            policy = self.policy(academic_read_grants=(grant,))
+            self.assertFalse(self.allowed('schedule.read', 'teacher-b', policy=policy))
+            self.assertFalse(self.allowed('student.report', 'enrollment-b', policy=policy))
+        active = self.policy(academic_read_grants=(AcademicReadGrant('full-read', 'teacher-a', START, END),))
+        self.assertFalse(self.allowed('student.report', 'enrollment-b', policy=active,
+                                     context=self.context(authenticated=False)))
+
+    def test_full_read_keeps_channel_scopes_and_binding_capabilities(self):
+        policy = self.policy(academic_read_grants=(AcademicReadGrant('full-read', 'teacher-a', START, END),))
+        ctx = Context('chatgpt', 'oauth-sub-a', authenticated=True, scopes=frozenset({'student.report'}))
+        self.assertTrue(self.allowed('student.report', 'enrollment-b', policy=policy, context=ctx))
+        self.assertFalse(self.allowed('schedule.read', 'teacher-b', policy=policy, context=ctx))
+        restricted = replace(self.bindings[0], capabilities=frozenset({'schedule.read'}))
+        self.assertFalse(self.allowed('student.report', 'enrollment-b',
+                                     policy=self.policy(bindings=(restricted,), academic_read_grants=(AcademicReadGrant('full-read', 'teacher-a', START, END),))))
+
+    def test_full_read_registry_must_reference_teacher_and_valid_interval(self):
+        for grant in [AcademicReadGrant('bad', 'student-a', START, END),
+                      AcademicReadGrant('bad', 'teacher-a', END, START)]:
+            with self.assertRaises(PolicyError):
+                self.policy(academic_read_grants=(grant,))
 
 
 if __name__ == '__main__':

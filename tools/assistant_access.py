@@ -80,6 +80,16 @@ class TeachingGrant:
 
 
 @dataclass(frozen=True)
+class AcademicReadGrant:
+    """Explicit project-wide academic reading, not owner/write permission."""
+    id: str
+    teacher_id: str
+    valid_from: dt.datetime
+    valid_until: dt.datetime
+    active: bool = True
+
+
+@dataclass(frozen=True)
 class Lecture:
     id: str
     teacher_id: str
@@ -148,14 +158,16 @@ class AccessPolicy:
     bindings: object = field(repr=False)
     enrollments: object = field(repr=False)
     teaching_grants: object = field(repr=False)
+    academic_read_grants: object = field(repr=False)
     lectures: object = field(repr=False)
     substitutions: object = field(repr=False)
 
     def __init__(self, *, teachers=(), students=(), bindings=(), enrollments=(),
-                 teaching_grants=(), lectures=(), substitutions=()):
+                 teaching_grants=(), lectures=(), substitutions=(), academic_read_grants=()):
         for name, values, cls in [('teachers', teachers, Teacher), ('students', students, Student),
                                   ('enrollments', enrollments, Enrollment),
                                   ('teaching_grants', teaching_grants, TeachingGrant),
+                                  ('academic_read_grants', academic_read_grants, AcademicReadGrant),
                                   ('lectures', lectures, Lecture),
                                   ('substitutions', substitutions, SubstitutionGrant)]:
             object.__setattr__(self, name, index(values, cls))
@@ -191,6 +203,10 @@ class AccessPolicy:
             interval(grant.valid_from, grant.valid_until)
             if not identifier(grant.teacher_id) or grant.teacher_id not in self.teachers or not identifier(grant.discipline_id) or not identifier(grant.group_id):
                 raise PolicyError('Invalid teaching grant relationship')
+        for grant in self.academic_read_grants.values():
+            interval(grant.valid_from, grant.valid_until)
+            if not identifier(grant.teacher_id) or grant.teacher_id not in self.teachers:
+                raise PolicyError('Invalid academic read grant relationship')
         for lecture in self.lectures.values():
             interval(lecture.starts_at, lecture.ends_at)
             if (not identifier(lecture.teacher_id) or lecture.teacher_id not in self.teachers or not identifier(lecture.discipline_id)
@@ -232,7 +248,11 @@ class AccessPolicy:
             return DENIED
         if context.channel == 'email' and action != 'student.report':
             return DENIED  # Authorization to read a report is never permission to send it.
-        if action in ('schedule.read', 'personal.read'):
+        full_read = binding.role == 'teacher' and any(
+            g.teacher_id == binding.entity_id and live(g, now) for g in self.academic_read_grants.values())
+        if action == 'schedule.read':
+            return ALLOWED if binding.role == 'teacher' and target_id in self.teachers and (binding.entity_id == target_id or full_read) else DENIED
+        if action == 'personal.read':
             return ALLOWED if binding.role == 'teacher' and binding.entity_id == target_id else DENIED
         if action == 'progress.self':
             if binding.role != 'student' or binding.entity_id != target_id:
@@ -242,7 +262,11 @@ class AccessPolicy:
             return DENIED
         if action == 'student.report':
             enrollment = self.enrollments.get(target_id)
-            if enrollment is None or not live(enrollment, now) or not self.students[enrollment.student_id].active:
+            if enrollment is None:
+                return DENIED
+            if full_read:
+                return ALLOWED  # Includes known historical enrollments for academic review.
+            if not live(enrollment, now) or not self.students[enrollment.student_id].active:
                 return DENIED
             return ALLOWED if any(g.teacher_id == binding.entity_id and live(g, now)
                                   and g.group_id == enrollment.group_id

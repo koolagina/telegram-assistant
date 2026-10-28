@@ -1,3 +1,11 @@
+# Уточнение доступа пользователя — 28.10.2026
+
+По явному запросу добавлен AcademicReadGrant в tools/assistant_access.py: полное чтение академических расписаний и студенческих данных проекта, включая известную историю. Стандартные Teacher grants, student self-access и отдельное lecture-замещение не расширяются автоматически. Send/write/private/owner полномочия full read не выдаёт.
+
+6 новых синтетических tests, первоначально красный импорт до класса, затем **36 policy / 116 Python / 101 Node PASS**. Учтены отсутствие reverse grant, история/missing IDs, auth/capabilities/scopes и revoke/expiry. Рабочий бот, реальные аккаунты и внешние ресурсы не менялись. Подробности: ACCESS_POLICY.md и REQUIREMENTS.md, раздел I.
+
+---
+
 # Локальная академическая identity/policy — 28.10.2026
 
 Добавлены `tools/assistant_access.py`, `tests/test_assistant_access.py`, контракт [ACCESS_POLICY.md](ACCESS_POLICY.md). Два преподавателя получают предметные grants; student progress — только self; замещение — отдельное временное право на конкретную lecture без обратного доступа/чужих отчётов. Неизвестные роли/операции запрещены, IDs точные, bindings подтверждаются явно, snapshots неизменяемы. Email/ChatGPT не получают send/write/code полномочий; ChatGPT scopes только сужают серверные grants.
