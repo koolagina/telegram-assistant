@@ -66,3 +66,8 @@ Read-only metadata discovery доступно отдельным manual workflow
 ## Обновления заданий
 
 [Каталог материалов](docs/MATERIALS_CATALOG.md) дополнен M04 из upload; вопросы M02 пользователь исключил из обязательных. Lecture makeup связываются по номерам 1→1, 2→2, 3→3, 4→4. `tools/material_versions.py` — локальная история source/criteria и version-bound checks: новое содержимое → новая версия, смена во время pending проверки → needs_recheck, completed results не меняются. [Контракт и ограничения](docs/MATERIAL_VERSIONS.md): live parser/watcher/grader ещё не подключены. Полный Python suite 168 PASS, Node 101 PASS.
+
+
+## Локальный разбор материалов Word
+
+`tools/material_docx.py` извлекает текст/таблицы с ограничениями ZIP/XML, помечает неподдержанные элементы для review. Это не автоматическое утверждение критериев; подключение к Диску/оценке пока отсутствует. 11 новых synthetic tests, текущий полный Python suite **179 PASS**. Подробности — [контракт материалов](docs/MATERIAL_VERSIONS.md).

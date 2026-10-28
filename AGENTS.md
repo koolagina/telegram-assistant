@@ -214,3 +214,6 @@ node tests/audit.cjs
 
 
 Пользователь загрузил M04 lecture makeup; он прочитан, M02 (вопросы) исключён из обязательных источников, не запрашивать его снова. Mapping прямо подтверждён: №ДЗ1→Л1, 2→Л2, 3→Л3, 4→Л4, несмотря на широту тем. M04 comic разрешает ИИ-графику с доработкой; rubric weights не дают проходного порога. Обновления файлов должны учитываться в новых проверках с версией source/rubric/parser; pending source drift → needs_recheck, completed results не менять автоматически, source errors без stale fallback. Локальное ядро tools/material_versions.py реализовано (14 tests), но live watcher/DOCX parser/grader/плюс не подключены. Контракты docs/MATERIAL_VERSIONS.md и MATERIALS_CATALOG.md §5; private .materials-state не переносить в Git.
+
+
+Локальный `tools/material_docx.py` извлекает untrusted текст/таблицы (11 tests; полный Python179). Каждый результат criteria-not-validated; не конвертировать его автоматически в утверждённый rubric/MaterialRead. Review flags означают потенциально неполное извлечение, не пустые требования. Сеть/внешние ссылки/содержимое embedded objects не исполняются. Live refresh и semantic rubric extraction остаются неподключёнными.

@@ -1,3 +1,8 @@
+# Локальный DOCX extractor — 28.10.2026
+
+- `tools/material_docx.py`: bounded text/table extraction, review flags, no network/execution or automatic rubric approval.
+- 11 новых синтетических tests; полный Python 179 PASS. Последний Node 101 PASS, не перезапускался. Live adapter/grader и рабочие ресурсы не менялись.
+
 # Changelog
 
 ## Актуальные материалы и версии проверок — 2026-10-28

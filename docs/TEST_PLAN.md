@@ -1,3 +1,15 @@
+# Локальное чтение DOCX — 28.10.2026
+
+Добавлен `tools/material_docx.py`: ограниченное чтение ZIP/XML без распаковки на диск, сети и исполнения ссылок. Текст абзацев сохраняет границы runs/tab/break; таблицы возвращаются по строкам/ячейкам. Размер входа до 16 MiB, суммарный распакованный размер до 32 MiB, до 1024 entries. Duplicate parts, macro parts, encrypted entries, DTD/entities, повреждённые архивы/XML отклоняются. Рисунки, relationships, дополнительные части и неизвестная разметка помечаются для review. Это частичное извлечение текста, не доказательство полной поддержки Word и не антивирус.
+
+Каждый результат помечен `criteria-not-validated`: текст не превращается автоматически в утверждённый rubric или MaterialRead. Автоматическое подключение к MaterialCatalog намеренно отсутствует до семантической проверки критериев. Источники остаются данными, а не разрешением удалять почту/начислять баллы. SHA-256 относится к полученным bytes, не доказывает свежесть на Диске.
+
+11 synthetic tests PASS (исходный запуск без модуля красный): текст/переносы, таблицы, malformed/missing XML, DTD, links/review, images/revisions, macros, duplicate parts, expanded-size limit и no automatic rubric. Полный Python **179 PASS**. Node не перезапускался: исходники бота не менялись, последний результат 101 PASS. Настоящие файлы/работы в этом этапе не обрабатывались; сеть, почта, журнал, развёртывание не использовались.
+
+Далее: read-only adapter получения актуального файла, семантическое извлечение требований с контролем полноты и утверждение порога принятия; затем связка с версиями и пилот проверки. Автоплюс/оценка/письмо не включены.
+
+---
+
 # Версии материалов и lecture makeup — 28.10.2026
 
 Добавлены 14 synthetic tests material_versions: update before/during check, no stale fallback при ошибке provider, missing/invalid rubric, parser/rule changes, copied rules, version-bound restart/idempotence, completed-result immutability, concurrent refresh CAS, namespace/permissions, JSON NaN rejection и 1→1 lecture-number mapping. Начальные tests красные до модуля; отдельный mapping test красный до свойства lecture_number. Всё исправлено.
