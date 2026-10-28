@@ -1,3 +1,10 @@
+# Owner decision queue — 29.10.2026
+
+- Current-source read-only owner dashboard: consultations/reviews/technical, dates/filters/pagination/detail/version references, partial source warnings.
+- Normalized dated consultation feed contract; actual local review/dispatch sources, personal+academic permission gates, opt-in adapter/worker integration.
+- Исправлены false active-send incident и concurrent worker blocking; inflight остаётся pending без resend до проверенного исхода.
+- 34decision+2worker tests,400Python+101Node PASS;3offline demos. Никаких live API, grades, source mutations или deployment.
+
 # Reports-only queue worker and failure recovery — 29.10.2026
 
 - Bounded worker соединяет inbox/current policy/dispatch; API receipt recovery не повторяет send после mark failure, unsupported updates сохраняются для других handlers.

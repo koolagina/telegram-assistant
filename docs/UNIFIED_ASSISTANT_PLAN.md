@@ -329,3 +329,8 @@ Fixed-origin verified bot HTTP и durable dispatch ledger проходят tests
 ## 34. Bounded queue worker — 29.10.2026
 
 Inbox/current policy/dispatch связаны reports-only worker; markfailure recovery не дублирует send и не требует доступа к прежнему private report.10worker tests,51новыйtest всего блока/Python364+Node101 PASS. Live bootstrap/полный dispatcher/backoff/monitoring/operator recovery/callback ack и sandbox integration остаются, actual API не вызывались.
+
+
+## 35. Owner decision queue — 29.10.2026
+
+Read-only /decisions с3sources/filters/5item pages/details и partial warnings реализован;34decision tests+2worker regressions,Python400/Node101 PASS. Локальные review/dispatch DB читаются с current gates; consultations требуют normalized dated feed. Реальные actions/deploy не выполнялись. Следующие отдельные компоненты — live consultation feed и authoritative human/operator resolutions с отдельными подтверждениями; не перезаписывать immutable history или unknown outcome ради скрытия case. DECISION_QUEUE.md.

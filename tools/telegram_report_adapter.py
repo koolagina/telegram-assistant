@@ -1,4 +1,4 @@
-"""Reports-only adapter for an injected VERIFIED Telegram polling transport.
+"""Read-only report/optional owner-decision adapter for VERIFIED polling input.
 
 fetch_verified_updates MUST be trusted server code performing authenticated Bot
 API requests over verified TLS to the configured bot. An ok/result JSON body or
@@ -9,6 +9,7 @@ transport is NOT implemented. No network calls, sends or delivery claims here.
 from dataclasses import dataclass,field
 import re
 from assistant_access import Context,identifier
+from decision_requests import prepare_decision_reply,prepare_decision_callback
 from report_access import ReportReader
 from report_requests import PreparedReply,prepare_report_reply,prepare_progress_callback
 
@@ -39,9 +40,11 @@ def _private_message(message,subject):
     return type(chat) is dict and chat.get('type')=='private' and _id(chat.get('id')) and chat['id']==subject
 
 class TelegramReportAdapter:
-    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates):
+    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None):
         if not _id(bot_id) or not callable(reader_factory) or not callable(fetch_verified_updates):
             raise TelegramAdapterError('Trusted polling adapters and bot identity required')
+        if decision_service_factory is not None and not callable(decision_service_factory):raise TelegramAdapterError('Invalid trusted decision service')
+        self._decisions=decision_service_factory
         self._reader=reader_factory;self._bot_id=bot_id;self._fetch=fetch_verified_updates
 
     def prepare_batch(self):
@@ -76,8 +79,11 @@ class TelegramReportAdapter:
             sender=message['from']['id']
             if sender==self._bot_id or not _private_message(message,sender):return None
             text=message.get('text')
-            if type(text) is not str or re.match(r'^/(progress|report)(?: |$)',text) is None:return None
+            if type(text) is not str or re.match(r'^/(progress|report|decisions)(?: |$)',text) is None:return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
+            if text.startswith('/decisions'):
+                if self._decisions is None:return None
+                return TelegramPreparation(update['update_id'],sender,prepare_decision_reply(self._decisions(),context,text))
             reader=self._reader()
             if type(reader) is not ReportReader:raise TelegramAdapterError('Trusted report reader required')
             return TelegramPreparation(update['update_id'],sender,prepare_report_reply(reader,context,text))
@@ -87,8 +93,11 @@ class TelegramReportAdapter:
             if sender==self._bot_id or not _private_message(message,sender):return None
             if not _user(message.get('from'),bot=True) or message['from']['id']!=self._bot_id:return None
             data=query.get('data')
-            if type(data) is not str or not data.startswith('progress:'):return None
+            if type(data) is not str or not data.startswith(('progress:','dec:')):return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
+            if data.startswith('dec:'):
+                if self._decisions is None:return None
+                return TelegramPreparation(update['update_id'],sender,prepare_decision_callback(self._decisions(),context,data),query['id'])
             reader=self._reader()
             if type(reader) is not ReportReader:raise TelegramAdapterError('Trusted report reader required')
             return TelegramPreparation(update['update_id'],sender,prepare_progress_callback(reader,context,data),query['id'])

@@ -74,3 +74,19 @@ class WorkerTests(unittest.TestCase):
     def test_same_bot_different_project_cannot_share_worker(self):
         with DispatchLedger(self.root/'other-project.sqlite3',namespace='other-project',bot_id=9001) as other:
             with self.assertRaises(WorkerError):ReportWorker(self.inbox,other,reader_factory=self.session.reader,send=self.send)
+
+    def test_active_parallel_worker_does_not_mark_inflight_as_failed(self):
+        nested=[]
+        def send(method,payload):
+            nested.extend(self.worker().step(dispatch_enabled=True))
+            return self.send(method,payload)
+        result=self.worker(send=send).step(dispatch_enabled=True)
+        self.assertEqual(nested[0]['queue_status'],'inflight')
+        self.assertEqual(result[0]['queue_status'],'handled')
+        self.assertEqual(self.inbox.pending(),());self.assertEqual(len(self.calls),1)
+    def test_interrupted_attempt_stays_pending_for_verified_orphan_recovery(self):
+        def stopped(*args):raise KeyboardInterrupt('mock worker stop')
+        with self.assertRaises(KeyboardInterrupt):self.worker(send=stopped).step(dispatch_enabled=True)
+        result=self.worker().step(dispatch_enabled=True)
+        self.assertEqual(result[0]['queue_status'],'inflight')
+        self.assertEqual(len(self.inbox.pending()),1);self.assertEqual(self.calls,[])

@@ -10,6 +10,7 @@
 | Принадлежность | ReportRegistry private SQLite, immutable links, unique check, retry | Trusted publication adapter для реальных submission/enrollment |
 | Права | AccessPolicy, PolicyStore version snapshots/CAS/no older fallback | Реальная authentication и административная процедура подтверждения/отзыва |
 | Запросы | Self list/page/buttons, teacher report, current-policy gating, verified-input TG parser | Mock-tested fixed-origin HTTP и dispatch ledger добавлены; store-before-ack inbox и bounded ReportWorker добавлены; остаются live runtime/sends/delivery |
+| Очередь решений | Owner-only /decisions,3sources,filters,pages,details,partial warnings | Live consultation feed, отдельные подтверждения действий/resolutions |
 | Учебный журнал | Read-only локальное чтение структуры XLSX | Полный расчёт успеваемости, синхронизация отметок, запись реального журнала |
 | Production | Исходники и локальные тесты | Разрешённая sandbox-приёмка, bindings, rollout |
 
@@ -26,9 +27,10 @@ python -m unittest discover -s tests -p 'test_*.py'
 node tests/run-current.cjs
 python tools/review_demo.py
 python tools/assistant_demo.py
+python tools/decision_demo.py
 ```
 
-Подтверждено: **364 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
+Подтверждено: **400 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
 
 ## Данные и восстановление
 
@@ -50,3 +52,5 @@ Telegram adapter принимает только инъецируемый truste
 HTTP-клиент и dispatch ledger теперь реализованы и проверены только mock transport. Network/writes/dispatch default off; реальных API-вызовов нет. Durable inbox/cursor реализован и проверен моками; live runtime/retention/idle reset/единственный polling owner требуют sandbox-приёмки; api_confirmed не delivery, unknown не повторяется автоматически. Подробности TELEGRAM_TRANSPORT.md.
 
 ReportWorker теперь связывает inbox→reports→dispatch и восстанавливает mark по API receipt без повторной отправки; только bounded local step, не live scheduler/полный bot dispatcher. Unknown/rejected → blocked для оператора; unsupported остаётся pending. Общий dispatcher/backoff/monitoring/операторский recovery и callback acknowledgement ещё не реализованы.
+
+Owner decision menu реализован локально и opt-in подключён к adapter/worker, но не к рабочему GAS. Демонстрация DECISION_QUEUE_DEMO.md, контракт DECISION_QUEUE.md. Нормальный inflight оставляется pending, не выдаётся за сбой без подтверждения orphan; old statements о безусловной blocked маркировке inflight superseded.

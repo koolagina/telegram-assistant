@@ -1,4 +1,4 @@
-"""Bounded reports-only inbox step. No scheduler or live bootstrap.
+"""Bounded read-only report/optional owner-decision inbox step. No scheduler or live bootstrap.
 
 Default dispatch is disabled. Caller must supply approved trusted runtime
 adapters; a flag is not permission to send. Unsupported updates stay pending for
@@ -11,14 +11,16 @@ from telegram_report_adapter import TelegramReportAdapter
 class WorkerError(ValueError):
     pass
 
-FINAL=frozenset({'api_confirmed','api_rejected','cancelled','unknown','inflight_or_unknown'})
+FINAL=frozenset({'api_confirmed','api_rejected','cancelled','unknown'})
 
 class ReportWorker:
-    def __init__(self,inbox,ledger,*,reader_factory,send):
+    def __init__(self,inbox,ledger,*,reader_factory,send,decision_service_factory=None):
         if (type(inbox) is not TelegramInbox or type(ledger) is not DispatchLedger
                 or inbox.bot_id!=ledger.bot_id or inbox.namespace!=ledger.namespace
                 or not callable(reader_factory) or not callable(send)):
             raise WorkerError('Matching trusted inbox/dispatch/runtime required')
+        if decision_service_factory is not None and not callable(decision_service_factory):raise WorkerError('Invalid decision service factory')
+        self._decisions=decision_service_factory
         self.inbox=inbox;self.ledger=ledger;self._reader=reader_factory;self._send=send
 
     def step(self,*,dispatch_enabled=False,limit=100):
@@ -31,7 +33,7 @@ class ReportWorker:
             try:
                 outcome=self.ledger.result(update_id)
                 if outcome['status']=='not_attempted':
-                    adapter=TelegramReportAdapter(reader_factory=self._reader,bot_id=self.inbox.bot_id,
+                    adapter=TelegramReportAdapter(reader_factory=self._reader,bot_id=self.inbox.bot_id,decision_service_factory=self._decisions,
                         fetch_verified_updates=lambda update=row['update']:{'ok':True,'result':[update]})
                     # Route only. Do not reuse this potentially stale reply for sending.
                     if not adapter.prepare_batch():
@@ -42,6 +44,11 @@ class ReportWorker:
                         if len(prepared)!=1:raise WorkerError('Current report preparation unavailable')
                         return prepared[0]
                     outcome=self.ledger.attempt(update_id,prepare_fresh=fresh,send=self._send,dispatch_enabled=True)
+                if outcome['status']=='inflight_or_unknown':
+                    # It may be an active peer. Do not turn its pending work
+                    # into a failed/blocked item without verified orphan state.
+                    results.append({'update_id':update_id,'status':outcome['status'],'queue_status':'inflight','delivered':None})
+                    continue
                 if outcome['status'] not in FINAL:raise WorkerError('Unexpected dispatch state')
                 queue_status='handled' if outcome['status'] in ('api_confirmed','cancelled') else 'blocked'
                 self.inbox.mark(update_id,status=queue_status)

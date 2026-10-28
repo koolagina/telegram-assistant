@@ -1,3 +1,26 @@
+# Единая очередь решений владельца — 29.10.2026
+
+Реализованы tools/decision_queue.py, decision_sources.py, decision_requests.py и decision_demo.py. `/decisions` показывает consultations/reviews/technical с counters, filters,5items/page, overdue/today priority в Asia/Yekaterinburg и version-bound detail callbacks. Данные пересобираются по текущим источникам; отдельной копии задач/новых Google Sheets статусов нет. Всё read-only: никакого подтверждения встречи, grade/credit/send/retry/скрытия исходного unresolved case.
+
+Consultations читаются из нормализованного dated ConsultationBatch с aware датами и исходной полнотой; live Google snapshot feed не подключён. Reviews используют настоящие локальные ReportRegistry/MaterialCatalog, права student.report до payload. Technical decisions используют отдельную read-only attention projection ledger: только known unknown/rejected, не обычный active send. Orphan inflight допускается только от trusted monitor с explicit review_required=True; такой monitor ещё не реализован. Полный/частичный сбой одного источника видим как неполнота, не ложное «решений нет»; другие источники доступны.
+
+personal.read owner gate выполняется до источников и после них; review scope дополнительно сверяется с current enrollment/academic grants. Копии объединяются по stable source identity; conflicting copies, stale data, naive dates и unknown statuses требуют source review. Refresh не обновляет source timestamp сам по себе. Callback stale при изменившемся/решённом source; времена для reference нормализованы в UTC. Telegram adapter/worker получили optional decision_service_factory; без неё новые commands/callbacks не активируются и не отбрасываются.
+
+Добавлено34decision tests +2worker regression tests, итог **400 Python PASS +101 Node PASS**. Сначала tests красные без модулей; дополнительно red→green: stale-after-read snapshot, timezone-only ref drift, false busy-send incident и race при параллельном worker. В последнем peer больше не маркирует активный sending как blocked: pending/inflight остаётся до receipt/verified orphan recovery, без resend. `bash tools/check-local.sh` запускает также3synthetic demos. User-visible example: DECISION_QUEUE_DEMO.md; контракт DECISION_QUEUE.md.
+
+| Проверка | Результат | Предел |
+|---|---|---|
+| Owner/student/second teacher/revocation/privacy | PASS | Реальная authentication/bindings не подключались |
+| Categories,dates,overdue,filter,pages,duplicates/stale refs | PASS | Только trusted local snapshots, не реальный Sheets/Calendar |
+| Partial source failure/age/completeness | PASS | Консультационный feed должен сохранять честный observed_at |
+| Queue source update removes resolved consultation | PASS | Изменялся только fixture, не настоящая заявка |
+| Opt-in API adapter→worker→mock sender | PASS | Нет actual API/delivery или установленной команды GAS |
+| Active-send concurrency false incident/recovery | PASS | Orphan monitor/operator resolution ещё отсутствует |
+
+Остатки: live feed консультаций, реальные provisioning/runtime/test rollout; separate source-of-truth human-review/operator resolutions и исполнение действий после отдельного подтверждения. Immutable report result/unknown dispatch outcome не перезаписываются ради исчезновения из очереди. Semantic grading/порог не придуманы. Все проверки offline/mock-only; рабочий бот, таблицы/календарь/почта/триггеры не менялись.
+
+---
+
 # Обработка очереди и восстановление после API success — 29.10.2026
 
 Добавлен tools/report_worker.py: bounded reports-only step соединяет private inbox, trusted verified-update adapter, fresh policy preparation и durable dispatch ledger. Dispatch default off. Worker требует совпадающие project/bot namespace; он не запускает polling/scheduler и не меняет webhook. Только canonical persisted updates, без public body/role args. Реальные API/отправки в этом этапе не выполнялись, все sender/opener — моки.

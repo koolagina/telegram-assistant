@@ -29,7 +29,7 @@ def synthetic_policy(bindings=None):
         bindings=bindings if bindings is not None else (
             Binding('telegram','103','student','student-a',frozenset({'progress.self'}),confirmed=True),
             Binding('telegram','104','student','student-b',frozenset({'progress.self'}),confirmed=True),
-            Binding('telegram','101','teacher','owner',frozenset({'student.report'}),confirmed=True)),
+            Binding('telegram','101','teacher','owner',frozenset({'student.report','personal.read'}),confirmed=True)),
         enrollments=(Enrollment('enrollment-a','student-a','discipline','group',START,END),
                      Enrollment('enrollment-b','student-b','discipline','group',START,END)),
         academic_read_grants=(AcademicReadGrant('owner-full','owner',START,END),))

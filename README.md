@@ -2,9 +2,9 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
-## Актуальная проверка материалов
+## Очередь решений владельца — текущий локальный кандидат
 
-Mock-tested Telegram HTTP client и private dispatch ledger связывают current-policy отчёт с состояниями API-confirmed/rejected/unknown без blind resends. Сеть и отправки по умолчанию выключены. **364 Python +101 Node PASS**. Store-before-ack inbox/cursor также проверены локально; bounded ReportWorker добавлен; live runtime/integrations и semantic grading ещё не подключены. Локальная приёмка: `bash tools/check-local.sh`. [Состояние](docs/LOCAL_ASSISTANT_STATUS.md), [транспорт и пределы](docs/TELEGRAM_TRANSPORT.md).
+`/decisions`: консультации, проверки работ и технические сбои; фильтры, сроки и подробности. Доступ только владельцу, source failures явно помечают неполную сводку. Никаких автоматических решений/оценок/отправок. **400 Python +101 Node PASS**. [Пример меню](docs/DECISION_QUEUE_DEMO.md), [контракт и ограничения](docs/DECISION_QUEUE.md). Команда рабочего GAS-бота ещё не включена. Локальная приёмка: `bash tools/check-local.sh`.
 
 ## ВАЖНО: статус исходников
 

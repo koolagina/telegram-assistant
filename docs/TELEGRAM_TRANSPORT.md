@@ -37,8 +37,10 @@ stateDiagram-v2
 
 Реальные HTTP source/sends, test bot integration, webhook/poll worker, answerCallbackQuery и эксплуатационная сверка unknown не запускались. Semantic grading и запись оценок также не реализованы.
 
-Локальная проверка: `bash tools/check-local.sh`. 364 Python-теста, включая13 ledger/10 HTTP/8 integration/10 inbox/10 worker; Node101 также проверяется скриптом. Все transport calls в этих tests инъецируются как mocks; никаких настоящих Bot API credentials/configuration не требуется.
+Локальная проверка: `bash tools/check-local.sh`. 400 Python-тестов, включая13 ledger/10 HTTP/8 transport integration/10 inbox/12 worker/34 decision; Node101 также проверяется скриптом. Все transport calls в этих tests инъецируются как mocks; никаких настоящих Bot API credentials/configuration не требуется.
 
 ## Reports-only worker
 
-`ReportWorker.step()` default-disabled, без loop/scheduler. Он сверяет inbox/ledger project+bot, читает hash-checked persisted updates, reauthorizes before first send, а для существующего receipt только восстанавливает queue status. Ошибка mark после API success не создаёт новый send. Unknown/rejected/inflight блокируются для сверки. Неподдержанные updates остаются pending/deferred: это предотвращает потерю чужих функций, но требует общего dispatcher, иначе первые100 неподдержанных updates могут задержать reports. Такой worker не является полным production runtime. Нельзя автоматически очищать backlog ради обхода этой ситуации.
+`ReportWorker.step()` default-disabled, без loop/scheduler. Он сверяет inbox/ledger project+bot, читает hash-checked persisted updates, reauthorizes before first send, а для существующего receipt только восстанавливает queue status. Ошибка mark после API success не создаёт новый send. Unknown/rejected блокируются для сверки. Inflight остаётся pending: это может быть активный peer, а не orphan; подтверждение monitor требуется отдельно. Неподдержанные updates остаются pending/deferred: это предотвращает потерю чужих функций, но требует общего dispatcher, иначе первые100 неподдержанных updates могут задержать reports. Такой worker не является полным production runtime. Нельзя автоматически очищать backlog ради обхода этой ситуации.
+
+Optional decision_service_factory подключает private owner /decisions и dec: callbacks к тем же identity/current policy/fresh dispatch gates. Нет автоматических source mutations; подробности DECISION_QUEUE.md.

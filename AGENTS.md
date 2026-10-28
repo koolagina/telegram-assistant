@@ -262,3 +262,6 @@ telegram_inbox.py сохраняет всю verified batch+cursor атомарн
 
 
 report_worker.py — bounded reports-only queue step (10tests, итого51новыйtest блока/Python364+Node101). Default dispatch off; bot+project namespace должны совпадать. Recover existing receipt без private reread/send; unknown/rejected → blocked, unsupported → deferred/pending для других функций. Не использовать как замену всему боту: нужен общий dispatcher/backoff/monitoring/operator recovery; callback ack не реализован. Реальных transport API/deploy не было.
+
+
+/decisions реализован локально в decision_queue/sources/requests (34tests+2worker regressions;Python400/Node101). personal.read на configured owner до/после source reads, reviews ещё student.report+original relation. Источники только trusted local snapshots; ConsultationBatch обязан сохранять true observed_at/complete, не time-of-click. Никаких approve/reject/grade/send/retry/hide действий из очереди. Worker/adapter decision factory optional; без неё route не активируется. Active inflight не считать failure/orphan автоматически и не блокировать работу peer: остаётся pending, monitor proof нужен отдельно. Existing Sheets/GAS/immutable report history не менялись; контракт DECISION_QUEUE.md.

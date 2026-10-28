@@ -124,3 +124,9 @@ class DispatchLedger:
         except DispatchError:raise
         except Exception:
             raise DispatchError('Dispatch outcome unavailable; do not retry blindly') from None
+
+
+    def attention(self):
+        """Private read-only operator projection; never a retry/resolve action."""
+        rows=self.db.execute("SELECT update_id FROM dispatch_attempts WHERE phase IN ('unknown','api_rejected') ORDER BY update_id").fetchall()
+        return tuple({'update_id':row[0],**self.result(row[0])} for row in rows)
