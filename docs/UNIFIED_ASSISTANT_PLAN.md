@@ -339,3 +339,8 @@ Read-only /decisions с3sources/filters/5item pages/details и partial warnings 
 ## 36. Явные планы решений по консультациям — 29.10.2026
 
 Локальные core/UI/demo готовы: 30 новых tests,430Python/101Node PASS. План approve/reject/propose после explicit confirm, revision/token/idempotency/restart/rollback; предложение не снимает исходный hold. Это synthetic SQLite store, не authoritative Sheet. Handlers нельзя использовать как read-only prepare_fresh. Следующие этапы: trusted live consultation feed/полнота НВГУ, отдельные dispatcher/executor с reconciliation, student agreement on proposal, затем разрешённая sandbox-приёмка. Рабочие ресурсы сохранены. Контракт CONSULTATION_ACTIONS.md.
+
+
+## 37. Проверяемые snapshots консультаций — 29.10.2026
+
+ConsultationFeed/BusyFeed и отдельный read-only GAS export helper кандидат готовы,29новыхPython+9Node, полный459Python/110Node PASS. Exact headers/dates/true snapshot age/row revisions; future verifier contract не доказывает реальную полноту, demo attestation только fake. External collection/auth/ownership/import verifier/CAS/dispatcher/executor остаются. Source versions инвалидируют старые кнопки при смене адресата/event. Контракт CONSULTATION_FEED.md; production не подключался.

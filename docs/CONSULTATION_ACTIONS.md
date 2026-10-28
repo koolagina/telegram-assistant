@@ -36,3 +36,8 @@ SQLite WAL/FULL, private directory/file, namespace+owner identity, `BEGIN IMMEDI
 ## Локальная проверка
 
 `python -m unittest discover -s tests -p 'test_consultation*.py'`: 30 тестов (23 core +7 UI/demo). Проверены две одновременно открытые connection/threads, перезапуск, повтор, ревизии, rollback plan insert, свежесть/полнота/ownership, изменение занятости/доступа во время чтения, expiry, границы слотов, private plain-text UI/поддельные кнопки. Реальных Calendar/Telegram/Sheets интеграционных тестов не было.
+
+
+## Следующий подготовленный компонент — 29.10.2026
+
+Read-only export helper и source/Calendar normalization реализованы отдельно: [CONSULTATION_FEED.md](CONSULTATION_FEED.md). Demo теперь проходит этот вход, но snapshots/verification synthetic. Live collection/identity/ownership и verifier реального полного импорта не подключены; исходный action sandbox не превращён в зеркало рабочей таблицы. Полная приёмка расширена до459Python/110Node PASS.

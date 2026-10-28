@@ -1,3 +1,13 @@
+# Проверяемые источники консультаций — 29.10.2026
+
+Готовы tools/consultation_feed.py и отдельный **неустановленный** src/tools/consultation_snapshot_export.gs. Exact 11-column schema, aware датировки/AsiaYekaterinburg, истинные age/complete, row-revision guards; calendar reads используют существующий GoogleCalendarAdapter с injected mocks. BusyFeed сохраняет другие/manual/all-day/recurring события и различает одинаковые IDs в разных календарях; ownership только trusted bindings, не title/description marker. Полнота занятий требует отдельно выданной trusted TeachingVerification, привязанной к exact calendar snapshot/range/teacher/current source revision. Реальный verifier ещё не реализован/не подключён, аттестация в demo исключительно fake.
+
+Старые queue refs теперь учитывают невидимые изменения адресата/event ID через optional ConsultationRecord.source_version (Sheets columns не менялись). Исправлены red→green: истечение busy snapshot во время сборки, impossible verification chronology, округление секунд typed time. Source `require_revision` — read guard, не настоящий Google CAS. Error/partial data не маскируются под свободный слот. Все snapshot methods требуют доверенного server context, JSON format не доказывает authentication.
+
+Полная локальная проверка: **459 Python PASS +110 Node PASS** (101 прежних+9export); новые29 Python+9Node, tests first. `bash tools/check-local.sh`,4synthetic demos; consultation demo теперь проходит нормализаторы. Реальные API/личные данные/Google Sheets/Calendar не читались/не изменялись; exporter только Node VM mocks, исходные GAS snapshots сохранены. Контракт [CONSULTATION_FEED.md](CONSULTATION_FEED.md), ограничения/таблица рисков в нём. Live private collection, verified identities/ownership/full-import verifier, authoritative CAS/dispatcher/executor/reconciliation ещё требуют реализации и разрешённой sandbox-приёмки.
+
+---
+
 # Подтверждение консультаций — локальная модель, 29.10.2026
 
 Добавлены tools/consultation_actions.py, consultation_requests.py, consultation_demo.py и 30 tests. Карточка → preview → отдельное подтверждение/отмена, пять минут на intent; права/занятость/полнота/владение проверяются повторно. Предложение времени не снимает старый резерв; согласие студента и реальный перенос пока отсутствуют. Approve/reject сохраняют только план update/delete того же owned event + два notification-намерения, не выполняют API. Локальные статусы не являются authoritative Sheet. Контракт [CONSULTATION_ACTIONS.md](CONSULTATION_ACTIONS.md), [пример](CONSULTATION_ACTIONS_DEMO.md).

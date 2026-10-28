@@ -1,3 +1,10 @@
+# 29.10.2026 — read-only вход заявок и занятости
+
+- ConsultationFeed/BusyFeed: existing 11 columns, typed dates, freshness/coverage, private row revisions, verified binding-only hold, calendar-qualified IDs; существующий GoogleCalendarAdapter, без нового Calendar transport.
+- Отдельный consultation_snapshot_export.gs helper кандидат читает существующий лист без initialize/tab_/rows_/log_; не установлен, не запускался на real данных. Bounded private JSON decoder не выдаёт authorization.
+- Red→green: invisible recipient/event change invalidates decision ref, age checked after assembly, source verification chronology, subminute typed time rejected without rounding.
+- 29 новых Python+9Node VM tests; полный459Python/110Node PASS,4offline demos. Live auth/collection/import verification/CAS/executor не подключены; working GAS/resources сохранены. Контракт docs/CONSULTATION_FEED.md.
+
 # 29.10.2026 — локальные планы решений по консультациям
 
 - Добавлены offline core/UI/demo и 30 тестов: preview/explicit confirm/cancel, revision/expiry/owner gates, same-event calendar plan, два уведомления-намерения, предложение без снятия резерва.

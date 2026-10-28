@@ -1,3 +1,9 @@
+# Дополнение 29.10.2026: источники консультаций
+
+Read-only helper/нормализаторы и optional source_version для queue refs готовы;459Python/110Node PASS. Полнота не выводится из пустого Calendar: trusted verifier attestation required, в demo только fake. Реальные Google reads/writes отсутствуют, exporter не установлен. Следующие границы подключения: live collection/auth/ownership, verifier законченного НВГУ import, CAS/dispatcher/executor. Контракт CONSULTATION_FEED.md.
+
+---
+
 # Дополнение 29.10.2026: решения по консультациям
 
 Локальный sandbox core/UI сохраняет планы approve/reject/propose с отдельным подтверждением, без реального исполнения. Полная проверка: 430 Python +101 Node PASS; 30 новых тестов, пример CONSULTATION_ACTIONS_DEMO.md. Не подключено к рабочему боту или read-only worker. Нужны live sources/полнота НВГУ, отдельный dispatcher/executor и принятие студентом предлагаемого времени; реальные статусы не менялись. Контракт CONSULTATION_ACTIONS.md.

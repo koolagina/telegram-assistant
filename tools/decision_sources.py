@@ -18,6 +18,7 @@ class ConsultationRecord:
     created_at: object
     student_label: str = field(repr=False)
     topic: str = field(repr=False)
+    source_version: str = field(default="",repr=False)
 
 @dataclass(frozen=True)
 class ConsultationBatch:
@@ -36,7 +37,7 @@ class ConsultationSource:
         for record in records:
             if (type(record) is not ConsultationRecord or not identifier(record.id) or record.status not in known
                     or not aware(record.starts_at) or (record.created_at is not None and not aware(record.created_at))
-                    or type(record.student_label) is not str or type(record.topic) is not str):
+                    or type(record.student_label) is not str or type(record.topic) is not str or type(record.source_version) is not str):
                 raise ValueError('Consultation source requires review')
             if record.id in unique and unique[record.id]!=record:raise ValueError('Conflicting consultation copies')
             unique[record.id]=record
@@ -46,7 +47,7 @@ class ConsultationSource:
             items.append(DecisionItem('consultation',record.id,self.owner,'Решить заявку на консультацию',
                 'Студент: '+record.student_label+'\nТема: '+record.topic+'\nСтатус: '+record.status,
                 record.created_at,record.starts_at,1 if 'сверка' in record.status else 2,
-                steps=('Проверить время и занятость.','После сверки времени подтвердить заявку, отклонить или предложить другое время отдельно.')))
+                steps=('Проверить время и занятость.','После сверки времени подтвердить заявку, отклонить или предложить другое время отдельно.'),source_version=record.source_version))
         return DecisionSnapshot(tuple(items),batch.observed_at,batch.complete)
 
 class ReviewSource:
