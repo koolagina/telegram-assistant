@@ -1,5 +1,12 @@
 # Changelog
 
+## Локальные lecture windows — 2026-10-28 — не развёрнуто
+
+- Добавлен контроллер 90-секундных кодов с SQLite restart/retry/concurrency и AES-GCM; ключ не хранится в БД.
+- AEAD связывает срок/источник/оператора; актуальные права и замещение перепроверяются, новые регистрации после revoke закрыты.
+- Один local attendance на lecture+student, persistent failed-attempt limit, receipt not_synced; нет записи XLSX/отправки/QR.
+- 22 windows tests PASS (также cryptography 50.0.2), полный Python 138 PASS, Node 101 PASS. Четыре воспроизведённых дефекта исправлены.
+
 ## Полный академический доступ пользователя — 2026-10-28
 
 - По запросу добавлен отдельный AcademicReadGrant для чтения расписаний и всех известных учебных данных/истории студентов проекта.

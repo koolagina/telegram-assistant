@@ -1,3 +1,13 @@
+# Lecture windows — 28.10.2026
+
+Добавлены 22 синтетических теста `tests/test_lecture_windows.py`: 90s boundary, отсутствие кода в repr/audit, restart/retry без продления, два преподавателя/конкурентные SQLite connections, old vs new request, отсутствие повторного code, один local attendance на Student+Session, revoke operator/substitution, source drift/type/groups, AEAD-bound expiry tamper, wrong key/project, приватный каталог, clock rollback, persistent failed-attempt counter, повторное открытие near lecture end и отсутствие gradebook write.
+
+Первый запуск был красным до модуля; дополнительные четыре красных сценария выявили ошибки revoke/expiry tamper/late retry и исправлены. Исправлен flaky test: случайное совпадение substring кода в random window_id не является утечкой; теперь проверяется схема аудита и значения полей.
+
+Запущены: полный Python **138 PASS** (64+16+36+22), текущий Node **101 PASS**. Windows **22 PASS** отдельно также с pinned cryptography 50.0.2 в существующем venv, pip check PASS. Реальных сервисов/аккаунтов/писем/журнала нет. Authentication, public QR/network limiter, identity resolver, live source и XLSX sync остаются будущими проверками, не покрываются этими цифрами. Контракт: [LECTURE_WINDOWS.md](LECTURE_WINDOWS.md).
+
+---
+
 # Полное академическое чтение пользователя — 28.10.2026
 
 Добавлены 6 синтетических tests в test_assistant_access.py и AcademicReadGrant. До добавления класса запуск был красным. После реализации: **36/36 policy, 116/116 Python, 101/101 Node PASS**.

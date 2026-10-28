@@ -1,3 +1,13 @@
+# Локальный контроллер lecture-кодов — 28.10.2026
+
+Реализован `tools/lecture_windows.py` с private SQLite WAL/FULL, AES-GCM, stable request recovery и текущей `assistant_access` policy. Одно 90s окно на lecture, единственный local attendance на lecture+student, без продления/слепого recreate после неизвестного delivery. Ключ явно задаётся secure runtime provider; настоящий ключ/registry/transport не подключены.
+
+22 tests PASS. Четыре дополнительных красных сценария выявили и исправили регистрацию после revoke исходного operator/grant, подмену срока в базе и late retry при остатке пары менее 90s. Метаданные окна теперь связаны AEAD; исходные права проверяются и при регистрации. Code/repr/audit не раскрывают plaintext. Source drift и `зач`/unknown/cancelled закрыты; failed-attempt counter хранится локально (5 ошибок на фиксированную минуту для lecture+resolved student).
+
+Полный suite **138 Python PASS**, текущий бот **101 Node PASS**; pinned cryptography 50.0.2 также проверена (22 PASS/pip check PASS). Нет реальных сообщений, формы, attendance в настоящем журнале или deployment. Local receipt = not_synced; стандартные tests не подтверждают API authentication, актуальность registry/source, network limiter или безопасную запись XLSX. Подробнее: [LECTURE_WINDOWS.md](LECTURE_WINDOWS.md).
+
+---
+
 # Уточнение доступа пользователя — 28.10.2026
 
 По явному запросу добавлен AcademicReadGrant в tools/assistant_access.py: полное чтение академических расписаний и студенческих данных проекта, включая известную историю. Стандартные Teacher grants, student self-access и отдельное lecture-замещение не расширяются автоматически. Send/write/private/owner полномочия full read не выдаёт.

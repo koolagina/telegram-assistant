@@ -1,0 +1,2 @@
+# AES-GCM for local encrypted lecture state; no Google/Telegram SDK needed.
+cryptography==50.0.2

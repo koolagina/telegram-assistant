@@ -13,5 +13,6 @@ __pycache__/
 
 # Local Calendar state and private plan/snapshot artifacts
 .nvsu-state/
+.lecture-state/
 *.sqlite3
 *.sqlite3-*
