@@ -1,3 +1,9 @@
+# Яндекс Диск / GitHub Actions — 28.10.2026
+
+8 новых mock tests для yandex_disk_probe.py PASS; полный Python suite **146 PASS**. Проверены fixed read-only GET, отсутствие/формат токена, redirect отказ, 401/403/network/JSON/size и минимальный sanitized CLI. Реальный manual GitHub Actions run 40645632279 выполнен один раз: runner/checkout SUCCESS, probe **FAIL token_rejected/HTTP401**; secret передан, доступ к Диску не подтверждён. Не считать локальные 146 PASS успешной авторизацией Яндекса. Node в этом этапе не запускался (GAS не менялся). Результат и безопасные дальнейшие шаги — [YANDEX_CONNECTION.md](YANDEX_CONNECTION.md).
+
+---
+
 # Lecture windows — 28.10.2026
 
 Добавлены 22 синтетических теста `tests/test_lecture_windows.py`: 90s boundary, отсутствие кода в repr/audit, restart/retry без продления, два преподавателя/конкурентные SQLite connections, old vs new request, отсутствие повторного code, один local attendance на Student+Session, revoke operator/substitution, source drift/type/groups, AEAD-bound expiry tamper, wrong key/project, приватный каталог, clock rollback, persistent failed-attempt counter, повторное открытие near lecture end и отсутствие gradebook write.

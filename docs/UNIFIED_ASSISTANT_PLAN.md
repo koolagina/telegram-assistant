@@ -236,3 +236,8 @@ P1 должен содержать подтверждённые account bindings
 Добавлены `tools/lecture_windows.py`, `tests/test_lecture_windows.py`, `requirements-lecture.txt` и контракт [LECTURE_WINDOWS.md](LECTURE_WINDOWS.md). Policy проверяется на открытие/показ/регистрацию; SQLite сохраняет одно окно/стабильный request и один local attendance на lecture+student. Код зашифрован AES-GCM, expiry/source/operator связаны AEAD, смена источника/revoke закрывают регистрацию, новый код требует нового намерения после expiry. 22 windows / 138 Python / 101 Node PASS.
 
 Это локальная часть P9 без переноса production-приёмки вперёд: Telegram/QR, актуальный registry и расписание обоих преподавателей не подключены, XLSX writer отсутствует, реальная дата запуска/отмены бонусов не назначается. Следующие зависимости перед пользовательским пилотом — verified source/Student-Enrollment mapping, authenticated transport и network limiter; запись журнала по-прежнему требует отдельного технического доказательства/разрешения.
+
+
+## 18. Вариант подключения Диска без публикации среды — 28.10.2026
+
+По запросу пользователя подготовлен GitHub Actions manual workflow с YANDEX_DISK_TOKEN из repository Secrets. 8 mock tests/146 Python PASS. Реальный single run 40645632279 запущен и завершён: секрет передан, но API Яндекса вернул HTTP401. Маршрут Actions работает, авторизация Диска не подтверждена; нужно обновить корректное значение секрета до следующей проверки. Не переносить токен в код/Codex, не повторять публикацию среды. Scope probe — только metadata type корня, не скачивание/индексирование журнала. Подробности — [YANDEX_CONNECTION.md](YANDEX_CONNECTION.md).

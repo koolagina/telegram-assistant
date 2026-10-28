@@ -1,5 +1,11 @@
 # Changelog
 
+## Проверка Яндекс Диска через GitHub Actions — 2026-10-28
+
+- Добавлен ручной fixed metadata GET с repository Secret, без auto triggers, файловых списков и изменений; timeout 2 минуты.
+- 8 probe mock tests PASS, полный Python 146 PASS. Реальный Actions run выполнен: secret получен, API Яндекса вернул HTTP401/token_rejected, доступ не подтверждён.
+- Публикация среды/Почта/журнал/бот не запускались; Node в этом этапе не перезапускался. Подробности docs/YANDEX_CONNECTION.md.
+
 ## Локальные lecture windows — 2026-10-28 — не развёрнуто
 
 - Добавлен контроллер 90-секундных кодов с SQLite restart/retry/concurrency и AES-GCM; ключ не хранится в БД.

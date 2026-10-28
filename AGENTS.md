@@ -35,6 +35,7 @@
 | Локальное чтение XLSX | tools/gradebook_read.py | Только структура/кеши/даты локальной копии; raw cells приватны, CLI без значений, нет записи и академической identity |
 | Локальная академическая policy | tools/assistant_access.py | Только authorization по trusted snapshot; два преподавателя, self-progress, session-specific замещение; нет реальной authentication/registry/transport |
 | Локальные lecture windows | tools/lecture_windows.py | SQLite/AES-GCM, 90s/request recovery/local attendance; без Telegram/QR/real registry/XLSX sync; receipt not_synced |
+| GitHub Actions Disk probe | .github/workflows/yandex-disk-read-check.yml, tools/yandex_disk_probe.py | Только manual metadata GET корня; secret остаётся в Actions, API401 ещё не устранён; нет почты/записи/индексации |
 
 Python parser/sync ещё не подключены к Apps Script. tools/nvsu_calendar.py готовит read-only план; Google-адаптер по умолчанию запрещает запись, tools/nvsu_state.py хранит SQLite ledger/checkpoints. Локальные HTTP-моки не подтверждают реальную Google-интеграцию. Не запускать execute_plan или подтверждение владения ручными событиями без соответствующего разрешения.
 
@@ -196,3 +197,8 @@ node tests/audit.cjs
 Поддерживать актуальные требования и отчёт по объёму задачи, явно отделяя новые результаты от исторических разделов. Основные справочники: docs/REQUIREMENTS.md, docs/AUDIT_REPORT.md, docs/TEST_PLAN.md, docs/CONSULTATIONS.md, docs/NVSU_SOURCE.md, docs/NVSU_SYNC_RULES.md и CHANGELOG.md.
 
 Последовательность: инвентаризация → воспроизводимый тест → минимальное исправление → локальные проверки → разрешённая sandbox-приёмка → отдельно согласованный rollout. Двигаться самостоятельно внутри разрешённой задачи; если нужен внешний доступ или решение владельца, завершить независимую работу и назвать точный блокер. При явно ограниченном объёме менять только разрешённые файлы/ресурсы.
+
+
+## 11. Проверка Яндекс Диска без публикации среды
+
+По запросу пользователя разрешена ручная проверка read-only metadata через GitHub Actions с repository Secret YANDEX_DISK_TOKEN. Workflow только workflow_dispatch, timeout 2 минуты, без cron/автозапусков/печати секретов/списка файлов. Не переносить secret в Codex и не извлекать через логи. Если API401/403 или secret unavailable — сначала диагноз/значимое изменение, не повторять неизменный запуск. Первый реальный run вернул HTTP401; доступ пока не подтверждён (docs/YANDEX_CONNECTION.md). Это не разрешение на письма, upload/XLSX write, произвольные downloads или deployment. При изменении workflow сохранять fixed endpoint, redirect refusal, минимальные permissions и no secret output.

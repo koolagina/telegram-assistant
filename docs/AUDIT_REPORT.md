@@ -1,3 +1,11 @@
+# Проверка токена Яндекс Диска через GitHub Actions — 28.10.2026
+
+Добавлены tools/yandex_disk_probe.py, 8 синтетических tests и ручной workflow .github/workflows/yandex-disk-read-check.yml. Один GET запрашивает только type корня Диска, redirect запрещён, секрет/response body не печатаются. Нет автоматического расписания и внешних записей. Локально **146 Python PASS**; Node не перезапускался.
+
+Реальный run 40645632279: runner/checkout SUCCESS, secret передан, Яндекс вернул **HTTP401/token_rejected**. Это integration failure, доступ не готов. Причина неверного/просроченного/отозванного значения не установлена; до обновления GitHub secret повтор не выполняется. Документ: [YANDEX_CONNECTION.md](YANDEX_CONNECTION.md). Cloud environment publication, Почта и учебный журнал не затронуты.
+
+---
+
 # Локальный контроллер lecture-кодов — 28.10.2026
 
 Реализован `tools/lecture_windows.py` с private SQLite WAL/FULL, AES-GCM, stable request recovery и текущей `assistant_access` policy. Одно 90s окно на lecture, единственный local attendance на lecture+student, без продления/слепого recreate после неизвестного delivery. Ключ явно задаётся secure runtime provider; настоящий ключ/registry/transport не подключены.
