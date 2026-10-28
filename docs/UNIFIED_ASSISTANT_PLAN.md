@@ -304,3 +304,8 @@ In-process progress/report готовят ограниченные plain-text о
 ## 29. Bare /progress и self pagination — 28.10.2026
 
 Локальный trusted self resolver и5reports/page реализованы;10tests/полныйPython270 PASS. Нет foreign reads/counts, права проверяются при каждой странице. Реальные bot commands, identity persistence/transport, journal-grade aggregation и semantic evaluation остаются отдельными неподключёнными компонентами. Контракт REPORT_REQUESTS.md.
+
+
+## 30. Local progress buttons — 28.10.2026
+
+Immutable inline button model/callback preparation готовы,8tests/полныйPython278 PASS. Navigation uses source-bound refs, current self authorization; forwarding/revocation/collision denied. Реальный bot handler/transport не подключён. Следующий independent шаг — integrated SQLite-backed synthetic navigation demo, не production send. Контракт REPORT_REQUESTS.md.

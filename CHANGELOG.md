@@ -1,3 +1,8 @@
+# Local progress inline-button model — 28.10.2026
+
+- PreparedReply keyboard rows, open/page/back callbacks с short source-bound references и current self authorization; без Telegram API.
+- 8 новых tests, полныйPython278 PASS; Node не перезапускался, GAS неизменён. Production не подключён.
+
 # Self-only progress list and pagination — 28.10.2026
 
 - Bare progress + page N, trusted self resolution, five own reports per page, no foreign reads/counts, revoke/rebind checks.

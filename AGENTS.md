@@ -244,3 +244,6 @@ report_requests.py — локальная подготовка /progress REPORT_
 
 
 Bare /progress и page N реализованы локально через list_self (10tests, полныйPython270). Student берётся только из current authenticated binding/progress.self, не command args. Чужие links не читаются/не считаются; current self/ownership перепроверяются перед возвратом. Собственный unavailable slot безpayload допустим только после такой проверки. Это список local review reports, не полный journal progress и не включённый Telegram handler.
+
+
+Локальные progress buttons/callbacks добавлены в PreparedReply/report_requests (8tests, полныйPython278). ASCII reference≤64bytes не credential: always current self lookup/read, forged/foreign/revoked/ambiguous refs deny. Не переносить callback как authorization cache и не трактовать повторный read как send/receipt. Реальный TG callback adapter/answerCallbackQuery отсутствует; source GAS не менялся.

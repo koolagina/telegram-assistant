@@ -6,6 +6,8 @@ No persistent link registry, Telegram/ChatGPT/email endpoint or sending here.
 """
 from dataclasses import dataclass
 import json
+import re
+from material_versions import digest
 from types import MappingProxyType
 from assistant_access import AccessPolicy, Context, identifier, live, aware
 
@@ -129,15 +131,32 @@ class ReportReader:
             for link in selected:
                 try:
                     report=self.read(link.id,context,purpose='progress.self')
-                    items.append({'report_id':link.id,'available':True,'report':report})
+                    items.append({'report_id':link.id,'reference':self._reference(link),'available':True,'report':report})
                 except ReportAccessError:
                     # Only disclose an unavailable slot if current self access remains.
                     if self._mode(link,context)!='student':raise ReportAccessError('Report unavailable')
-                    items.append({'report_id':link.id,'available':False})
+                    items.append({'report_id':link.id,'reference':self._reference(link),'available':False})
             if self._self_student(context)!=student:
                 raise ReportAccessError('Report unavailable')
             for link in selected:
                 if self._mode(link,context)!='student':raise ReportAccessError('Report unavailable')
             return {'page':page,'items':items,'next_page':page+1 if offset+5<len(own) else None}
+        except Exception:
+            raise ReportAccessError('Report unavailable') from None
+
+
+    @staticmethod
+    def _reference(link):
+        return digest([link.id,link.check_id,link.enrollment_id,link.student_id,link.discipline_id,link.group_id])[:32]
+
+    def resolve_progress_reference(self,reference,context):
+        """Opaque callback lookup is not authentication or authorization."""
+        try:
+            if type(reference) is not str or re.fullmatch('[a-f0-9]{32}',reference) is None:
+                raise ReportAccessError('Report unavailable')
+            matches=[link for link in self._links.values() if self._reference(link)==reference]
+            if len(matches)!=1 or self._mode(matches[0],context)!='student':
+                raise ReportAccessError('Report unavailable')
+            return matches[0].id
         except Exception:
             raise ReportAccessError('Report unavailable') from None

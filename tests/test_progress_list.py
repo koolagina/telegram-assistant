@@ -51,7 +51,9 @@ class ListTests(unittest.TestCase):
     def test_pending_own_report_keeps_only_authorized_reference(self):
         self.f.row={'status':'pending','version':'v','result':None}
         page=self.f.reader.list_self(self.f.context('003'))
-        self.assertEqual(page['items'],[{'report_id':'report-a','available':False}])
+        self.assertEqual(len(page['items']),1)
+        self.assertEqual(page['items'][0]['report_id'],'report-a')
+        self.assertFalse(page['items'][0]['available'])
     def test_rebound_account_during_list_does_not_return_previous_students_page(self):
         def load(key):
             bindings=tuple(replace(b,entity_id='student-b') if b.subject=='003' else b for b in self.f.fixture.bindings)

@@ -1,3 +1,17 @@
+# Локальные кнопки /progress — 28.10.2026
+
+PreparedReply получил immutable rows ReplyButton(label,callback_data): отдельная кнопка открытия каждой работы, назад/далее для страниц, возврат к списку из результата. Это только модель inline keyboard, не вызов Telegram API и не включённый processCallback_ рабочего GAS. Старые текстовые команды сохранены.
+
+Callback ASCII ≤64bytes: progress:p:N для страницы, progress:o:REFERENCE для открытия. Reference — первые32hex SHA-256 digest исходной связи report/check/enrollment/student/discipline/group. Это не секрет/подпись/access token; lookup всегда повторно требует current self policy, read заново проверяет purpose/ownership. Смена связи в trusted registry делает старую reference неразрешимой; если digest совпал у нескольких связей, отказ, не первый match. Reference не включает права владельца и не разрешает открывать чужое при пересылке. Stable hash не является anonymization guarantee или rate limiter; private callbacks не логировать.
+
+prepare_progress_callback допускает только две явные формы, не выполняет произвольные commands/roles/recipients. Каждый click заново готовит ответ через существующий policy-gated flow. Повторный click здесь read-only, не отправляет уведомление и не начисляет баллы. Перед реальным send/answerCallbackQuery будущий transport отдельно проверяет актуальные права/контекст, соблюдает private chat и formatting. Нет реального callback receipt/delivery/expiry/replay journal: это navigation references, не операции записи.
+
+8 новых synthetic tests, первый запуск красный без callback implementation; полный Python **278 PASS**. Проверены own open/back, forwarded foreign denial, revoked binding, replaced check reference, malformed/overlong payload без чтения, self page navigation, forced collision rejection, Unicode longID callback bytes. Node не перезапускался (последний101 PASS), GAS не менялся. TG/почта/журнал/production не затронуты.
+
+Следующий шаг — локальный сквозной сценарий request→page→button→report с настоящим внутренним хранилищем и synthetic identities; реальная интеграция/identity registry persistence/semantic grading остаются отдельно неподключёнными.
+
+---
+
 # /progress без ID и self-only страницы — 28.10.2026
 
 В tools/report_access.py добавлен list_self: Student определяется только по действующему confirmed Context/Binding и progress.self; caller не задаёт student_id. Link registry неизменяемый и trusted, принадлежность enrollment сверяется текущей policy. Чужие links не загружаются и не входят в пагинацию. Порядок стабилен по opaque report id; по5своих links на страницу, page — целое1..1000000, не credential. Page numbers не гарантируют неизменный набор при замене registry; это не cursor snapshot.
