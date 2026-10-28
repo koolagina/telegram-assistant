@@ -21,10 +21,11 @@ PKG='http://schemas.openxmlformats.org/package/2006/relationships'
 def synthetic_work(count):
     stream=io.BytesIO()
     with zipfile.ZipFile(stream,'w') as archive:
-        archive.writestr('ppt/presentation.xml',f'<p:presentation xmlns:p="{P}" xmlns:r="{R}"><p:sldIdLst>'+''.join(f'<p:sldId id="{256+i}" r:id="r{i}"/>' for i in range(count))+'</p:sldIdLst></p:presentation>')
-        archive.writestr('ppt/_rels/presentation.xml.rels',f'<Relationships xmlns="{PKG}">'+''.join(f'<Relationship Id="r{i}" Type="{R}/slide" Target="slides/s{i}.xml"/>' for i in range(count))+'</Relationships>')
+        def write(name,value):archive.writestr(zipfile.ZipInfo(name),value)
+        write('ppt/presentation.xml',f'<p:presentation xmlns:p="{P}" xmlns:r="{R}"><p:sldIdLst>'+''.join(f'<p:sldId id="{256+i}" r:id="r{i}"/>' for i in range(count))+'</p:sldIdLst></p:presentation>')
+        write('ppt/_rels/presentation.xml.rels',f'<Relationships xmlns="{PKG}">'+''.join(f'<Relationship Id="r{i}" Type="{R}/slide" Target="slides/s{i}.xml"/>' for i in range(count))+'</Relationships>')
         for i in range(count):
-            archive.writestr(f'ppt/slides/s{i}.xml',f'<p:sld xmlns:p="{P}" xmlns:a="{A}"><p:cSld><a:t>Synthetic example</a:t></p:cSld></p:sld>')
+            write(f'ppt/slides/s{i}.xml',f'<p:sld xmlns:p="{P}" xmlns:a="{A}"><p:cSld><a:t>Synthetic example</a:t></p:cSld></p:sld>')
     return stream.getvalue()
 
 

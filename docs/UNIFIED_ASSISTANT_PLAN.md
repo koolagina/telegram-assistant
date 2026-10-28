@@ -309,3 +309,8 @@ In-process progress/report готовят ограниченные plain-text о
 ## 30. Local progress buttons — 28.10.2026
 
 Immutable inline button model/callback preparation готовы,8tests/полныйPython278 PASS. Navigation uses source-bound refs, current self authorization; forwarding/revocation/collision denied. Реальный bot handler/transport не подключён. Следующий independent шаг — integrated SQLite-backed synthetic navigation demo, не production send. Контракт REPORT_REQUESTS.md.
+
+
+## 31. Durable integration — 28.10.2026
+
+Private ownership registry и versioned policy persistence реализованы; stale writes не отменяют revoke. Integrated synthetic assistant demo проходит ingest/navigation/restart/forwarded denial/revoke и до/после commit failures.23новыхtests/301Python+101Node PASS. Прямые runtime adapters/authentication/semantic evaluator/test rollout ещё не подключены. Точные пределы LOCAL_ASSISTANT_STATUS.md.

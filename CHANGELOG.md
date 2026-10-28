@@ -1,3 +1,10 @@
+# Durable local assistant integration — 28.10.2026
+
+- ReportRegistry: immutable ownership/check links с безопасным retry публикации после partial failure.
+- PolicyStore: private versioned AccessPolicy snapshots, CAS revoke protection, no automatic roles/older fallback.
+- Полный offline assistant_demo с SQLite, navigation, restart, revoke и duplicate recovery; synthetic fixtures only.
+- 23 новых tests;301Python+101Node PASS. Production/API/письма/журнал не затронуты.
+
 # Local progress inline-button model — 28.10.2026
 
 - PreparedReply keyboard rows, open/page/back callbacks с short source-bound references и current self authorization; без Telegram API.

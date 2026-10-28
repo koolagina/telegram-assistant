@@ -93,3 +93,21 @@ Full read не назначается автоматически второму 
 Дальше — локальные обработчики запросов/рендеринг, затем защищённые реальные adapters в отдельной среде. Научная semantic evaluation/автопринятие/запись оценок остаются неподключёнными.
 
 ---
+
+# Durable links/policy и сквозной локальный сценарий — 28.10.2026
+
+Добавлены tools/report_registry.py и tools/policy_store.py, отдельные private SQLite WAL/FULL файлы (directory0700/file0600, symlink/foreign schema/namespace mismatch refusal). Существующие MaterialCatalog schema, Google Sheets и GAS snapshots не менялись.
+
+ReportRegistry хранит immutable ReportLink. Публикация разрешается только после local done с matching check/material identity и needs_teacher_review/credit_written=false. Повтор той же связи идемпотентен; один report/check нельзя перепривязать другой ownership relation. Register — только trusted ingestion API, не пользовательский endpoint. Нет выдачи прав из факта публикации. Перерыв после material commit до link publication восстанавливается retry, как и timeout после accepted publication. Это не транзакция между двумя DB; при потерянной истории read остаётся unavailable, не создаёт оценку заново. Backups должны учитывать обе DB и WAL.
+
+PolicyStore сохраняет полные снимки существующего AccessPolicy: teachers/students, confirmed bindings/capabilities, enrollments, teaching/full academic/substitution grants и lectures с aware датами. Пустая DB даёт пустую deny-all policy, не admin/binding. Save требует expected_revision и BEGIN IMMEDIATE; stale writer не перезаписывает новый revoke. Load читает только последнюю валидную ревизию, corruption останавливает доступ без fallback к старым grants. Snapshot не authentication: записи/подтверждения может создавать только доверенная административная процедура, не LLM/student payload. Нет public provisioning endpoint, секретов, реальных аккаунтов или автоматического owner grant. Ручное восстановление старой копии policy DB требует отдельной сверки revoked grants; внешнего anti-rollback witness нет.
+
+tools/assistant_demo.py соединяет все локальные компоненты с настоящими temporary SQLite, но synthetic Word/PPTX/identities/authentication/validator. ReportReader получает свежие links и policy на каждый запрос. Сценарий: review→persist→publish→bare progress→button→restart→own result; foreign/forwarded и revoked access denied. Отзыв сохраняется после создания новой session. Демо специально создаёт явно fake bindings только для namespace synthetic-assistant и временного каталога; этот bootstrap запрещено копировать в production. Synthetic PPTX ZIP timestamps сделаны стабильными для воспроизводимых content-bound revision IDs.
+
+Добавлено23tests:8 registry,8 policy store,7 end-to-end. Первые запуски каждого нового модуля красные до реализации. Проверены restart/idempotence/immutable ownership/unique check, namespace/permissions/foreign DB/symlink, pending/corrupt/sanitized loader failures, full snapshot roundtrip/неподтверждённые bindings/CAS revoke/no fallback, durable page navigation и частичные сбои до/после link commit. Итог: **301 Python PASS +101 Node PASS** (Node64+37, оба запускались в этом этапе). Сквозной demo реально запущен локально; network запрещена отдельным test mock. Это не подтверждение Apps Script/Telegram/Google/Yandex/почты.
+
+Команды: `python tools/assistant_demo.py`; `python tools/review_demo.py`; `python -m unittest discover -s tests -p 'test_*.py'`; `node tests/run-current.cjs`. Демонстрационный вывод: LOCAL_ASSISTANT_DEMO.md. Полное состояние и пределы: LOCAL_ASSISTANT_STATUS.md.
+
+Остались real authentication adapters и trusted account enrollment/provisioning, server runtime/transport с безопасной отправкой и повторной авторизацией, live file bindings/валидатор критериев и semantic reviewer, test integration и согласованный rollout. Полный journal progress и grade write не подключены; numeric pass threshold не придуман. Никаких реальных API/писем/журнала/триггеров/deploy в этом этапе.
+
+---

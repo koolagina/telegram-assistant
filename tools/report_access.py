@@ -2,7 +2,8 @@
 
 Links, context, registry provider, clock and storage loader MUST be supplied by
 trusted server code. Never construct ReportLink/Context from student input.
-No persistent link registry, Telegram/ChatGPT/email endpoint or sending here.
+Persistent links/policy are separate trusted adapters. No authentication,
+Telegram/ChatGPT/email endpoint or sending here.
 """
 from dataclasses import dataclass
 import json

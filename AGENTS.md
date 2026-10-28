@@ -247,3 +247,6 @@ Bare /progress и page N реализованы локально через list
 
 
 Локальные progress buttons/callbacks добавлены в PreparedReply/report_requests (8tests, полныйPython278). ASCII reference≤64bytes не credential: always current self lookup/read, forged/foreign/revoked/ambiguous refs deny. Не переносить callback как authorization cache и не трактовать повторный read как send/receipt. Реальный TG callback adapter/answerCallbackQuery отсутствует; source GAS не менялся.
+
+
+Актуально: report_registry.py хранит private immutable ownership links; policy_store.py — versioned AccessPolicy с expected_revision CAS, no older fallback/automatic roles (23 новыхtests вместе с demo, полныйPython301/Node101 PASS). Только trusted ingestion/admin code может публиковать links/policy; не загружать их из student/LLM payload. assistant_demo.py — strictly synthetic bootstrap в temporary DB, не production authentication/provisioning. Runtime каждый request берёт current links/policy; WAL/backups нескольких DB требуют согласованного восстановления, особенно revoked grants. Контракт LOCAL_ASSISTANT_STATUS.md.
