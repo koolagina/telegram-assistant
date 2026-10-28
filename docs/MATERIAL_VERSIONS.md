@@ -48,3 +48,13 @@
 Далее: read-only adapter получения актуального файла, семантическое извлечение требований с контролем полноты и утверждение порога принятия; затем связка с версиями и пилот проверки. Автоплюс/оценка/письмо не включены.
 
 ---
+
+# Read-only адаптер публичных DOCX — 28.10.2026
+
+`tools/material_source.py`: явно заданные public_key и путь одного DOCX, без поиска по всей папке, токена, журнала XLSX, записи, кеша и фонового запуска. GET metadata → download descriptor → bounded GET bytes → GET metadata. Проверяются type/size/SHA-256/modified, соответствие bytes размеру и SHA, неизменность metadata во время чтения. Смена источника/HTTP/неполные metadata/целостность — остановка без stale fallback и без автоматических повторов. TLS/proxy по умолчанию, redirects запрещены; download только HTTPS домены yandex.ru/yandex.net и поддомены, без userinfo/нестандартного порта. Signed URL/пути/ответы API не печатаются; неожиданные исключения выдаются обобщённо. Это проверка одной загрузки, не гарантия отсутствия будущего изменения файла и не distributed transaction.
+
+8 новых synthetic tests: fresh each call, source drift, integrity mismatch, destination restrictions, no fallback/leak, explicit DOCX reference, bounded GET/timeout и redirect refusal. Начальный запуск красный без модуля, затем полный Python **187 PASS**. Node не перезапускался (GAS не изменён), последний 101 PASS. Реальных HTTP-запросов/скачиваний учебных файлов/отправок/журнала/deploy в этом этапе нет.
+
+Адаптер готов как локальный кандидат, не подключён к боту, расписанию запуска или MaterialCatalog: `read()` возвращает bytes; `extract_docx()` возвращает untrusted text с review. Требуется отдельный semantic rubric validator, утверждённый порог принятия и проверенные привязки. Полный автоматический grading ещё отсутствует. Источник public; перед будущей production-интеграцией нельзя автоматически делать закрытый журнал публичным или менять sharing. Существующий inventory остаётся metadata-only; права его workflow не расширялись.
+
+---

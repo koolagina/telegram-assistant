@@ -217,3 +217,6 @@ node tests/audit.cjs
 
 
 Локальный `tools/material_docx.py` извлекает untrusted текст/таблицы (11 tests; полный Python179). Каждый результат criteria-not-validated; не конвертировать его автоматически в утверждённый rubric/MaterialRead. Review flags означают потенциально неполное извлечение, не пустые требования. Сеть/внешние ссылки/содержимое embedded objects не исполняются. Live refresh и semantic rubric extraction остаются неподключёнными.
+
+
+`tools/material_source.py` — read-only public DOCX adapter, explicit resource only, metadata/hash before-after, no cache/token/writes. 8 offline tests, полный Python187 PASS. Не запускать как scan/downloader произвольной папки; не добавлять XLSX, секреты или signed URLs в логи. Live binding и semantic rubric validator не подключены; read bytes не означает утверждённые criteria.

@@ -1,3 +1,8 @@
+# Read-only public DOCX refresh — 28.10.2026
+
+- Добавлен material_source: metadata before/after, SHA-256/size, bounded HTTPS GET, no redirects/cache/token/writes.
+- 8 новых offline tests; полный Python187 PASS. GAS не менялся, Node не перезапускался (последний101 PASS). Live интеграция/semantic rubric validator ещё отсутствуют.
+
 # Локальный DOCX extractor — 28.10.2026
 
 - `tools/material_docx.py`: bounded text/table extraction, review flags, no network/execution or automatic rubric approval.

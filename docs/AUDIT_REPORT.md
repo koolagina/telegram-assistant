@@ -1,3 +1,13 @@
+# Read-only адаптер публичных DOCX — 28.10.2026
+
+`tools/material_source.py`: явно заданные public_key и путь одного DOCX, без поиска по всей папке, токена, журнала XLSX, записи, кеша и фонового запуска. GET metadata → download descriptor → bounded GET bytes → GET metadata. Проверяются type/size/SHA-256/modified, соответствие bytes размеру и SHA, неизменность metadata во время чтения. Смена источника/HTTP/неполные metadata/целостность — остановка без stale fallback и без автоматических повторов. TLS/proxy по умолчанию, redirects запрещены; download только HTTPS домены yandex.ru/yandex.net и поддомены, без userinfo/нестандартного порта. Signed URL/пути/ответы API не печатаются; неожиданные исключения выдаются обобщённо. Это проверка одной загрузки, не гарантия отсутствия будущего изменения файла и не distributed transaction.
+
+8 новых synthetic tests: fresh each call, source drift, integrity mismatch, destination restrictions, no fallback/leak, explicit DOCX reference, bounded GET/timeout и redirect refusal. Начальный запуск красный без модуля, затем полный Python **187 PASS**. Node не перезапускался (GAS не изменён), последний 101 PASS. Реальных HTTP-запросов/скачиваний учебных файлов/отправок/журнала/deploy в этом этапе нет.
+
+Адаптер готов как локальный кандидат, не подключён к боту, расписанию запуска или MaterialCatalog: `read()` возвращает bytes; `extract_docx()` возвращает untrusted text с review. Требуется отдельный semantic rubric validator, утверждённый порог принятия и проверенные привязки. Полный автоматический grading ещё отсутствует. Источник public; перед будущей production-интеграцией нельзя автоматически делать закрытый журнал публичным или менять sharing. Существующий inventory остаётся metadata-only; права его workflow не расширялись.
+
+---
+
 # Локальное чтение DOCX — 28.10.2026
 
 Добавлен `tools/material_docx.py`: ограниченное чтение ZIP/XML без распаковки на диск, сети и исполнения ссылок. Текст абзацев сохраняет границы runs/tab/break; таблицы возвращаются по строкам/ячейкам. Размер входа до 16 MiB, суммарный распакованный размер до 32 MiB, до 1024 entries. Duplicate parts, macro parts, encrypted entries, DTD/entities, повреждённые архивы/XML отклоняются. Рисунки, relationships, дополнительные части и неизвестная разметка помечаются для review. Это частичное извлечение текста, не доказательство полной поддержки Word и не антивирус.
