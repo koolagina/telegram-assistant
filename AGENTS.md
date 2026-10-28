@@ -33,6 +33,7 @@
 | Проверенный разбор НВГУ | tools/nvsu_preview.py | Локальный HTML parser и read-only CLI, проверяющий выбранную дату/неделю |
 | Модель синхронизации | tools/nvsu_sync.py | План обновлений и протокольная модель; Google transport — tools/nvsu_google.py, durable state — tools/nvsu_state.py |
 | Локальное чтение XLSX | tools/gradebook_read.py | Только структура/кеши/даты локальной копии; raw cells приватны, CLI без значений, нет записи и академической identity |
+| Локальная академическая policy | tools/assistant_access.py | Только authorization по trusted snapshot; два преподавателя, self-progress, session-specific замещение; нет реальной authentication/registry/transport |
 
 Python parser/sync ещё не подключены к Apps Script. tools/nvsu_calendar.py готовит read-only план; Google-адаптер по умолчанию запрещает запись, tools/nvsu_state.py хранит SQLite ledger/checkpoints. Локальные HTTP-моки не подтверждают реальную Google-интеграцию. Не запускать execute_plan или подтверждение владения ручными событиями без соответствующего разрешения.
 
@@ -128,7 +129,8 @@ setupAutomation описывает следующие триггеры; их р�
 
 ## 7. Telegram, поручения и идемпотентность
 
-- Согласован будущий режим двух преподавателей: отдельные подтверждённые Telegram accounts, своё расписание и предметные права по дисциплинам/группам. Не назначать второго глобальным owner; личные задачи/входящие/чужие консультации изолированы. Сейчас 2.0.5 всё ещё имеет одного OWNER_CHAT_ID; новая policy ещё не реализована. Контракт — docs/REQUIREMENTS.md, раздел F.
+- Согласован будущий режим двух преподавателей: отдельные подтверждённые Telegram accounts, своё расписание и предметные права по дисциплинам/группам. Не назначать второго глобальным owner; личные задачи/входящие/чужие консультации изолированы. Сейчас 2.0.5 всё ещё имеет одного OWNER_CHAT_ID; локальное ядро tools/assistant_access.py реализовано, но real identity/transport/registry ещё не подключены. Контракт — docs/REQUIREMENTS.md, раздел F и docs/ACCESS_POLICY.md.
+- Academic Context создаётся только trusted authenticated adapter, не из JSON/LLM arguments. Grants берутся из актуального подтверждённого registry на каждый запрос: immutable старый snapshot не узнаёт о revoke автоматически. Локальная policy не является выданными реальными правами.
 - Коды лекций согласованы по запросу через Telegram обоим преподавателям; пользователю также доступно явное замещение второго преподавателя, без автоматического обратного права и без глобального owner. Серверное окно — 90 секунд по кнопке, одна активная регистрация на Session, `зач` исключён. Контракт — docs/REQUIREMENTS.md, раздел G; пока не реализовано/не развёрнуто.
 - Точный статус «Одобрен» должен разрешать доступ; «Не одобрен», пустое/неизвестное значение и отозванный доступ — нет. Сравнивать ID как строки; не терять знак/ведущие символы через преобразование в число.
 - Callback принимать только из private chat при совпадении from.id и chat ID и действующем доступе. Owner-only действия проверять явно. Истёкшая answerCallbackQuery не должна блокировать следующие updates.
@@ -160,7 +162,7 @@ setupAutomation описывает следующие триггеры; их р�
 # Текущий кандидат 2.0.5: сохранённые сценарии и консультации
 node tests/run-current.cjs
 
-# Python: НВГУ и read-only XLSX (только синтетические fixtures в тестах)
+# Python: НВГУ, read-only XLSX и academic policy (без реальных пользовательских данных)
 python -m unittest discover -s tests -p 'test_*.py'
 
 # История: по умолчанию regression.cjs проверяет 2.0.4

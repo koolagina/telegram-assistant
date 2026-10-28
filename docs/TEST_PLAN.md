@@ -1,3 +1,15 @@
+# Академическая policy — 28.10.2026
+
+Запущены `python -m unittest discover -s tests -p 'test_assistant_access.py'` — **30 PASS**; полный `test_*.py` — **110 PASS** (64 НВГУ + 16 XLSX + 30 policy); `node tests/run-current.cjs` — **101 PASS** (64 + 37). Исторические 69/19 в этом этапе не перезапускались, наборы не складываются как уникальные.
+
+Policy tests используют только вымышленные IDs и не подключаются к каналам. Покрыты два преподавателя/общие grants, личные данные/owner denial, собственный progress, exact group+discipline, подтверждение/отзыв binding, активность личностей/Enrollment, омонимы через запрет идентификации по имени, переводы/интервалы, дубли bindings/IDs, malformed inputs, неизменяемые snapshots, scopes ChatGPT, неподтверждённый email, собственная lecture и направленное session-specific замещение, отсутствие расширения report/personal, `зач`/practice/unknown/cancelled, aware timezone и окно, помещающееся в пару/grant.
+
+Сначала зафиксирован красный запуск без модуля; затем четыре красных сценария воспроизвели overlap Enrollment, короткий grant и malformed request/registry types. Исправления прошли регрессию. Это authorization-модель, не подтверждение реальной authentication. Для настоящего транспорта обязательны подпись/identity/scopes, реальный подтверждённый registry и перечитывание его актуального состояния на запрос; `authenticated=True` из клиентского JSON доверять нельзя.
+
+Подробности: [ACCESS_POLICY.md](ACCESS_POLICY.md). Lecture window, persistent registry, `/progress`, email sending и ChatGPT endpoint остаются отдельными будущими тестами; они не включены в 30 PASS.
+
+---
+
 # Локальное чтение XLSX — 28.10.2026
 
 ```bash

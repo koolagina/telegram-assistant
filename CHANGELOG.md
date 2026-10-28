@@ -1,5 +1,11 @@
 # Changelog
 
+## Локальная модель доступа двух преподавателей/студентов — 2026-10-28
+
+- Добавлено academic authorization-ядро: подтверждённые bindings, Teacher/Student/Enrollment, предметные grants и отдельное session-specific замещение. Default deny, точные ID, неизменяемые snapshots, ограничения Telegram/email/ChatGPT и проверка временных интервалов.
+- 30 policy tests PASS, полный Python 110 PASS, текущий Node 101 PASS. Исправлены четыре воспроизведённых краевых сценария.
+- Нет реальных account bindings/authentication/persistent registry, `/progress` и lecture-коды ещё не подключены. Apps Script/внешние данные и публикация среды не менялись.
+
 ## Согласование lecture-кодов в Telegram и замещения — 2026-10-28
 
 - Вместо фиксированных утренних окон: запрос кода кнопкой, 90 секунд от успешного открытия, доступ обоим преподавателям.
