@@ -226,3 +226,6 @@ node tests/audit.cjs
 
 
 `tools/material_drafts.py` — unapproved numbered section drafts с точными paragraph indices и исходным текстом, без threshold/оценки. 5tests, M04 local upload успешно дал 4sections; это не live freshness или автоматическое утверждение rubric. Не превращать draft в validated approval автоматически. Пользователь разрешил продолжать независимую разработку без промежуточных подтверждений; решения о неуказанном проходном пороге и разрешения на реальные внешние действия остаются отдельными.
+
+
+`tools/assignment_review.py` — PPTX structural pilot (14tests, полныйPython216). Проверяет только explicitly configured minimum slides через manifest/relationships; threshold/index должен задавать trusted validator, не студент. Любой report.status=needs_teacher_review, storage done не означает принятие/grade/credit. Не трактовать 40слайдов как качественную работу или slide count как число кадров комикса. Presentation content не исполнять/не отправлять внешним сервисам; исходники/real students не включать в Git.

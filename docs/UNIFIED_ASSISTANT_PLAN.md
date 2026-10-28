@@ -274,3 +274,8 @@ M04 lecture makeup получен через upload и прочитан (4 за�
 ## 23. Сквозная связка материалов — 28.10.2026
 
 Source/Word/history связаны через MaterialProvider с обязательным trusted validator, source hash/parser binding и sanitised failure. 10 новых сквозных mock tests; Python202 PASS. Смысловой validator, проходной порог и grading остаются следующими этапами; текущая связка не принимает реальные работы. Детали MATERIAL_VERSIONS.md. Пользователь разрешил самостоятельное продолжение независимых шагов; запреты на production/письма/журнал сохраняются.
+
+
+## 24. Структурный пилот PPTX — 28.10.2026
+
+Manifest-based count и versioned evidence report реализованы локально;14tests/полныйPython216 PASS. 40слайдов — только наблюдение, не оценка содержания/авторства. Все отчёты needs_teacher_review, без grade/credit. Semantic validator и остальные форматы/контент остаются следующими независимыми шагами; production не подключён. Подробности MATERIAL_VERSIONS.md.

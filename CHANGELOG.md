@@ -1,3 +1,8 @@
+# Structural homework review pilot — 28.10.2026
+
+- PPTX manifest reader и локальный отчёт minimum slides с evidence/version binding. Никаких оценок, автопринятия или внешних операций.
+- 14 новых synthetic tests, полныйPython216 PASS; Node не перезапускался (последний101 PASS), GAS без изменений.
+
 # Source-to-catalog pipeline — 28.10.2026
 
 - MaterialProvider связывает свежую загрузку, DOCX extraction и trusted source-bound validation с существующей историей версий; без автоматического approval.
