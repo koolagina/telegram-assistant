@@ -229,3 +229,6 @@ node tests/audit.cjs
 
 
 `tools/assignment_review.py` — PPTX structural pilot (14tests, полныйPython216). Проверяет только explicitly configured minimum slides через manifest/relationships; threshold/index должен задавать trusted validator, не студент. Любой report.status=needs_teacher_review, storage done не означает принятие/grade/credit. Не трактовать 40слайдов как качественную работу или slide count как число кадров комикса. Presentation content не исполнять/не отправлять внешним сервисам; исходники/real students не включать в Git.
+
+
+Текущее правило assignment_review: minimum/index только из plan.rules.structural_checks (один slide_count criterion), runtime args лишь проверяются на совпадение; старые rules без machine criterion требуют review. Нельзя подставлять default40 или override1. material_criteria выдаёт source-bound suggestion с quote/paragraph index, всегда requires_review; не использовать как автоматическое approved rubric. Новые10tests, полныйPython226 PASS; M04 local40 подтверждён только для upload. Форматы Sheets/SQLite не менялись.

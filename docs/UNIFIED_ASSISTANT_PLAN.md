@@ -279,3 +279,8 @@ Source/Word/history связаны через MaterialProvider с обязате
 ## 24. Структурный пилот PPTX — 28.10.2026
 
 Manifest-based count и versioned evidence report реализованы локально;14tests/полныйPython216 PASS. 40слайдов — только наблюдение, не оценка содержания/авторства. Все отчёты needs_teacher_review, без grade/credit. Semantic validator и остальные форматы/контент остаются следующими независимыми шагами; production не подключён. Подробности MATERIAL_VERSIONS.md.
+
+
+## 25. Version-bound structural criterion — 28.10.2026
+
+Runtime override дефект исправлен тестом: snapshot criteria определяет минимум, mismatch отклоняется. Source-bound suggestions извлекают подтверждённую формулировку minimum40 из локальногоM04, но остаются review. 10 новыхtests/полныйPython226 PASS. Полноценный semantic validator, содержание/порог принятия и production ещё не подключены. Контракт MATERIAL_VERSIONS.md.

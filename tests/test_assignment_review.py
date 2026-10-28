@@ -23,7 +23,7 @@ def deck(count,hidden=False):
     return stream.getvalue()
 
 def plan():
-    return CheckPlan('check-1','version-1','material-1','makeup-3',encoded({'kind':'lecture_makeup','number':3,'requirements':['At least 40 slides','Original diagrams and conclusions']}))
+    return CheckPlan('check-1','version-1','material-1','makeup-3',encoded({'kind':'lecture_makeup','number':3,'requirements':['At least 40 slides','Original diagrams and conclusions'],'structural_checks':[{'measure':'slide_count','requirement_index':0,'minimum':40}]}))
 
 class ReviewTests(unittest.TestCase):
     def test_count_and_exact_slide_evidence(self):
@@ -93,6 +93,27 @@ class PackageSafetyTests(unittest.TestCase):
     def test_configuration_in_result_and_evaluation_identity(self):
         evidence=read_presentation(deck(40))
         first=review_presentation(plan(),evidence,slide_requirement_index=0,minimum_slides=40)
-        second=review_presentation(plan(),evidence,slide_requirement_index=0,minimum_slides=41)
+        from dataclasses import replace
+        rules=plan().rules;rules['structural_checks'][0]['minimum']=41
+        rules['requirements'][0]='At least 41 slides'
+        updated=replace(plan(),version='version-2',rules_json=encoded(rules))
+        second=review_presentation(updated,evidence)
         self.assertNotEqual(first['evaluation_key'],second['evaluation_key'])
         self.assertEqual(first['configuration']['minimum_slides'],40)
+
+class BoundCriterionTests(unittest.TestCase):
+    def test_runtime_minimum_cannot_override_versioned_rule(self):
+        with self.assertRaises(ReviewError):review_presentation(plan(),read_presentation(deck(1)),slide_requirement_index=0,minimum_slides=1)
+    def test_legacy_rules_without_machine_criterion_require_review(self):
+        from dataclasses import replace
+        rules=plan().rules;rules.pop('structural_checks')
+        with self.assertRaises(ReviewError):review_presentation(replace(plan(),rules_json=encoded(rules)),read_presentation(deck(40)),slide_requirement_index=0,minimum_slides=40)
+    def test_duplicate_or_boolean_machine_criteria_rejected(self):
+        from dataclasses import replace
+        for criteria in [[{'measure':'slide_count','requirement_index':0,'minimum':40}]*2,[{'measure':'slide_count','requirement_index':False,'minimum':40}]]:
+            rules=plan().rules;rules['structural_checks']=criteria
+            with self.assertRaises(ReviewError):review_presentation(replace(plan(),rules_json=encoded(rules)),read_presentation(deck(40)),slide_requirement_index=0,minimum_slides=40)
+    def test_automatic_mode_uses_versioned_minimum(self):
+        result=review_presentation(plan(),read_presentation(deck(39)))
+        self.assertEqual(result['configuration']['minimum_slides'],40)
+        self.assertEqual(result['requirements'][0]['status'],'not_met')

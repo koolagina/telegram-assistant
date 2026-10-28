@@ -97,21 +97,34 @@ def read_presentation(content):
         raise ReviewError('Presentation could not be safely read') from None
 
 
-def review_presentation(plan, evidence, *, slide_requirement_index, minimum_slides):
+def review_presentation(plan, evidence, *, slide_requirement_index=None, minimum_slides=None):
     """Generate observations from an explicitly configured trusted criterion.
 
-    Threshold/index are application configuration, not inferred from submission.
-    They are included in the result and evaluator digest for reproducibility.
-    The caller must bind this configuration to its validated rubric before use.
+    Threshold/index come from the version-bound structural_checks snapshot.
+    Optional legacy arguments must match it exactly; they cannot override it.
+    Old rules without an explicit machine criterion require review.
     """
     if type(plan) is not CheckPlan or type(evidence) is not PresentationEvidence:
         raise ReviewError('Explicit versioned plan and presentation evidence required')
-    requirements=plan.rules.get('requirements')
+    rules=plan.rules
+    requirements=rules.get('requirements')
+    machine=rules.get('structural_checks')
+    if (type(machine) is not list or len(machine)!=1 or type(machine[0]) is not dict
+            or set(machine[0])!={'measure','requirement_index','minimum'}
+            or machine[0]['measure']!='slide_count'
+            or type(machine[0]['requirement_index']) is not int
+            or type(machine[0]['minimum']) is not int):
+        raise ReviewError('Unambiguous version-bound slide criterion required')
+    bound=machine[0]
+    if slide_requirement_index is None and minimum_slides is None:
+        slide_requirement_index,minimum_slides=bound['requirement_index'],bound['minimum']
     if (type(requirements) is not list or not requirements
             or any(not isinstance(item,str) or not item.strip() for item in requirements)
             or type(slide_requirement_index) is not int or not 0<=slide_requirement_index<len(requirements)
             or type(minimum_slides) is not int or minimum_slides<1):
         raise ReviewError('Explicit structural requirement configuration required')
+    if slide_requirement_index!=bound['requirement_index'] or minimum_slides!=bound['minimum']:
+        raise ReviewError('Runtime criterion differs from versioned requirements')
     configuration={'requirement_index':slide_requirement_index,'minimum_slides':minimum_slides}
     checks=[]
     hidden=any(slide.hidden for slide in evidence.slides)
@@ -124,6 +137,6 @@ def review_presentation(plan, evidence, *, slide_requirement_index, minimum_slid
         checks.append(item)
     return {'check_id':plan.id,'material_version':plan.version,'assignment_id':plan.assignment_id,
             'submission_sha256':evidence.sha256,'submission_reader_version':evidence.reader_version,
-            'evaluator_version':'structural-pilot-1','configuration':configuration,
-            'evaluation_key':digest([plan.id,evidence.sha256,evidence.reader_version,'structural-pilot-1',configuration]),
+            'evaluator_version':'structural-pilot-2','configuration':configuration,
+            'evaluation_key':digest([plan.id,plan.version,evidence.sha256,evidence.reader_version,'structural-pilot-2',configuration]),
             'status':'needs_teacher_review','requirements':checks,'credit_written':False}

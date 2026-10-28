@@ -93,3 +93,25 @@
 Дальше: source-grounded semantic criteria validation и дополнительные безопасные structural checks по утверждённым требованиям. Форма из30вопросов, научная правильность, авторство, качество40слайдов/10кадров этим пилотом не подтверждены. Внешние формы/ответы, AI service и проходной порог не подключены/не придуманы.
 
 ---
+
+# Привязка структурного критерия к версии — 28.10.2026
+
+Воспроизведён дефект: review_presentation принимал runtime minimum1 вместо указанного40 для той же версии задания. Новые tests сначала показали 3fail/1error. Исправление в tools/assignment_review.py: единственный однозначный slide_count criterion берётся из plan.rules.structural_checks; legacy runtime arguments могут только совпасть с ним, не заменить его. Без machine criterion/с дублями/bool/невалидными индексами — отказ, а не использование догадки или старого default. Оба аргумента теперь можно опустить. evaluator_version=structural-pilot-2, evaluation key включает material version. Старые completed результаты не переписываются; формат Google Sheets/SQLite не менялся.
+
+Контракт одной версии rules: `structural_checks: [{"measure":"slide_count","requirement_index":0,"minimum":40}]`. Index относится к requirements snapshot; запись должен создавать trusted semantic validator после сверки source evidence, не студент/параметр запуска. На этом этапе поддержан ровно один такой criterion. Само добавление поля не доказывает семантическую правильность.
+
+Добавлен tools/material_criteria.py: консервативная suggestion явного minimum-slides из нумерованного draft с source SHA/parser/draft version, номером задания, индексами requirement/paragraph и дословной quote. Поддержаны standalone «минимум N слайдов»/«не менее N слайдов» (в том числе Объём:) и завершающее предложение «Минимальный объем — N слайдов». Неизвестное/несколько совпадений/условные или примерные фразы требуют review; не выводятся проходной балл, научная правильность и авторство. Suggestion всегда requires_review и не превращается автоматически в ValidatedRubrics. Модуль не является полноценным semantic validator.
+
+На локальном upload M04 первая узкая форма не распознала предложение с описанием работы; это явно остановило extraction. После отдельного красного regression test добавлена подтверждённая форма завершающего предложения. Повторная read-only проверка upload нашла minimum40 для ДЗ3, source quote не публикуется. Свежесть файла на Диске не проверялась.
+
+10 новых tests (4 version-binding +6 suggestions), полный Python **226 PASS**. Все проверки исходников/правил синтетические; реальный M04 только локально read-only для подтверждения известной формулировки. Node не перезапускался (последний101 PASS, GAS не менялся). Нет live downloads, реальных работ студентов, grade/credit/mail/deploy.
+
+| Дефект/риск | Причина | Исправление | Тест/результат | Остаток |
+|---|---|---|---|---|
+| Подмена40 на1 | runtime параметр не сверялся с snapshot | plan-bound machine rule, mismatch refusal | red→green, boundary/regression PASS | Trusted validator должен подтвердить соответствие тексту |
+| Неизвестная формулировка | узкий parser не распознавал итоговое предложение | только исследованная форма с source quote | отдельный red→green + M04 local40 | Неизвестное/двусмысленное по-прежнему review |
+| Автопринятие по одному числу | count не проверяет содержание | report needs_teacher_review, без grade/credit | прежние regression PASS | Semantic validation и содержание ещё требуют реализации |
+
+Дальше — безопасная фиксация решения о содержательных критериях и полный отчёт с evidence; автоматическое принятие без порога не включать. Неизвестные правила не угадывать.
+
+---

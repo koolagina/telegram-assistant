@@ -1,3 +1,9 @@
+# Bind slide criteria to versioned rules — 28.10.2026
+
+- Исправлена воспроизводимая подмена minimum runtime параметром: структурный criterion читается из versioned rules; legacy params только сверяются.
+- Добавлены source-bound minimum-slide suggestions (всегда review), M04 local upload дал40.
+- 10 новых tests, полныйPython226 PASS; Node не перезапускался (последний101 PASS). Live операции отсутствуют.
+
 # Structural homework review pilot — 28.10.2026
 
 - PPTX manifest reader и локальный отчёт minimum slides с evidence/version binding. Никаких оценок, автопринятия или внешних операций.
