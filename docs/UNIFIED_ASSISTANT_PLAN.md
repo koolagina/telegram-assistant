@@ -269,3 +269,8 @@ P1 должен содержать подтверждённые account bindings
 M04 lecture makeup получен через upload и прочитан (4 задания, requirements/weights); M02 исключён пользователем, больше не запрашивать. Пользователь явно подтвердил mapping №ДЗ→такой же №лекции, не все темы работы. Каталог дополнен MATERIALS_CATALOG.md, раздел 5.
 
 По запросу «обновлю файлы → проверять по ним» добавлен tools/material_versions.py: private SQLite revision/rubric/check history, fresh provider перед prepare/finish, CAS head после fetch, source change → needs_recheck, no silent stale fallback и immutable completed results. 14 tests PASS, весь Python 168/Node 101 PASS. Нет live source adapter/DOCX extraction/grader; материал и source text не являются разрешением на внешние операции. Контракт — MATERIAL_VERSIONS.md. Остались rubric pass policy и проверенные identity/session mapping, а не вопросы M02.
+
+
+## 23. Сквозная связка материалов — 28.10.2026
+
+Source/Word/history связаны через MaterialProvider с обязательным trusted validator, source hash/parser binding и sanitised failure. 10 новых сквозных mock tests; Python202 PASS. Смысловой validator, проходной порог и grading остаются следующими этапами; текущая связка не принимает реальные работы. Детали MATERIAL_VERSIONS.md. Пользователь разрешил самостоятельное продолжение независимых шагов; запреты на production/письма/журнал сохраняются.

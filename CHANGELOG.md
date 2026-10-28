@@ -1,3 +1,8 @@
+# Source-to-catalog pipeline — 28.10.2026
+
+- MaterialProvider связывает свежую загрузку, DOCX extraction и trusted source-bound validation с существующей историей версий; без автоматического approval.
+- 10 новых end-to-end/offline tests + 5 draft tests, полный Python202 PASS. GAS не менялся, Node не перезапускался (последний101 PASS). M04 upload прочитан только локально: четыре source-bound draft sections. Нет live source reads, grades, mail или deployment.
+
 # Read-only public DOCX refresh — 28.10.2026
 
 - Добавлен material_source: metadata before/after, SHA-256/size, bounded HTTPS GET, no redirects/cache/token/writes.

@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Актуальная проверка материалов
+
+`tools/material_pipeline.py` связывает источник, разбор Word и проверенные criteria с историей версий. **202 Python PASS**, включая 10 новых сквозных mock tests и 5 draft tests. `material_drafts.py` готовит черновик требований с дословными цитатами и индексами абзацев; на локальном M04 выделены 4 раздела. Semantic validator и реальная оценка ещё не подключены; последний Node101 PASS, в этом этапе не перезапускался. [Контракт](docs/MATERIAL_VERSIONS.md).
+
 ## ВАЖНО: статус исходников
 
 - `src/archive/telegram_assistant_v1_4_3_reference.gs` — доступный исторический снимок версии 1.4.3. Это **не подтверждённая копия текущего развёрнутого production-проекта**.

@@ -220,3 +220,9 @@ node tests/audit.cjs
 
 
 `tools/material_source.py` — read-only public DOCX adapter, explicit resource only, metadata/hash before-after, no cache/token/writes. 8 offline tests, полный Python187 PASS. Не запускать как scan/downloader произвольной папки; не добавлять XLSX, секреты или signed URLs в логи. Live binding и semantic rubric validator не подключены; read bytes не означает утверждённые criteria.
+
+
+`tools/material_pipeline.py` связывает source/Word/trusted validator с MaterialCatalog (10 новых tests; полныйPython202). Не считать ValidatedRubrics семантическим доказательством: validator — trusted application code, без default approval; требуется связь с текущим SHA/parser и review flags. Производственный validator/grader отсутствует. Не подменять его сырым текстом Word, callback из документа или старым approval. SQL schema/GAS не менялись.
+
+
+`tools/material_drafts.py` — unapproved numbered section drafts с точными paragraph indices и исходным текстом, без threshold/оценки. 5tests, M04 local upload успешно дал 4sections; это не live freshness или автоматическое утверждение rubric. Не превращать draft в validated approval автоматически. Пользователь разрешил продолжать независимую разработку без промежуточных подтверждений; решения о неуказанном проходном пороге и разрешения на реальные внешние действия остаются отдельными.

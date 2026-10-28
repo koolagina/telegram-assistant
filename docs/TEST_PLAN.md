@@ -1,3 +1,24 @@
+# Сквозной процесс материалов — 28.10.2026
+
+Добавлен `tools/material_pipeline.py`: callable MaterialProvider связывает source.read → extract_docx → явно выбранный trusted validator → MaterialRead для существующего MaterialCatalog. Перед prepare/finish файл читается заново; validator должен вернуть source SHA-256, версию extractor, собственную версию, рассмотренные review flags и структурированные criteria. Несовпадение hash/parser/flags, невалидные rules/JSON, ошибка чтения/Word/validator останавливают процесс без fallback. Версии extractor+validator включены в существующее parser_version через digest, схема SQLite не менялась. Сообщения исключений сторонних компонентов не публикуются.
+
+Это проверка привязки, а не реализованный semantic validator: callback является доверенным кодом приложения и должен доказать полноту/корректность требований. Документ не может назначить такой callback или сам подтвердить criteria. Нет permissive/default validator; criteria-not-validated нельзя снять без явного решения trusted validator по текущему source. Само заполнение полей ValidatedRubrics не доказывает научной правильности. Production validator, оценка содержимого работ и live bindings остаются неподключёнными. Ни проходной порог, ни оценки не придуманы.
+
+10 новых сквозных offline tests и 5 tests черновика требований, исходные запуски красные до реализации. Полный Python **202 PASS**. Сквозной тест использует синтетический Word и mocked Yandex metadata/download, затем настоящую временную SQLite: обновлённые требования → новый version-bound check, изменение перед finish → needs_recheck, старый done сохраняется. Дополнительно: stale approval, unresolved warnings, parser/validator versions, network/parser/validator failure и отсутствие default approval. Реальные сервисы и студенческие работы не использовались. Дополнительно read-only обработан ранее загруженный M04: 100 абзацев, без таблиц, успешно выделены четыре раздела; исходник и контакты не сохранялись в Git. Это локальная проверка upload, не свежести файла на Диске. Node не перезапускался, GAS не менялся (последний101 PASS).
+
+| Риск | Защита | Проверка | Остаток |
+|---|---|---|---|
+| Старые criteria применяются к новому файлу | hash/parser binding, новый validator result при каждом чтении | stale-validation test PASS | Семантика trusted validator ещё не реализована |
+| Источник изменён между prepare/finish | повторная загрузка и version-bound результат | end-to-end update test PASS | Нет распределённой транзакции с Диском |
+| Не удалось прочитать/валидировать документ | остановка, pending не становится done | failure tests PASS | Нужен операторский review без тихого автоприёма |
+| Обновление переписывает прежнюю оценку | immutable local completed history | history test PASS | Реальные оценки/журнал не подключены |
+
+`tools/material_drafts.py` сохраняет source-bound черновик разделов и дословные требования с индексами абзацев. Вид standalone heading: ДЗ №N или Домашнее задание №N, при ожидаемой точной последовательности. Intro хранится отдельно, heading сохраняется, ничего не преобразуется в числовые баллы. Пропуск/дубль/перестановка номеров, пустой раздел или таблицы требуют layout review. Рисунки/прочие flags сохраняются; черновик никогда не является approved rubric и не заменяет semantic validator. На M04 четыре раздела выделены успешно, но научная правильность/полнота/порог принятия не подтверждены автоматически.
+
+Следующий этап — смысловая проверка полноты черновика требований, затем локальный пилот проверки работы без присуждения реальных баллов. Проходной порог остаётся отдельным решением до автоматического принятия; это не блокирует дальнейшую независимую разработку.
+
+---
+
 # Read-only адаптер публичных DOCX — 28.10.2026
 
 `tools/material_source.py`: явно заданные public_key и путь одного DOCX, без поиска по всей папке, токена, журнала XLSX, записи, кеша и фонового запуска. GET metadata → download descriptor → bounded GET bytes → GET metadata. Проверяются type/size/SHA-256/modified, соответствие bytes размеру и SHA, неизменность metadata во время чтения. Смена источника/HTTP/неполные metadata/целостность — остановка без stale fallback и без автоматических повторов. TLS/proxy по умолчанию, redirects запрещены; download только HTTPS домены yandex.ru/yandex.net и поддомены, без userinfo/нестандартного порта. Signed URL/пути/ответы API не печатаются; неожиданные исключения выдаются обобщённо. Это проверка одной загрузки, не гарантия отсутствия будущего изменения файла и не distributed transaction.
