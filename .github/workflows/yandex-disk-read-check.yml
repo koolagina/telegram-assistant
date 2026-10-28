@@ -1,0 +1,26 @@
+name: Yandex Disk read-only check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: yandex-disk-read-check
+  cancel-in-progress: false
+
+jobs:
+  read-check:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Checkout reviewed code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Verify Disk read access without listing files
+        env:
+          YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
+        run: python3 -I tools/yandex_disk_probe.py
