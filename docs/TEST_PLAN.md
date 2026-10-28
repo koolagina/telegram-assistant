@@ -1,3 +1,11 @@
+# Версии материалов и lecture makeup — 28.10.2026
+
+Добавлены 14 synthetic tests material_versions: update before/during check, no stale fallback при ошибке provider, missing/invalid rubric, parser/rule changes, copied rules, version-bound restart/idempotence, completed-result immutability, concurrent refresh CAS, namespace/permissions, JSON NaN rejection и 1→1 lecture-number mapping. Начальные tests красные до модуля; отдельный mapping test красный до свойства lecture_number. Всё исправлено.
+
+Запущено **168/168 Python PASS**, **101/101 Node PASS**. User-upload M04 прочитан, source/контакты в fixtures не копируются. M02 исключён пользователем. Actual grading, periodic source polling, live DOCX parser и XLSX/почта не реализованы/не запускались. Contract: MATERIAL_VERSIONS.md; source requirements: MATERIALS_CATALOG.md §5.
+
+---
+
 # Поиск согласованных ресурсов Диска — 28.10.2026
 
 Добавлено 8 синтетических inventory tests: pagination, точное/пробельное имя, несколько копий без выбора первой, scan limit без ложной полноты, missing, invalid URL/records/duplicates и безопасный CLI. После красного запуска до модуля все **154 Python PASS** (146 прежних + 8). Реальный Actions run 40647021089: folder_readable, journal not_found_in_scan/0 matches, scan_complete=true, no downloads/writes. Conclusion failure означает отсутствие найденного журнала, не неработающий OAuth. Точное имя/расположение запрошено; повторного scan без новых данных нет. Node не запускался (GAS не менялся). Подробности — YANDEX_CONNECTION.md.

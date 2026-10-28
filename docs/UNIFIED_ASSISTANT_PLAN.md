@@ -262,3 +262,10 @@ P1 должен содержать подтверждённые account bindings
 Старые материалы содержат >60 против нового >56, минимум отработок против всех обязательных лекций, неоднозначное «4–5 баллов» и утверждение об удалении писем. Применяется явное ТЗ пользователя; документы/фильтры/книга не менялись. В одном письме допустимо несколько работ — будущая модель должна поддерживать MailMessage→несколько Submission и review неоднозначности. Нельзя вывести rubric/даты/группы из одного имени или номера строки.
 
 Чтобы завершить каталог и lecture makeup, нужны два недоступных DOCX локально либо восстановление скачивания; другие независимые локальные этапы можно продолжать. Нет автоматических оценок/ответов/плюсов, новых кодовых модулей или deployments; suites не запускались в документальном аудите.
+
+
+## 22. M04, исключение вопросов и версии criteria — 28.10.2026
+
+M04 lecture makeup получен через upload и прочитан (4 задания, requirements/weights); M02 исключён пользователем, больше не запрашивать. Пользователь явно подтвердил mapping №ДЗ→такой же №лекции, не все темы работы. Каталог дополнен MATERIALS_CATALOG.md, раздел 5.
+
+По запросу «обновлю файлы → проверять по ним» добавлен tools/material_versions.py: private SQLite revision/rubric/check history, fresh provider перед prepare/finish, CAS head после fetch, source change → needs_recheck, no silent stale fallback и immutable completed results. 14 tests PASS, весь Python 168/Node 101 PASS. Нет live source adapter/DOCX extraction/grader; материал и source text не являются разрешением на внешние операции. Контракт — MATERIAL_VERSIONS.md. Остались rubric pass policy и проверенные identity/session mapping, а не вопросы M02.

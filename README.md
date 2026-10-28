@@ -36,19 +36,19 @@
 
 `python tools/gradebook_read.py PATH_TO_LOCAL_XLSX` печатает только структурный отчёт без имён и оценок. Модуль не вычисляет формулы, не записывает файл и не определяет student identity. Данные загруженного журнала не хранятся в Git. [Аудит и ограничения reader](docs/GRADEBOOK_STRUCTURE_AUDIT.md), [единый план](docs/UNIFIED_ASSISTANT_PLAN.md).
 
-Полный локальный Python suite: `python -m unittest discover -s tests -p 'test_*.py'` — 154 PASS (НВГУ, XLSX, policy, lecture windows, probe/inventory mocks); текущий бот: `node tests/run-current.cjs` — 101 PASS. Это не проверка реальных API или развёртывания.
+Полный локальный Python suite: `python -m unittest discover -s tests -p 'test_*.py'` — 168 PASS (НВГУ, XLSX, policy, lecture windows, Yandex mocks, material versions); текущий бот: `node tests/run-current.cjs` — 101 PASS. Это не проверка реальных API или развёртывания.
 
 
 ## Локальная академическая policy
 
-`tools/assistant_access.py` — проверка прав двух преподавателей, собственных данных студента и временного замещения по конкретной лекции. [Контракт и границы доверия](docs/ACCESS_POLICY.md). Это не authentication и не включённый режим бота: настоящий registry и transport adapters отсутствуют. Полный Python suite — **154 PASS**, из них 36 policy и 22 lecture windows; текущий бот — 101 PASS. Сеть и реальные данные не используются.
+`tools/assistant_access.py` — проверка прав двух преподавателей, собственных данных студента и временного замещения по конкретной лекции. [Контракт и границы доверия](docs/ACCESS_POLICY.md). Это не authentication и не включённый режим бота: настоящий registry и transport adapters отсутствуют. Полный Python suite — **168 PASS**, из них 36 policy и 22 lecture windows; текущий бот — 101 PASS. Сеть и реальные данные не используются.
 
 Пользователю предусмотрено явное полное академическое чтение (AcademicReadGrant), включая расписание второго преподавателя и все известные учебные данные студентов; второму преподавателю оно автоматически не передаётся. Это ещё не live-привязка аккаунта.
 
 
 ## Локальные lecture-коды
 
-`tools/lecture_windows.py` реализует SQLite/AES-GCM ядро 90-секундных окон и проверяет `assistant_access` policy. Нужна `cryptography`: `python -m pip install -r requirements-lecture.txt`. [Контракт, ключи и ограничения](docs/LECTURE_WINDOWS.md). Telegram/QR/реальная identity и запись в журнал ещё не подключены. Локальное событие регистрации не означает сохранённый плюс в XLSX. Полный Python suite — 154 PASS; последний запуск бота — 101 PASS.
+`tools/lecture_windows.py` реализует SQLite/AES-GCM ядро 90-секундных окон и проверяет `assistant_access` policy. Нужна `cryptography`: `python -m pip install -r requirements-lecture.txt`. [Контракт, ключи и ограничения](docs/LECTURE_WINDOWS.md). Telegram/QR/реальная identity и запись в журнал ещё не подключены. Локальное событие регистрации не означает сохранённый плюс в XLSX. Полный Python suite — 168 PASS; последний запуск бота — 101 PASS.
 
 
 ## Проверка GitHub Secret для Яндекс Диска
@@ -60,4 +60,9 @@ Read-only metadata discovery доступно отдельным manual workflow
 
 ## Каталог учебных материалов
 
-[Аудит DOCX](docs/MATERIALS_CATALOG.md): прочитаны 3/5 файлов, выделены задания шести практик и расхождения старых инструкций с ТЗ. Два файла (вопросы к практикам и отработка лекций) пока недоступны для скачивания HTTP500/503. Назначения оценок/автоответов нет, оригиналы в Git не включены.
+[Аудит DOCX](docs/MATERIALS_CATALOG.md): прочитаны 4/5 файлов, включая загруженные задания отработки лекций; вопросы M02 исключены пользователем. Выделены задания шести практик, четырёх отработок и расхождения старых инструкций с ТЗ. Назначения оценок/автоответов нет, оригиналы в Git не включены.
+
+
+## Обновления заданий
+
+[Каталог материалов](docs/MATERIALS_CATALOG.md) дополнен M04 из upload; вопросы M02 пользователь исключил из обязательных. Lecture makeup связываются по номерам 1→1, 2→2, 3→3, 4→4. `tools/material_versions.py` — локальная история source/criteria и version-bound checks: новое содержимое → новая версия, смена во время pending проверки → needs_recheck, completed results не меняются. [Контракт и ограничения](docs/MATERIAL_VERSIONS.md): live parser/watcher/grader ещё не подключены. Полный Python suite 168 PASS, Node 101 PASS.

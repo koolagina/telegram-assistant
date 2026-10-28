@@ -1,3 +1,11 @@
+# M04 и версионирование проверок — 28.10.2026
+
+Прочитан пользовательский upload lecture makeup: 4 задания, требования и weights, никаких контактов/документов в Git. M02 не нужен по решению пользователя. Явно подтверждено ДЗ №1→Л1, №2→Л2, №3→Л3, №4→Л4. Более широкая тема не закрывает другие lectures. M04 также содержит старое >60 — глобальное >56 из ТЗ не меняется. ИИ-графика с доработкой разрешена в comic; веса rubric не задают pass threshold.
+
+Добавлено local MaterialCatalog: source/rubric/parser hash revisions, snapshot checks, re-fetch в prepare/finish, no stale fallback, CAS head, needs_recheck при изменении, immutable completed results. 14 synthetic tests, начальный красный импорт и красный lecture mapping test, затем **168 Python / 101 Node PASS**. Это не live watcher/parser/grader: нет обработки настоящих студенческих работ, оценки/плюса/письма. Подробности MATERIAL_VERSIONS.md и актуальный MATERIALS_CATALOG.md §5.
+
+---
+
 # Аудит материалов: 3/5 DOCX — 28.10.2026
 
 Прочитаны инструкция студентам (M01), дистанционная ссылка (M03) и задания шести практик (M05). Вопросы к практикам (M02) и lecture makeup (M04) не скачались из-за HTTP500/503; их содержание/критерии не утверждаются. Источники только в private temporary storage вне Git, без контактов/приглашений в отчётах.

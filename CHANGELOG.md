@@ -1,5 +1,11 @@
 # Changelog
 
+## Актуальные материалы и версии проверок — 2026-10-28
+
+- Прочитан M04 upload; вопросы M02 исключены пользователем. Подтверждено №ДЗ→такая же №лекция, не все темы работы.
+- Добавлен local material_versions.py: SQLite history, source/rubric/parser versions, fresh-provider prepare/finish, no stale fallback, needs_recheck/CAS и immutable completed results.
+- 14 synthetic tests, полный Python 168 PASS, Node 101 PASS. Live watcher/parser/grader, почта и журнал не подключены/не менялись.
+
 ## Частичный каталог учебных DOCX — 2026-10-28
 
 - Прочитаны 3/5 материалов: инструкция, дистанционная ссылка, задания шести практик; каталог docs/MATERIALS_CATALOG.md.
