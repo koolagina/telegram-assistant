@@ -235,3 +235,6 @@ node tests/audit.cjs
 
 
 content_evidence.py проверяет source-bound Finding/Citation и exact quote offsets, не генерирует и не подтверждает научную правильность (9tests, полныйPython237). Observation status всегда needs_review; нельзя превращать supported в принятый ДЗ или переписывать им structural status. Quotes/comments приватны, выдача требует academic policy. Semantic evaluator и внешние сервисы не подключены.
+
+
+report_access.py выдаёт только policy-gated projections (13tests, полныйPython250). ReportLink и Context создаёт trusted server registry/authadapter, не Telegram text/LLM/request payload. Проверять current policy перед payload и после него, final send отдельно; student projection без internal notes/evidence. Unknown/denied одинаковы. Ни registry persistence, ни authentication/real transports модуль не реализует. Не обходить ReportReader прямым MaterialCatalog.result в публичном endpoint.

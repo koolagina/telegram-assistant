@@ -72,3 +72,24 @@ node tests/run-current.cjs
 Full read не назначается автоматически второму преподавателю/студентам и не превращается в право записи журнала, отправки писем, доступа к чужим личным входящим/задачам или управления произвольной лекцией. Лекционное замещение продолжает проверяться отдельным SubstitutionGrant. Подтверждённые Binding/capabilities и ограничения каналов/scopes проверяются до полного чтения; отозванный/истёкший grant прекращает расширенный доступ. Это разрешение на учебные данные данного проекта, не доступ ко всему содержимому личного Диска/почтового ящика.
 
 Добавлено 6 синтетических тестов: полное чтение чужого расписания/студенческого отчёта, отсутствие обратных прав, известные исторические записи, несуществующие IDs, запрет write/send/личных данных/кодовых полномочий через full read, сроки/revoke/auth, channel scopes/capabilities и валидация grant. Сначала запуск был красным до добавления AcademicReadGrant; затем все 36 policy/116 Python/101 Node PASS.
+
+# Доступ к локальным отчётам — 28.10.2026
+
+Добавлен tools/report_access.py: ReportReader использует существующую AccessPolicy и trusted ReportLink(report/check/enrollment/student/discipline/group). Link создаётся серверным registry, не из запроса студента. Текущий enrollment должен совпасть с исходной привязкой во всех четырёх полях; переиспользование enrollment ID не переносит чужой отчёт новому студенту. Policy/clock получают свежие значения перед чтением payload и после него. При отзыве/изменении binding/grant запрос блокируется или получает более ограниченную student projection. Нельзя кешировать решение allow как credential.
+
+Студенту доступен только собственный report при действующем enrollment и progress.self; краткий ответ исключает evidence/internal reviewer notes. Преподаватель получает evidence/observations только при student.report для точной discipline/group либо явном full AcademicReadGrant. Full grant владельца включает известную историю, второй преподаватель автоматически его не получает. Unknown/missing/forbidden/corrupt/pending дают одинаковый Report unavailable без private деталей. Loader не вызывается до авторизации. Result check/material identity сверяется с trusted link/хранилищем, неожиданным полям нет выдачи. Выход — detached JSON projection, не ссылка на сохранённый dict.
+
+Поддерживаются существующие channel policy: private confirmed Telegram, scope-bound отдельный ChatGPT context, confirmed email read. Это только разрешение на чтение, не отправка письма или реальный OAuth/TG endpoint. ReportReader не аутентифицирует пользователя; Context, links, policy provider, clock и loader — доверенные runtime adapters. Persistent links/identity registry ещё не реализованы. Повторная проверка уменьшает окно отзыва, но не является транзакцией между registry и отправкой; будущий transport обязан сверять права перед фактической отправкой и применять безопасное форматирование.
+
+13 новых synthetic tests (первый запуск красный до модуля), полный Python **250 PASS**: self/foreign isolation, exact teaching grants, owner full read, revocation/rebind during load, reused enrollment, private/confirmed channel, ChatGPT scope, email read, historical restrictions, pending/version mismatch, detached output и sanitized failures. Node не перезапускался, GAS не менялся (последний101 PASS). Ни реальных student identities, ни выдачи данных, отправок, API calls или записи журнала нет.
+
+| Риск | Защита | Проверка | Остаток |
+|---|---|---|---|
+| Чужой результат по report ID | current policy до payload | self/foreign и exact grants PASS | Нужен реальный authentication adapter |
+| Отозванный доступ к кешу/отчёту | повторная policy перед ответом | revoke и downgrade during load PASS | Сверка перед transport send ещё не подключена |
+| Enrollment перепривязан | immutable original relation + current equality | reused enrollment PASS | Нужен durable trusted link registry |
+| Внутренние заметки студенту | отдельная минимальная projection | notes/evidence omitted PASS | Утверждённый формат обратной связи ещё не реализован |
+
+Дальше — локальные обработчики запросов/рендеринг, затем защищённые реальные adapters в отдельной среде. Научная semantic evaluation/автопринятие/запись оценок остаются неподключёнными.
+
+---

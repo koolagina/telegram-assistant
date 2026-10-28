@@ -1,3 +1,8 @@
+# Policy-gated local report retrieval — 28.10.2026
+
+- ReportReader: trusted ownership links, current policy before/after load, student/teacher projections, revoke/rebind protection, uniform safe denial.
+- 13 новых synthetic tests, полныйPython250 PASS. Node не перезапускался, GAS неизменён. Нет real identity/transport/send/gradebook integration.
+
 # Validate content observation citations — 28.10.2026
 
 - Finding/Citation binding к current plan/work и точным slide text offsets; отдельные needs_review наблюдения без grades/credit/перезаписи structural статуса.

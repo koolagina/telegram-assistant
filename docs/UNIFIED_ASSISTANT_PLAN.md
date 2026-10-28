@@ -289,3 +289,8 @@ Runtime override дефект исправлен тестом: snapshot criteria
 ## 26. Проверяемые цитаты наблюдений — 28.10.2026
 
 Content evidence binding реализован локально,9tests/полныйPython237 PASS: requirement/check/material/work identity и exact slide quotes. Это не scientific grading, не авторство и не автоматический плюс. Все observations требуют review; следующие шаги — локальный demo/report и отдельно semantic evaluator. Подробности MATERIAL_VERSIONS.md.
+
+
+## 27. Policy-gated report read — 28.10.2026
+
+Локальный ReportReader связывает trusted report ownership с действующей policy, повторной сверкой и отдельными projections.13tests/полныйPython250 PASS. Owner full read сохранён, студент self-only, второйteacher только grants. Real identities/links persistence/transports не подключены. Следующий независимый шаг — безопасный локальный рендеринг запроса/ответа, не реальные отправки. Контракт ACCESS_POLICY.md.
