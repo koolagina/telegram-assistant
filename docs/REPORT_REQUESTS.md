@@ -1,3 +1,43 @@
+# Обработка очереди и восстановление после API success — 29.10.2026
+
+Добавлен tools/report_worker.py: bounded reports-only step соединяет private inbox, trusted verified-update adapter, fresh policy preparation и durable dispatch ledger. Dispatch default off. Worker требует совпадающие project/bot namespace; он не запускает polling/scheduler и не меняет webhook. Только canonical persisted updates, без public body/role args. Реальные API/отправки в этом этапе не выполнялись, все sender/opener — моки.
+
+Если для update уже есть durable dispatch outcome, worker не читает private report заново и не отправляет сообщение. api_confirmed/cancelled → handled, api_rejected/unknown/inflight_or_unknown → blocked; это processing disposition, не delivery. При ошибке inbox mark остаётся pending + receipt: повтор восстанавливает mark без sender call. Неподдержанные/не относящиеся к reports updates остаются deferred/pending для других handlers, не отбрасываются. Такой bounded step не является заменой всему боту; без общего dispatcher неизвестные updates могут занимать первые100 мест и требуют маршрутизации/операторского наблюдения.
+
+10 worker tests, первый запуск красный до реализации. Весь текущий блок: **51 новый test** (13ledger+10HTTP+10inbox+8integration+10worker), полный Python **364 PASS**, Node **101 PASS**. Дополнительно выполнен `bash tools/check-local.sh`: unit suites и оба synthetic demos, без реальных credentials/сети/данных студентов. Реальные transport endpoints, test deployment, callback acknowledgement и операторский recovery интерфейс не запускались/не реализованы.
+
+| Дефект/риск | Причина | Исправление | Тест/результат | Остаток |
+|---|---|---|---|---|
+| Дубль после API success и сбоя записи результата | повтор без доказательства прежней попытки | durable pre-send claim, unknown/inflight blocks retry | accepted→writefailure/restart PASS | Не гарантирует доставку; нужен review |
+| Дубль после сбоя отметки очереди | API receipt и inbox mark в разных DB | recovery по receipt, без нового send/private read | markfailure+revoke recovery PASS | Coordinated backup/operator recovery остаются |
+| Потеря updates после подтверждения | cursor поднят до сохранения batch | atomic batch+cursor, ack только ранее committed | store failure/poll offsets PASS | Retention/idle reset/другой consumer не решены |
+| Подмена ID true→1 | Python bool сравнивался с int | exact integer type перед claim | red→green regression PASS | Реальная source authenticity отдельно |
+| Другой бот/проект в pipeline | неправильное runtime wiring | matching bot/project guards до запросов/worker | bot mismatch/project mismatch PASS | Настоящий getMe подтверждён только mock tests |
+| Отозванный доступ после cached preview | reuse старого текста | fresh preparation внутри claim до send | route→revoke→cancel PASS | Нет атомарной транзакции registry↔Telegram |
+
+Состояние компонентов и ограничения обновлены в LOCAL_ASSISTANT_STATUS.md и TELEGRAM_TRANSPORT.md. Не считать успешный локальный transport test реальной интеграционной приёмкой. Часть ещё отсутствует: утверждённое real provisioning, live server/bootstrap/единый dispatcher, monitoring/backoff/operator recovery, callback acknowledgement, semantic evaluation/порог и разрешённый sandbox rollout. GAS/реальные ресурсы не менялись.
+
+---
+
+# Mock-tested HTTP и durable dispatch outcomes — 28.10.2026
+
+Добавлены tools/telegram_http.py и tools/report_dispatch.py. Это кандидаты, все вызовы в этом этапе только injected mock transport, реальные HTTP не выполнялись. Network/writes/dispatch выключены по умолчанию; включение флага в коде не заменяет отдельное разрешение на реальные ресурсы. Source GAS/webhook/триггеры/почта/журнал не менялись.
+
+TelegramHTTP использует фиксированный HTTPS Bot API origin, POST JSON, default TLS/proxy, запрет redirects, bounded1MiB responses,20s timeout и no retries/logging. verify_bot(getMe) должен совпасть с configured numeric bot id/is_bot до polling/send. Разрешены только getMe/getUpdates/sendMessage; webhook/delete/edit методы отсутствуют. Обычный текст, preview disabled, произвольный parse_mode/payload extras запрещены. API credential неизбежно находится внутри request URL по протоколу Telegram: request objects/HTTP traces/token/exception internals не логировать. Проверенные API rejections возвращают только ok/error_code, без description; сетевые/неполные/некорректные ответы дают безопасную ошибку, не гарантируют отсутствие отправки.
+
+DispatchLedger — отдельный private SQLite WAL/FULL, project+bot namespace, update_id primary key. Перед потенциальной отправкой fresh local preparation/authorization выполняется под claim lock, payload hash и sending claim фиксируются durable. Для unavailable результата — cancelled без sender call. Один update не посылается повторно даже другим connection/после restart. Подтверждённый ответ с message id, правильными private chat/bot → api_confirmed; ok=false → api_rejected; timeout/malformed/mismatch → unknown. После process stop или сбоя фиксации результата sending остаётся inflight_or_unknown. Ни unknown, ни api_rejected автоматически не повторяются. Это защита от blind duplicate, не гарантия доставки/exactly-once: сообщение может остаться неотправленным и потребовать сверки. Delivered всегда None. Callback acknowledgement отдельным API методом не реализован.
+
+13 ledger tests +10 HTTP tests +6 первичных integration tests, далее дополнено inbox tests (итог ниже). Сначала тесты модулей красные; отдельно bool update_id=True воспроизвёл подмену integer1 и исправлен строгой типизацией. Проверены default disabled, private payload/keyboard, restart dedupe, accepted→timeout/writefailure, concurrent claim, API rejection/mismatch, cancelled revoke, process interruption, namespace/file permissions, fixed POST/bot verify/redirect/response bound/sanitized errors, end-to-end HTTP mock→adapter→current policy→ledger. Только short fake credential в тестах, никаких настоящих секретов.
+
+Durable inbox/cursor/ack protocol добавлен в этом же этапе (см. ниже); настоящий polling по-прежнему не запускался и не разрешён этим локальным тестом. prepare_fresh для dispatch должен читать уже verified canonical update из будущей локальной inbox и свежую policy; не вызывать сеть под claim lock и не возвращать старый cached reply. Полная схема/пределы: TELEGRAM_TRANSPORT.md.
+
+Дополнительно в этом же этапе реализован tools/telegram_inbox.py: private SQLite store-before-ack. Вся verified batch≤100 и next_offset фиксируются одной транзакцией. Poll использует только ранее committed offset; commit failure/невалидная пачка/CAS conflict его не продвигают. Неизвестные типы updates сохраняются, не теряются из-за reports-only parser. Processing status pending/handled/ignored/blocked отделён от source acknowledgment и от delivery outcome. Payload hash проверяется при чтении, приватный raw JSON нельзя печатать. Same-bot guard отклоняет другой client до запроса. Низкий новый update ID не угадывается как idle reset; это review, не сброс offset.
+
+10 inbox tests добавлены, включая отдельный red→green mismatched-client regression, и2queue→dispatch integration tests. Итог этапа:41новыйtest (13ledger+10HTTP+8integration+10inbox), **354 Python +101 Node PASS**. Проверено receive→atomic save→pending→fresh policy→dispatch→restart→ack; unknown dispatch при повторном чтении очереди не посылается заново и может быть помечен blocked для сверки. Нет production worker/scheduler/operator recovery; retention/idle reset/failover и единственный polling owner требуют отдельно разрешённой test integration. Все API/сеть/отправки в тестах mocked.
+
+
+---
+
 # Telegram report adapter: trusted polling input — 28.10.2026
 
 Добавлен tools/telegram_report_adapter.py. Инъецируемый fetch_verified_updates — только доверенный серверный Bot API transport с проверенным TLS/ботом; настоящий HTTP-клиент/проверка происхождения/secret handling не реализованы. Структура ok/result и имя класса не доказывают authenticity. Нельзя подключать public JSON body, LLM args или непроверенный webhook к этому callable. Поддержан только reports-only разбор verified polling input, без изменения действующего GAS poller/webhook.

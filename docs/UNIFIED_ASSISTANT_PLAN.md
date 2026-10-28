@@ -319,3 +319,13 @@ Private ownership registry и versioned policy persistence реализован�
 ## 32. Verified-input TG report adapter — 28.10.2026
 
 Private sender/chat identity и bot-owned callback parser/routing реализованы для injected trusted API source;11adapter+1durable-policy integration tests/Python313 PASS. Real source verification/HTTP/offset/ack/delivery остаются отдельными слоями. GAS не менялся, никакого API/deploy. Контракт REPORT_REQUESTS.md.
+
+
+## 33. HTTP/dispatch candidate — 28.10.2026
+
+Fixed-origin verified bot HTTP и durable dispatch ledger проходят tests, дополнены inbox (итог41новыйtest/Python354). No blind resend unknown/partial failures; default off, только mocks. Durable inbox/cursor реализован в этом же этапе; остаются real worker/операторская сверка и sandbox integration до настоящего getUpdates; OAuth/email/semantic grading также не подключены. Контракт TELEGRAM_TRANSPORT.md.
+
+
+## 34. Bounded queue worker — 29.10.2026
+
+Inbox/current policy/dispatch связаны reports-only worker; markfailure recovery не дублирует send и не требует доступа к прежнему private report.10worker tests,51новыйtest всего блока/Python364+Node101 PASS. Live bootstrap/полный dispatcher/backoff/monitoring/operator recovery/callback ack и sandbox integration остаются, actual API не вызывались.

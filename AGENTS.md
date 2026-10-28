@@ -253,3 +253,12 @@ Bare /progress и page N реализованы локально через list
 
 
 telegram_report_adapter.py — only trusted verified polling input parser (11tests+1integrated;Python313). fetch_verified_updates должен быть server-side authenticated/TLS Bot API transport; JSON ok/result не доказывает origin. Не принимать public body/LLM args/unverified webhook как verified input. Только numeric private from/chat, current confirmed binding; callbacks message от configured bot. Реальные HTTP/offset/ack/outbox/sends не реализованы, repeated prepare не delivery dedupe. Numeric subjects103/104/101 в assistant_demo исключительно fake; не переносить в production.
+
+
+telegram_http.py и report_dispatch.py реализованы mock-only (41tests всего с inbox/integration,Python354). Network/writes/dispatch default off; flags не разрешение на реальные ресурсы. Verify configured bot, fixed HTTPS/no redirects, не логировать request URLs/токены/HTTP traces. Fresh local preparation перед durable claim/send; api_confirmed не delivery, unknown/inflight не повторять вслепую. Durable inbox/cursor/ack реализован в telegram_inbox.py и проверен только моками; реальный getUpdates не запускать без отдельной sandbox-приёмки/разрешения, не совмещать с действующим poller. Под claim lock нельзя выполнять сетевой polling; prepare_fresh читает verified local inbox/current policy. Контракт TELEGRAM_TRANSPORT.md.
+
+
+telegram_inbox.py сохраняет всю verified batch+cursor атомарно до ack, включая неизвестные update types; source ack не означает processing/delivery. Same-bot/CAS/hash checks обязательны; не брать cursor из текущего max processed. Низкие IDs не считать автоматически reset; retention/idle reset/failover и восстановление backup требуют сверки. ПолныйPython354/Node101 PASS, реальных API/отправок не было.
+
+
+report_worker.py — bounded reports-only queue step (10tests, итого51новыйtest блока/Python364+Node101). Default dispatch off; bot+project namespace должны совпадать. Recover existing receipt без private reread/send; unknown/rejected → blocked, unsupported → deferred/pending для других функций. Не использовать как замену всему боту: нужен общий dispatcher/backoff/monitoring/operator recovery; callback ack не реализован. Реальных transport API/deploy не было.

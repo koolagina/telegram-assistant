@@ -4,7 +4,7 @@
 
 ## Актуальная проверка материалов
 
-Локальный Telegram report adapter строит context из private from/chat IDs только для доверенного polling transport и вызывает policy-gated requests/callbacks. **313 Python +101 Node PASS**. Реальный HTTP/authentication/offset/ack/send transport и semantic grading не подключены. Полный offline пример: `bash tools/check-local.sh`. [Состояние](docs/LOCAL_ASSISTANT_STATUS.md), [контракт](docs/REPORT_REQUESTS.md).
+Mock-tested Telegram HTTP client и private dispatch ledger связывают current-policy отчёт с состояниями API-confirmed/rejected/unknown без blind resends. Сеть и отправки по умолчанию выключены. **364 Python +101 Node PASS**. Store-before-ack inbox/cursor также проверены локально; bounded ReportWorker добавлен; live runtime/integrations и semantic grading ещё не подключены. Локальная приёмка: `bash tools/check-local.sh`. [Состояние](docs/LOCAL_ASSISTANT_STATUS.md), [транспорт и пределы](docs/TELEGRAM_TRANSPORT.md).
 
 ## ВАЖНО: статус исходников
 

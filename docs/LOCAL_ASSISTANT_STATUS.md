@@ -1,4 +1,4 @@
-# Локальный кандидат единого помощника — 28.10.2026
+# Локальный кандидат единого помощника — 29.10.2026
 
 Основной GAS-кандидат: `src/telegram_assistant_v2_0_5_candidate.gs`; он не изменён этим этапом. Python-компоненты находятся в `tools/`. Архивные snapshots сохранены. Какая версия реально развёрнута, по локальному репозиторию не подтверждено; новых deploy/триггеров/webhook не выполнялось.
 
@@ -9,7 +9,7 @@
 | Хранилище результатов | MaterialCatalog SQLite, immutable done, needs_recheck | Реальный ingestion/backup runtime; done не означает принятую отработку |
 | Принадлежность | ReportRegistry private SQLite, immutable links, unique check, retry | Trusted publication adapter для реальных submission/enrollment |
 | Права | AccessPolicy, PolicyStore version snapshots/CAS/no older fallback | Реальная authentication и административная процедура подтверждения/отзыва |
-| Запросы | Self list/page/buttons, teacher report, current-policy gating, verified-input TG parser | Проверка происхождения TG source/HTTP client, endpoints, sends/receipts/delivery |
+| Запросы | Self list/page/buttons, teacher report, current-policy gating, verified-input TG parser | Mock-tested fixed-origin HTTP и dispatch ledger добавлены; store-before-ack inbox и bounded ReportWorker добавлены; остаются live runtime/sends/delivery |
 | Учебный журнал | Read-only локальное чтение структуры XLSX | Полный расчёт успеваемости, синхронизация отметок, запись реального журнала |
 | Production | Исходники и локальные тесты | Разрешённая sandbox-приёмка, bindings, rollout |
 
@@ -28,7 +28,7 @@ python tools/review_demo.py
 python tools/assistant_demo.py
 ```
 
-Подтверждено: **313 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
+Подтверждено: **364 Python +101 Node PASS**. Демо прошло работу с настоящими локальными SQLite, собственную/чужую кнопку, повторную загрузку, страницы, перезапуск, отзыв прав, stale write и сбои публикации до/после accepted commit. Ни один такой тест не подтверждает реальную доставку или работу production API.
 
 ## Данные и восстановление
 
@@ -42,7 +42,11 @@ Backup/restore нескольких DB должен быть согласова�
 
 1. Подготовить проверяемый authentication/provisioning adapter для отдельной тестовой среды; не считать Telegram username, email из текста или ChatGPT args подтверждённой identity.
 2. Подключить trusted ingestion и актуальные материалы, утвердить полноту критериев. Проходной порог нужен до автоматического принятия; сейчас все отчёты требуют преподавателя.
-3. Добавить transport с повторной проверкой прав перед фактической отправкой, безопасным форматированием, различением prepared/API success/delivery и восстановлением частичных сбоев.
+3. Связать реализованные HTTP/inbox/dispatch кандидаты в серверный runtime с единственным polling owner, проверенным provisioning и операторской сверкой blocked/unknown; не запускать рядом с рабочим GAS poller. Повторная policy и prepared/API success/delivery уже проверены локально, не на реальной доставке.
 4. Провести отдельно разрешённую интеграционную приёмку на test bot/resources, затем согласованный rollout. Реальные письма, изменения журнала и production не входят в текущие локальные действия.
 
 Telegram adapter принимает только инъецируемый trusted verified polling transport; произвольный JSON не аутентифицируется. Новый модуль не выполняет getUpdates/offset/ack и не подключён к существующему poller. Fake numeric subjects демонстрации не являются реальными bindings.
+
+HTTP-клиент и dispatch ledger теперь реализованы и проверены только mock transport. Network/writes/dispatch default off; реальных API-вызовов нет. Durable inbox/cursor реализован и проверен моками; live runtime/retention/idle reset/единственный polling owner требуют sandbox-приёмки; api_confirmed не delivery, unknown не повторяется автоматически. Подробности TELEGRAM_TRANSPORT.md.
+
+ReportWorker теперь связывает inbox→reports→dispatch и восстанавливает mark по API receipt без повторной отправки; только bounded local step, не live scheduler/полный bot dispatcher. Unknown/rejected → blocked для оператора; unsupported остаётся pending. Общий dispatcher/backoff/monitoring/операторский recovery и callback acknowledgement ещё не реализованы.

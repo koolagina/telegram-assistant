@@ -1,3 +1,14 @@
+# Reports-only queue worker and failure recovery — 29.10.2026
+
+- Bounded worker соединяет inbox/current policy/dispatch; API receipt recovery не повторяет send после mark failure, unsupported updates сохраняются для других handlers.
+- Итого51новыйtest транспортного блока; полныйPython364+Node101 PASS, вся приёмка offline/mock-only. Real runtime/сервисы/журнал/deploy не затронуты.
+
+# Mock-tested Telegram HTTP and durable dispatch ledger — 28.10.2026
+
+- Fixed-origin bounded POST/no redirect HTTP, configured bot verification, default network/writes off.
+- Durable per-update claim, fresh preparation, api_confirmed/rejected/unknown/cancelled; no blind retry after timeout/process stop/result persistence failure.
+- 13ledger+10HTTP+8integration+10inbox tests, Python354 PASS; реальные API/отправки не выполнялись. Durable store-before-ack inbox/cursor добавлен, real worker отсутствует, GAS неизменён.
+
 # Trusted-input Telegram report adapter — 28.10.2026
 
 - Private numeric from/chat identity parsing, bot-owned callbacks и reports-only routing через существующую current policy; без настоящего API/offset/ack/send.
