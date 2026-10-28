@@ -299,3 +299,8 @@ Content evidence binding реализован локально,9tests/полны
 ## 28. Локальные команды отчёта — 28.10.2026
 
 In-process progress/report готовят ограниченные plain-text ответы с purpose-bound current policy.10tests/полныйPython260 PASS. Нет sends/API/deploy; bare /progress ещё требует trusted self-list resolver/pagination. Контракт REPORT_REQUESTS.md.
+
+
+## 29. Bare /progress и self pagination — 28.10.2026
+
+Локальный trusted self resolver и5reports/page реализованы;10tests/полныйPython270 PASS. Нет foreign reads/counts, права проверяются при каждой странице. Реальные bot commands, identity persistence/transport, journal-grade aggregation и semantic evaluation остаются отдельными неподключёнными компонентами. Контракт REPORT_REQUESTS.md.

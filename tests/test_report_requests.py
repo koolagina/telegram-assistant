@@ -27,7 +27,7 @@ class RequestTests(unittest.TestCase):
         self.f.policy=self.f.fixture.policy(teaching_grants=())
         self.assertEqual(self.prepare('/report report-a','001').status,'unavailable')
     def test_invalid_commands_do_not_load_payload(self):
-        for command in ['/progress','/report x user=teacher','/send report-a','/progress report-a\n/report other']:
+        for command in ['/progress page 0','/report x user=teacher','/send report-a','/progress report-a\n/report other']:
             self.assertEqual(self.prepare(command).status,'invalid_request')
         self.assertEqual(self.f.loads,[])
     def test_unicode_limits_and_control_characters(self):

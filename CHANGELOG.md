@@ -1,3 +1,8 @@
+# Self-only progress list and pagination — 28.10.2026
+
+- Bare progress + page N, trusted self resolution, five own reports per page, no foreign reads/counts, revoke/rebind checks.
+- 10 новых tests, полныйPython270 PASS; Node не перезапускался, GAS неизменён. Real commands/transport не подключены.
+
 # Prepare policy-gated local report replies — 28.10.2026
 
 - Локальные progress/report requests, purpose narrowing, bounded Unicode plain-text replies; без отправки/доставки.

@@ -4,7 +4,7 @@
 
 ## Актуальная проверка материалов
 
-Локальные `/progress REPORT_ID` и `/report REPORT_ID` готовят policy-gated plain-text ответы через `tools/report_requests.py`; ничего не отправляют. **260 Python PASS**, включая 10 новых tests; Node не перезапускался (последний101 PASS). Эти команды ещё не включены в боте, реальные identity/transport/журнал и semantic grading не подключены. [Контракт](docs/REPORT_REQUESTS.md).
+Локальный `/progress` показывает до5собственных review reports, `/progress page N` листает страницы, `/progress ID` открывает результат; `/report ID` предназначен преподавателю. **270 Python PASS**, включая 10 новых tests; Node не перезапускался (последний101 PASS). Реальные команды бота, аккаунты, отправки и журнал не подключены; это не полный расчёт успеваемости. [Контракт](docs/REPORT_REQUESTS.md).
 
 ## ВАЖНО: статус исходников
 

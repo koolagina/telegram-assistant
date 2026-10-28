@@ -36,6 +36,24 @@ def prepare_report_reply(reader,context,command):
     if (type(command) is not str or len(command)>300
             or any(c in command for c in ('\r','\n'))):
         return PreparedReply('invalid_request','Укажите /progress ID_отчёта или /report ID_отчёта.')
+    list_match=re.fullmatch(r'/progress(?: page ([1-9][0-9]{0,5}|1000000))?',command)
+    if list_match is not None:
+        try:
+            if type(reader) is not ReportReader:raise ReportAccessError('Report unavailable')
+            page=reader.list_self(context,page=int(list_match.group(1) or '1'))
+        except ReportAccessError:
+            return PreparedReply('unavailable','Отчёт недоступен. Проверьте ссылку и подтверждение доступа.')
+        lines=['Мои работы — страница '+str(page['page']),'Предварительные результаты, без начисления баллов.','']
+        for item in page['items']:
+            if item['available']:
+                assignment=_text(item['report'].get('assignment_id','Работа'))[:80]
+                lines.append(assignment+' — нужна проверка преподавателя')
+            else:
+                lines.append('Результат пока недоступен')
+            lines.append('/progress '+_text(item['report_id']))
+        if not page['items']:lines.append('На этой странице нет доступных работ.')
+        if page['next_page'] is not None:lines.append('Далее: /progress page '+str(page['next_page']))
+        return PreparedReply('prepared',_bounded('\n'.join(lines)))
     match=re.fullmatch(r'/(progress|report) ([^\s]+)',command)
     if match is None:
         return PreparedReply('invalid_request','Укажите /progress ID_отчёта или /report ID_отчёта.')

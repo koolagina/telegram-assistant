@@ -7,7 +7,7 @@ No persistent link registry, Telegram/ChatGPT/email endpoint or sending here.
 from dataclasses import dataclass
 import json
 from types import MappingProxyType
-from assistant_access import AccessPolicy, identifier, live, aware
+from assistant_access import AccessPolicy, Context, identifier, live, aware
 
 class ReportAccessError(ValueError):
     pass
@@ -96,4 +96,48 @@ class ReportReader:
             return json.loads(json.dumps(result,allow_nan=False))
         except Exception:
             # Same safe response for missing/forbidden/corrupt report, no oracle/log leak.
+            raise ReportAccessError('Report unavailable') from None
+
+
+    def _self_student(self,context):
+        policy=self._policy();now=self._clock()
+        if type(policy) is not AccessPolicy or type(context) is not Context or not aware(now):
+            raise ReportAccessError('Report unavailable')
+        binding=policy.bindings.get((context.channel,context.subject))
+        if binding is None or not policy.authorize(context,'progress.self',binding.entity_id,now=now).allowed:
+            raise ReportAccessError('Report unavailable')
+        return binding.entity_id
+
+    def list_self(self,context,*,page=1):
+        """Current student's reports only, five per page. No caller student ID.
+
+        Page numbers are navigation, not authorization tokens. The immutable
+        trusted link registry defines ordering; ownership is checked afresh.
+        """
+        try:
+            if type(page) is not int or not 1<=page<=1000000:
+                raise ReportAccessError('Report unavailable')
+            student=self._self_student(context)
+            own=[]
+            for link in sorted(self._links.values(),key=lambda item:item.id):
+                if link.student_id!=student:continue
+                try:
+                    if self._mode(link,context)=='student':own.append(link)
+                except ReportAccessError:continue
+            offset=(page-1)*5
+            selected=own[offset:offset+5];items=[]
+            for link in selected:
+                try:
+                    report=self.read(link.id,context,purpose='progress.self')
+                    items.append({'report_id':link.id,'available':True,'report':report})
+                except ReportAccessError:
+                    # Only disclose an unavailable slot if current self access remains.
+                    if self._mode(link,context)!='student':raise ReportAccessError('Report unavailable')
+                    items.append({'report_id':link.id,'available':False})
+            if self._self_student(context)!=student:
+                raise ReportAccessError('Report unavailable')
+            for link in selected:
+                if self._mode(link,context)!='student':raise ReportAccessError('Report unavailable')
+            return {'page':page,'items':items,'next_page':page+1 if offset+5<len(own) else None}
+        except Exception:
             raise ReportAccessError('Report unavailable') from None
