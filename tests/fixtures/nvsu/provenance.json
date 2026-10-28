@@ -1,0 +1,25 @@
+{
+  "retrieved_on": "2026-10-27",
+  "source_host": "tm.nvsu.ru",
+  "kind": "sanitized live HTML structure; not fabricated selectors",
+  "sanitization": [
+    "teacher identity and lecturer ID replaced with test values",
+    "external teaching-material links replaced with example.invalid",
+    "subject names replaced with test label",
+    "source/group/auditory link IDs replaced with test values"
+  ],
+  "fixtures": {
+    "previous": {
+      "raw_sha256": "6ea50c76b5ec4047d45431b771009d27454f919f4bcfe4fc74e9e33c254f43a2",
+      "fixture_sha256": "63d60ac0ec232ea1faa3014de11559beaefb777ca12ba32e12412bc3e5ee7ada"
+    },
+    "current": {
+      "raw_sha256": "7d35dbfdf979ec748de01128b323488b84cc26c1af22ce6327d58619d3e2c9de",
+      "fixture_sha256": "a2dada71973f07f618d5503b75a0f3c198964ba0802124284b35b4f177f8f82a"
+    },
+    "next": {
+      "raw_sha256": "1fb10c88f629a261b27f0e5cd9b685d16cda29ba3e40fc71ac60710fe8686456",
+      "fixture_sha256": "102c80d6e297a4726df66843b2052ed9a0e29139d2d7519cacaf51530a0914a5"
+    }
+  }
+}

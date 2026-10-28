@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+*secret*
+*token*
+*.log
+node_modules/
+.DS_Store
+
+# Local Python parser tests
+__pycache__/
+*.py[cod]
+
+# Local Calendar state and private plan/snapshot artifacts
+.nvsu-state/
+*.sqlite3
+*.sqlite3-*
