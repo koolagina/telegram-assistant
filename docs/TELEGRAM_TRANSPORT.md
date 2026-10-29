@@ -1,3 +1,9 @@
+# Дополнение 29.10.2026 — consultation action worker
+
+ConsultationWorker отделён от read-only ReportWorker: локальные изменения и их reply receipt атомарны в action sandbox; DispatchLedger.prepare_fresh только проверяет текущие owner права и готовит уже сохранённый UI reply. Не вызывать локальные handlers повторно из send retry. Updates/bot/project связываются явно, defaults off. Полный483Python/110Node PASS; все sends mock-only, plan.execution=not_executed. Контракт/восстановление/миграция private synthetic store — CONSULTATION_WORKER.md. Общий bot dispatcher, callback acknowledgement, external executor/real auth/orphan recovery ещё отсутствуют.
+
+---
+
 # Telegram report transport — локальный кандидат
 
 `telegram_http.py` и `report_dispatch.py` проверены только моками. Не использовать настоящие ресурсы/токены без отдельного разрешения. GAS-кандидат и действующий bot transport не менялись.

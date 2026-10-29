@@ -10,12 +10,14 @@ from dataclasses import dataclass,asdict,field,replace
 import datetime as dt
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import sqlite3
 from zoneinfo import ZoneInfo
 from assistant_access import AccessPolicy,aware,identifier
 from material_versions import digest
+from report_requests import PreparedReply,ReplyButton
 
 TZ=ZoneInfo('Asia/Yekaterinburg')
 PENDING='Ожидает решения'
@@ -67,11 +69,12 @@ def _decode(payload):
     return Booking(**data)
 
 class ConsultationActions:
-    def __init__(self,path,*,namespace,owner_id,policy_provider,clock,calendar_snapshot,student_eligible):
+    def __init__(self,path,*,namespace,owner_id,policy_provider,clock,calendar_snapshot,student_eligible,bot_id=None):
         if (not identifier(namespace) or not identifier(owner_id)
+                or (bot_id is not None and (type(bot_id) is not int or not 0<bot_id<2**52))
                 or not all(callable(x) for x in (policy_provider,clock,calendar_snapshot,student_eligible))):
             raise ActionError('Trusted local configuration required')
-        self.owner=owner_id;self.policy=policy_provider;self.clock=clock
+        self.owner=owner_id;self.policy=policy_provider;self.clock=clock;self.namespace=namespace;self.bot_id=bot_id
         self.calendar_snapshot=calendar_snapshot;self.student_eligible=student_eligible
         path=Path(path).absolute()
         if path.is_symlink() or path.parent.is_symlink():raise ActionError('State symlinks forbidden')
@@ -84,34 +87,73 @@ class ConsultationActions:
         self.db=sqlite3.connect(path,timeout=5,isolation_level=None)
         try:
             tables={r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-            if tables and tables!={'action_meta','bookings','action_intents','action_plans'}:raise ActionError('Foreign state')
+            base={'action_meta','bookings','action_intents','action_plans'}
+            if tables and tables not in (base,base|{'action_updates'}):raise ActionError('Foreign state')
             self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
             with self.transaction():
                 self.db.execute('CREATE TABLE IF NOT EXISTS action_meta(id INTEGER PRIMARY KEY, identity TEXT NOT NULL)')
                 self.db.execute('CREATE TABLE IF NOT EXISTS bookings(id TEXT PRIMARY KEY,payload TEXT NOT NULL)')
                 self.db.execute('CREATE TABLE IF NOT EXISTS action_intents(token TEXT PRIMARY KEY,payload TEXT NOT NULL,state TEXT NOT NULL)')
                 self.db.execute('CREATE TABLE IF NOT EXISTS action_plans(token TEXT PRIMARY KEY,payload TEXT NOT NULL)')
+                self.db.execute('CREATE TABLE IF NOT EXISTS action_updates(update_id INTEGER PRIMARY KEY,payload_hash TEXT NOT NULL,subject TEXT NOT NULL,reply TEXT NOT NULL,reply_hash TEXT NOT NULL)')
                 identity=digest([namespace,owner_id,'offline-consultation-plans-v1'])
                 row=self.db.execute('SELECT identity FROM action_meta WHERE id=1').fetchone()
                 if row is None:self.db.execute('INSERT INTO action_meta VALUES(1,?)',(identity,))
                 elif row[0]!=identity:raise ActionError('Foreign project or owner')
+                known=dict(self.db.execute('SELECT id,identity FROM action_meta'))
+                if set(known)-{1,2}:raise ActionError('Unknown action metadata')
+                if bot_id is not None:
+                    if 2 not in known:self.db.execute('INSERT INTO action_meta VALUES(2,?)',(str(bot_id),))
+                    elif known[2]!=str(bot_id):raise ActionError('Foreign bot binding')
         except Exception:
             self.db.close();raise ActionError('Local action store unavailable') from None
     def close(self):self.db.close()
     @contextlib.contextmanager
     def transaction(self):
-        self.db.execute('BEGIN IMMEDIATE')
+        # Nested local handlers participate in the outer update transaction.
+        # SAVEPOINT names are generated internally, never from request input.
+        nested=self.db.in_transaction;name='action_'+secrets.token_hex(8)
+        self.db.execute('SAVEPOINT '+name if nested else 'BEGIN IMMEDIATE')
         try:
             yield
-            self.db.execute('COMMIT')
+            self.db.execute('RELEASE SAVEPOINT '+name if nested else 'COMMIT')
         except BaseException:
-            self.db.execute('ROLLBACK');raise
+            if nested:
+                self.db.execute('ROLLBACK TO SAVEPOINT '+name)
+                self.db.execute('RELEASE SAVEPOINT '+name)
+            else:self.db.execute('ROLLBACK')
+            raise
     def _auth(self,context):
         policy=self.policy();now=self.clock()
         if (type(policy) is not AccessPolicy or not aware(now)
                 or not policy.authorize(context,'personal.read',self.owner,now=now).allowed):
             raise ActionError('Consultation action unavailable')
         return now
+    def check_access(self,context):
+        """Current owner gate without data loading, for fresh reply dispatch."""
+        self._auth(context)
+    def process_update(self,context,update_id,payload_hash,process,*,actions_enabled=False):
+        """Atomic LOCAL handler+receipt, never network under this transaction.
+
+        process is trusted application code; it may call this sandbox's local
+        methods only. A real Calendar/Telegram operation here is forbidden.
+        """
+        try:
+            if (actions_enabled is not True or self.bot_id is None or type(update_id) is not int or not 0<=update_id<2**52
+                    or type(payload_hash) is not str or re.fullmatch(r'[a-f0-9]{64}',payload_hash) is None or not callable(process)):
+                raise ActionError('Local processing disabled or invalid')
+            self._auth(context)
+            with self.transaction():
+                self._auth(context)
+                row=self.db.execute('SELECT payload_hash,subject,reply,reply_hash FROM action_updates WHERE update_id=?',(update_id,)).fetchone()
+                if row is not None:
+                    if row[0]!=payload_hash or row[1]!=context.subject or digest(row[2])!=row[3]:raise ActionError('Update identity/receipt conflict')
+                    reply=_decode_reply(row[2]);self._auth(context);return reply
+                reply=process();encoded=_encode_reply(reply)
+                self._auth(context)
+                self.db.execute('INSERT INTO action_updates VALUES(?,?,?,?,?)',(update_id,payload_hash,context.subject,encoded,digest(encoded)))
+                return reply
+        except Exception:raise ActionError('Local consultation processing unavailable') from None
     def add(self,booking):
         """Trusted fixture ingestion, never a public command or real Sheet import."""
         if (type(booking) is not Booking or not all(identifier(x) for x in (booking.id,booking.student_id,booking.event_id))
@@ -231,3 +273,30 @@ class ConsultationActions:
                 self.db.execute("UPDATE action_intents SET state='planned' WHERE token=?",(token,))
                 return plan
         except Exception:raise ActionError('Consultation action unavailable; refresh and verify sources') from None
+
+
+def _encode_reply(reply):
+    if (type(reply) is not PreparedReply or reply.status not in ('prepared','unavailable','invalid_request')
+            or reply.parse_mode is not None or reply.link_preview_disabled is not True or type(reply.text) is not str
+            or not reply.text.strip() or len(reply.text.encode('utf-16-le'))//2>3500 or type(reply.buttons) is not tuple
+            or len(reply.buttons)>8):raise ActionError('Invalid local reply')
+    rows=[]
+    for row in reply.buttons:
+        if type(row) is not tuple or not 1<=len(row)<=8:raise ActionError('Invalid local keyboard')
+        items=[]
+        for button in row:
+            if (type(button) is not ReplyButton or type(button.label) is not str or not button.label.strip() or len(button.label)>64
+                    or type(button.callback_data) is not str or not 1<=len(button.callback_data.encode())<=64):raise ActionError('Invalid local button')
+            items.append([button.label,button.callback_data])
+        rows.append(items)
+    payload=json.dumps({'status':reply.status,'text':reply.text,'buttons':rows},ensure_ascii=False,allow_nan=False)
+    if len(payload.encode())>32768:raise ActionError('Reply limit exceeded')
+    return payload
+
+
+def _decode_reply(payload):
+    data=json.loads(payload)
+    if type(data) is not dict or set(data)!={'status','text','buttons'} or type(data['buttons']) is not list:raise ActionError('Invalid stored reply')
+    reply=PreparedReply(data['status'],data['text'],buttons=tuple(tuple(ReplyButton(*item) for item in row) for row in data['buttons']))
+    _encode_reply(reply)
+    return reply

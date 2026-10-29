@@ -71,3 +71,8 @@ Demo `python tools/consultation_demo.py` теперь использует на�
 | Старая кнопка после смены адресата/event | Полная row revision в reference | Red→green PASS | CAS перед реальной записью |
 | Принятие чужого события за свой hold | Calendar-qualified ID + trusted binding + времена | Same ID across calendars/forged marker PASS | Live ownership collection |
 | Потеря точности времени | Отказ subminute typed time, без округления | Node red→green PASS | Реальная historical time-cell приёмка |
+
+
+## Локальная маршрутизация updates — 29.10.2026
+
+Следующий локальный компонент реализован отдельно: [CONSULTATION_WORKER.md](CONSULTATION_WORKER.md). Handler и reply receipt атомарны, UI dispatch имеет отдельный fresh owner gate; demo проходит worker с mocks. Это не real runtime/executor, локальные планы не исполняются и рабочие ресурсы не меняются. Актуальная полная проверка483Python/110Node PASS.

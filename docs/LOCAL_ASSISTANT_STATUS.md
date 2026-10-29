@@ -1,3 +1,9 @@
+# Дополнение 29.10.2026: action worker
+
+Отдельный локальный consultation worker готов: atomic handler+receipt, separate UI dispatch, defaults off. 24 новыхtests, полный483Python/110Node PASS. Demo synthetic, sender mock. Никакого real action executor/authoritative Sheet update/student notification/развёртывания. Контракт CONSULTATION_WORKER.md.
+
+---
+
 # Дополнение 29.10.2026: источники консультаций
 
 Read-only helper/нормализаторы и optional source_version для queue refs готовы;459Python/110Node PASS. Полнота не выводится из пустого Calendar: trusted verifier attestation required, в demo только fake. Реальные Google reads/writes отсутствуют, exporter не установлен. Следующие границы подключения: live collection/auth/ownership, verifier законченного НВГУ import, CAS/dispatcher/executor. Контракт CONSULTATION_FEED.md.

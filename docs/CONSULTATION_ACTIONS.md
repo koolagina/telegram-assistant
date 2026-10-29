@@ -41,3 +41,8 @@ SQLite WAL/FULL, private directory/file, namespace+owner identity, `BEGIN IMMEDI
 ## Следующий подготовленный компонент — 29.10.2026
 
 Read-only export helper и source/Calendar normalization реализованы отдельно: [CONSULTATION_FEED.md](CONSULTATION_FEED.md). Demo теперь проходит этот вход, но snapshots/verification synthetic. Live collection/identity/ownership и verifier реального полного импорта не подключены; исходный action sandbox не превращён в зеркало рабочей таблицы. Полная приёмка расширена до459Python/110Node PASS.
+
+
+## Локальная маршрутизация updates — 29.10.2026
+
+Следующий локальный компонент реализован отдельно: [CONSULTATION_WORKER.md](CONSULTATION_WORKER.md). Handler и reply receipt атомарны, UI dispatch имеет отдельный fresh owner gate; demo проходит worker с mocks. Это не real runtime/executor, локальные планы не исполняются и рабочие ресурсы не меняются. Актуальная полная проверка483Python/110Node PASS.

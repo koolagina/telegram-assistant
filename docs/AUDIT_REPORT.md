@@ -1,3 +1,13 @@
+# Локальный обработчик действий консультаций — 29.10.2026
+
+Добавлен tools/consultation_worker.py: existing private inbox → atomic local handler+reply receipt → separate DispatchLedger UI reply. Mutation не вызывается из send/prepare_fresh. ConsultationActions.process_update добавляет action_updates и nested SAVEPOINT; локальные status/intent/plan/receipt фиксируются атомарно. bot_id optional для прежних callers, обязателен и immutable для worker. Старый synthetic v1 store получает только добавочную таблицу, планы/ownership сохранены и проверены тестом; это не миграция рабочих Sheets.
+
+24 новых tests сначала падали до реализации: receipt failure/stop/invalid reply/revoke rollback, two-connections handler once, restart/corruption, callback identity/bot/project, UI unknown/inflight/markfailure recovery. Полная проверка **483 Python PASS +110 Node PASS**,4offline demos. Consultation demo теперь идёт через реальные локальные stores/worker и mock sender. `api_confirmed` означает лишь mock UI response, meeting plan остаётся not_executed; уведомления студенту/владельцу из плана не отправляются. Реальных API, рабочего бота/ресурсов/deploy не было.
+
+Контракт/таблица дефектов/ограничений: [CONSULTATION_WORKER.md](CONSULTATION_WORKER.md). Fresh owner gate before private reply, existing send receipt recovery без private reread. Unknown/rejected не повторяются, active inflight не блокируется как failure. Неподдержанные updates deferred/pending; общего dispatcher/real auth/source verifier/authoritative CAS/executor/orphan recovery/student agreement пока нет.
+
+---
+
 # Проверяемые источники консультаций — 29.10.2026
 
 Готовы tools/consultation_feed.py и отдельный **неустановленный** src/tools/consultation_snapshot_export.gs. Exact 11-column schema, aware датировки/AsiaYekaterinburg, истинные age/complete, row-revision guards; calendar reads используют существующий GoogleCalendarAdapter с injected mocks. BusyFeed сохраняет другие/manual/all-day/recurring события и различает одинаковые IDs в разных календарях; ownership только trusted bindings, не title/description marker. Полнота занятий требует отдельно выданной trusted TeachingVerification, привязанной к exact calendar snapshot/range/teacher/current source revision. Реальный verifier ещё не реализован/не подключён, аттестация в demo исключительно fake.

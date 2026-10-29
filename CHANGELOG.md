@@ -1,3 +1,10 @@
+# 29.10.2026 — atomic local consultation worker
+
+- Existing inbox/action sandbox/dispatch связаны отдельным opt-in worker; action processing вне read-only send preparation. Локальный receipt атомарен с plan/intent/status через SAVEPOINT.
+- Добавочная action_updates, private reply hashes, immutable explicit bot binding; compatibility с synthetic v1 plans и direct API без bot_id.
+- Fresh owner gate перед UI send, no duplicate handler/restart/unknown resend; defaults off. Demo теперь проходит worker и injected mock sender.
+- 24 новых tests, полный483Python/110Node PASS. Нет actual Calendar/Sheet execution, notify/student agreement, polling/deploy или real sends. Контракт docs/CONSULTATION_WORKER.md.
+
 # 29.10.2026 — read-only вход заявок и занятости
 
 - ConsultationFeed/BusyFeed: existing 11 columns, typed dates, freshness/coverage, private row revisions, verified binding-only hold, calendar-qualified IDs; существующий GoogleCalendarAdapter, без нового Calendar transport.
