@@ -116,3 +116,8 @@ Protected run40909972837 после отдельного owner approval: prepare
 
 
 29.10.2026 — safe Google reason diagnostics: только для Apps Script API errors извлекается google_error_reason из фиксированного allowlist стандартных ErrorInfo/legacy reasons, иначе unclassified. Не выводятся message/details/metadata/URLs или credentials; unknown write остаётся без retry. Regression red→green:15relay+9legacy PASS. Причина прошлых403 не восстанавливается этим изменением, для получения reason нужен новый отдельно подтверждённый запрос; live запись в рамках этой доработки не выполнялась.
+
+
+## Диагностика причины не определила отказ — 29.10.2026
+
+Owner-approved run40910810292: prepare/backup succeeded; PUT returned403, google_error_reason=unclassified, API acceptance/verification false. Не трактовать unclassified как конкретную scope/IAM/API ошибку. Повторные попытки mutation приостановлены. Read-only recovery run40927862649 (maina960f08d049b1a74466b08e5c92efef41fac8682) success; encrypted artifact/target/fingerprint проверены,8исходных файлов без изменений. Новая диагностика покрыта предыдущими15relay+9legacy tests, но live причину не установила. Нельзя требовать очередное одинаковое approval или расширять scopes наугад. Для дальнейшей диагностики нужен подробный ответ Google в закрытом канале либо проверка прав аккаунта/доступа к проекту без записи; прежние response bodies не сохранялись.
