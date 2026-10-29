@@ -328,3 +328,8 @@ User approved preparing backup connection; Windows device. tools/clasp pins3.4.1
 ## Windows backup received as report — 29.10.2026
 
 User reported custom Desktop OAuth success then Pulled8files (manifest+main+6helpers). Standard OAuth client had been blocked; ownclient used, no security-policy bypass. Files remain user-local, not in Codex; no inspectedsource/deploymentversion/independent grants orACL evidence. Do not replay successfullogin/pull or overwritebackup; credentials/clientsecret/callbacks/IDs notGit/chat. Need private mainsource+manifest copies for firstdiff, redacthardcodedsecrets in separatecopies only. No implicitpushauthorization; fullproject/helperreview stillrequired. Docs only/last591Python178Node PASS6demos not rerun. docs/APPS_SCRIPT_CONNECTION.md.
+
+
+## Uploaded main source reviewed — 29.10.2026
+
+Actualuploadedmain445lines/37functions differsarchive1.4.3onlyversionheader and unguardedcallback ACK;36functionblocksidentical. Mockreproducednegativeapproval/expiredcallbackblocking; candidate2.0.5fixes,101NodecandidatePASS.5baseheadersmatch butresourceconfig changes. UploadedmanifestV8/AsiaYekaterinburg/Calendarv3alias known; not proof of deployment or existingendpoint.6helperscontents stillmissing, nofullprojectcollisioncheck. No copiedrawsource/hardcodedresourceID inGit. Preferminimalcompatiblepatchfirst; nofull2.0.5push orarchive merge/bootstrapmanifestupload. docs/APPS_SCRIPT_SOURCE_REVIEW.md.

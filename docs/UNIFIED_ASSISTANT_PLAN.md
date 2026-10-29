@@ -424,3 +424,8 @@ Existingweeklycollector reused for exportKulaginaNvsuNovemberReadOnly,02–29Nov
 ## 53. Read-only clasp connection preparation — 29.10.2026
 
 Windows local-only bootstrap prepared/pinned3.4.1+lock/6newNode;591Python178Node fullPASS6demos. No GoogleOAuth/pull/push/deploy; user participation needed for browserlogin, no credentialchat. Localidentity != Codexcloudconnection. Existingcode must be backedup/reviewed before any complete-project write; trigger risk evenwithout deployment. New receivedsnapshot onlyweekly02–08.11/checksumvalid/fresh11exact, broaderscope stillpending. docs/APPS_SCRIPT_CONNECTION.md.
+
+
+## 54. Main source/manifest reviewed — 29.10.2026
+
+Uploadedmain37functions36sameasarchive1.4.3, missingguardedACK. Mockverifiednegativeapprovalbypass/expiredcallbackblocksnextupdate;2.0.5fixesbut80newfunctions/configmigration.5baseheadersmatch/101NodecandidatePASS/syntaxJSONPASS. Workingresourcesunchanged;6helpersneededforfulluploadreview. Prioritize minimalcompatiblepatch, not wholesale2.0.5; actualdeployversion/props/triggersunknown. docs/APPS_SCRIPT_SOURCE_REVIEW.md.

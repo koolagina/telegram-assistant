@@ -1,3 +1,9 @@
+# 29.10.2026 — uploaded Apps Script source/manifest review
+
+- Compared uploaded445line/37function main with archive1.4.3:36function blocks identical, unguarded callback ACK and version header differ. Candidate2.0.5has80additional functions;5base headers match.
+- Mock probes reproduced negative approval bypass and expired-callback polling blockage in uploadedsource, candidate fixes verified. Syntax/JSONPASS,101candidate NodePASS. No source/manifest/resource changes; uploads not committed.
+- Preserve actualmanifest/service alias;6helpers still needed before full upload review. Minimal patch preferred over full candidate replacement. docs/APPS_SCRIPT_SOURCE_REVIEW.md.
+
 # 29.10.2026 — owner-run Apps Script source backup downloaded
 
 - User reports successful Windows custom-client OAuth after standard-client block; explicit read-only pull returned8files. No remote source writes/deployments claimed.

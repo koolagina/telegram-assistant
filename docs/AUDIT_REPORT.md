@@ -1,3 +1,13 @@
+# 29.10.2026 — скачанные основной код и manifest изучены
+
+Пользователь передал Код.js/appsscript.json.445строк/37функций,36блоков совпадают с архивом1.4.3; отличиеprocessCallback_ — нет best-effortACK, заголовок1.4. Это фактический source snapshot, не proof deployedversion. Candidate2.0.5:117функций/80новых, все37старых имён сохранены;5общих CFG header arrays совпадают. Manifest:Asia/Yekaterinburg/V8/Calendar v3 alias сохранён; явноoauthScopesнет; webapp ANYONE_ANONYMOUS/USER_DEPLOYING — настройки, не доказательство фактического endpoint. Rawsource/ресурсныйID неGit.
+
+На моках uploadedsource воспроизведены «Не одобрен»→approved и expiredcallback→exception/заблокированный последующийupdate на2polls. В2.0.5 отрицательныйстатусpending/expiredcallback не блокирует выбор. JS syntax/manifest parse PASS,101Node candidate behavior/consultation tests PASS. Последний полный591Python178Node/6demos сейчас целиком не повторялся; actualGooglewrites/sends0. Workingcode не менялся.
+
+Следующий безопасный приоритет — подготовить minimalcompatible access/ACK patch, не загружать весь2.0.5; полный набор6helpers ещё не изучен, properties/realheaders/active triggers/deployment неизвестны. Нужны оставшиеся6JSизbackup для проверки collidingglobals/full upload review, безcredentials/configsecrets. [Полный отчёт](APPS_SCRIPT_SOURCE_REVIEW.md).
+
+---
+
 # 29.10.2026 — пользовательский clasp pull завершён
 
 По пользовательскому журналу Windows: local preparation завершена; стандартный OAuth-вход был заблокирован Google, затем пользователь создал отдельный Cloud проект, включил Apps Script API, настроил Desktop OAuth client и сообщил успешный вход с --creds/--use-project-scopes. После этого explicit-auth/project `pull` вернул **Pulled 8 files**: manifest, основной код и6вспомогательных JS-файлов. OAuthclient/authfile/callback/реальныеIDs в Git не сохранены. Это доказательство ручного authenticated source read по пользовательскому сообщению; grants/ACL/deployment не проверены независимо.
