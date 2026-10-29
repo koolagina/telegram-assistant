@@ -416,3 +416,9 @@ Owner-approved protected run40942058864, main6055f6d174b90ec8593b1cc6c4e5ebdbc88
 
 Owner-runsetup вернулqueue_ready/createdfalse/6columns/businesswrites0/messagessent0/pollingfalse: существующая совместимая схема подтверждена, без повторногосоздания. После этого3partialreplyprojectionсценария воспроизведены red→green: tools/clasp/legacy-reply-recovery.cjs меняет dedupbranchprocessMessage_+1helper, repairsmissingfields по сохранённомуtaskID/chat, closed/manualconflicts сохраняет.12новыхtests, full596Python+255Node PASS,6offline demos. Actualinstalled8sourceoffline:1changedmain/7preserved/57globals/syntaxPASS. Новаяrecoveryправка не установлена/новыхGoogleопераций0/relayallowlist неизменён. [Состав, таблица дефектов и границы](LEGACY_REPLY_RECOVERY_CANDIDATE.md). Уведомления/rowbindingsновыхответов/Sheetsformula/CASmanualedits остаются отдельными рисками; не называть весьhandlerexactlyonce.
 
+
+
+# 30.10.2026 — reply-recovery установка разрешена, защищённый маршрут подготовлен
+
+Владелец ответил«да»на конкретное предложение установить recoveryдаты/текста/ссылки в поручениях послеpartialreplyсбоя. Не повторять scopepermission; GitHubprotectedapproval остаётся обязательным. Новые requestoperations review_legacy_reply_recovery/apply_legacy_reply_recovery; workerprepare_reply_recovery/apply_reply_recovery, backupfamilylegacy_reply_recovery_v1. Только поверхexactinstalledfile+queue; другойsource/7filedrift/missingparent/crossfamilybackup отказывают. Exactalreadyinstalled распознаётся безPUT. Сохранены full8encryptedbackupbeforePUT/reviewer/main/freshGET/5minreceipt/unknownnoRetry.3новыхrelaytests red→green; full596Python+258Node PASS,6offline demos. Подготовлен толькоread-onlypreflight; новаяsourceустановка/бизнесданные ещё не подтверждены. Никакого массовогоремонтастарыхстрок, poll/trigger/Telegram/Drive/deploy вызовов этим маршрутом нет.
+

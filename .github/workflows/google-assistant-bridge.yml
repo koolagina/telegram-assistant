@@ -16,6 +16,8 @@ on:
           - apply_legacy_patch
           - review_legacy_file_queue
           - apply_legacy_file_queue
+          - review_legacy_reply_recovery
+          - apply_legacy_reply_recovery
       recipient_public_key:
         type: string
         required: false
@@ -45,7 +47,7 @@ jobs:
 
   read:
     needs: request
-    if: needs.request.outputs.operation != 'apply_legacy_patch' && needs.request.outputs.operation != 'apply_legacy_file_queue'
+    if: needs.request.outputs.operation != 'apply_legacy_patch' && needs.request.outputs.operation != 'apply_legacy_file_queue' && needs.request.outputs.operation != 'apply_legacy_reply_recovery'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     concurrency:
@@ -72,7 +74,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Keep only encrypted review backup
-        if: (needs.request.outputs.operation == 'review_legacy_patch' || needs.request.outputs.operation == 'review_legacy_file_queue') && steps.bridge.outputs.change_required == 'true'
+        if: (needs.request.outputs.operation == 'review_legacy_patch' || needs.request.outputs.operation == 'review_legacy_file_queue' || needs.request.outputs.operation == 'review_legacy_reply_recovery') && steps.bridge.outputs.change_required == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: google-reviewed-source-encrypted
@@ -82,7 +84,7 @@ jobs:
 
   write:
     needs: request
-    if: needs.request.outputs.operation == 'apply_legacy_patch' || needs.request.outputs.operation == 'apply_legacy_file_queue'
+    if: needs.request.outputs.operation == 'apply_legacy_patch' || needs.request.outputs.operation == 'apply_legacy_file_queue' || needs.request.outputs.operation == 'apply_legacy_reply_recovery'
     environment: google-assistant-production
     permissions:
       contents: read
@@ -103,7 +105,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           KULAGINA_GOOGLE_WRITE_CONNECTION_V1: ${{ secrets.KULAGINA_GOOGLE_WRITE_CONNECTION_V1 }}
-        run: node tools/google-actions-bridge.cjs ${{ needs.request.outputs.operation == 'apply_legacy_file_queue' && 'prepare_file_queue' || 'prepare_write' }}
+        run: node tools/google-actions-bridge.cjs ${{ needs.request.outputs.operation == 'apply_legacy_reply_recovery' && 'prepare_reply_recovery' || needs.request.outputs.operation == 'apply_legacy_file_queue' && 'prepare_file_queue' || 'prepare_write' }}
       - name: Persist encrypted original before any project update
         id: backup
         if: steps.prepare.outputs.change_required == 'true'
@@ -119,4 +121,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           KULAGINA_GOOGLE_WRITE_CONNECTION_V1: ${{ secrets.KULAGINA_GOOGLE_WRITE_CONNECTION_V1 }}
           KULAGINA_BACKUP_UPLOADED: ${{ steps.backup.outputs.artifact-id != '' && 'true' || 'false' }}
-        run: node tools/google-actions-bridge.cjs ${{ needs.request.outputs.operation == 'apply_legacy_file_queue' && 'apply_file_queue' || 'apply_write' }}
+        run: node tools/google-actions-bridge.cjs ${{ needs.request.outputs.operation == 'apply_legacy_reply_recovery' && 'apply_reply_recovery' || needs.request.outputs.operation == 'apply_legacy_file_queue' && 'apply_file_queue' || 'apply_write' }}

@@ -43,4 +43,8 @@ function patchReplyRecovery(source){
   throw Error('Reviewed legacy reply precondition mismatch');
  return source.replace(original,replacement).replace('function processCallback_(',helper+'function processCallback_(');
 }
-module.exports={patchReplyRecovery};
+function restoreReplyRecovery(source){
+ if(typeof source!=='string'||source.split(replacement).length!==2||source.split(helper).length!==2)throw Error('Exact reply patch required');
+ return source.replace(helper,'').replace(replacement,original);
+}
+module.exports={patchReplyRecovery,restoreReplyRecovery};

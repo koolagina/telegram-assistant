@@ -1,3 +1,7 @@
+# 30.10.2026 — reply-recovery установка разрешена, защищённый маршрут подготовлен
+
+Владелец ответил«да»на конкретное предложение установить recoveryдаты/текста/ссылки в поручениях послеpartialreplyсбоя. Не повторять scopepermission; GitHubprotectedapproval остаётся обязательным. Новые requestoperations review_legacy_reply_recovery/apply_legacy_reply_recovery; workerprepare_reply_recovery/apply_reply_recovery, backupfamilylegacy_reply_recovery_v1. Только поверхexactinstalledfile+queue; другойsource/7filedrift/missingparent/crossfamilybackup отказывают. Exactalreadyinstalled распознаётся безPUT. Сохранены full8encryptedbackupbeforePUT/reviewer/main/freshGET/5minreceipt/unknownnoRetry.3новыхrelaytests red→green; full596Python+258Node PASS,6offline demos. Подготовлен толькоread-onlypreflight; новаяsourceустановка/бизнесданные ещё не подтверждены. Никакого массовогоремонтастарыхстрок, poll/trigger/Telegram/Drive/deploy вызовов этим маршрутом нет.
+
 # Кандидат восстановления частично записанного ответа — 30.10.2026
 
 **Только локальный кандидат, не установлен.** Применим к реально проверенному legacy source после file+queue install, не меняет архивные снимки/кандидат2.0.5/Google ресурсы. Рецепт tools/clasp/legacy-reply-recovery.cjs, review diff patches/legacy-reply-recovery.patch.
