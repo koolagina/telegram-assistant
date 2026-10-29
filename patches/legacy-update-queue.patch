@@ -1,0 +1,109 @@
+--- a/pollTelegramUpdates.gs
++++ b/pollTelegramUpdates.gs
+@@ -3,20 +3,94 @@
+   try {
+     const props=PropertiesService.getScriptProperties();
+     let offset=Number(props.getProperty('TELEGRAM_UPDATE_OFFSET')||'0');
++    if(!Number.isSafeInteger(offset)||offset<0) throw Error('Некорректный offset');
+     const updates=tg_('getUpdates',{offset,timeout:0,limit:CFG.pollLimit,allowed_updates:['message','callback_query']});
+-    for(const u of updates) {
+-      try {
+-        if(u.message) processMessage_(u.message);
+-        else if(u.callback_query) processCallback_(u.callback_query);
+-      } catch(e) {
+-        log_('Ошибка входящего',u.update_id,e.stack||e.message);
+-        // Do not advance the offset past a failed update: retry on next poll.
+-        // Processing is idempotent for ordinary messages via chat/message ID.
+-        try { send_(owner_(),'Ошибка обработки сообщения Telegram (update '+u.update_id+'): '+String(e.message||e).slice(0,500)); } catch(_) {}
+-        break;
+-      }
+-      offset=u.update_id+1;
++    const sheet=updateInbox_();
++    for(const update of updates) {
++      if(!Number.isSafeInteger(update.update_id)||update.update_id<0) throw Error('Некорректный update ID');
++      if(update.update_id<offset) continue;
++      const payload=JSON.stringify(update);
++      if(payload.length>45000) throw Error('Payload превышает лимит записи очереди; offset сохранён');
++      const key='U-'+update.update_id;
++      appendOnce_(sheet,[key,'PENDING',0,payload,new Date(),'']);
++      if(!processInboxItem_(sheet,inboxItem_(sheet,key))) break;
++      offset=update.update_id+1;
+       props.setProperty('TELEGRAM_UPDATE_OFFSET',String(offset));
+     }
+   } finally { lock.releaseLock(); }
+ }
++// Operator-only Apps Script helper, deliberately not exposed as a Telegram command.
++// Inspect partial side effects and the payload before explicitly replaying a DEAD item.
++
++function withScriptLock_(action) {
++  const lock=LockService.getScriptLock(), owned=!lock.hasLock();
++  if(owned && !lock.tryLock(1000)) throw Error('Не удалось получить блокировку');
++  try { return action(); } finally { if(owned) lock.releaseLock(); }
++}
++
++function appendOnce_(sheet,row) {
++  return withScriptLock_(()=>{
++    const matches=sheet.getDataRange().getValues().slice(1).filter(r=>String(r[0])===String(row[0]));
++    if(matches.length>1) throw Error('Неоднозначный ID: требуется сверка');
++    if(matches.length) return matches[0];
++    sheet.appendRow(row); SpreadsheetApp.flush(); return row;
++  });
++}
++
++function updateInbox_() {
++  const headers=['Ключ','Статус','Попытки','Payload JSON','Обновлено','Ошибка'];
++  const existing=ss_().getSheetByName('Очередь updates');
++  if(existing) {
++    const row=existing.getRange(1,1,1,headers.length).getValues()[0];
++    if(existing.getLastRow()<1||headers.some((h,i)=>String(row[i])!==h))
++      throw Error('Несовместимая схема очереди updates');
++    return existing;
++  }
++  return tab_('Очередь updates',headers);
++}
++
++function inboxItem_(sheet,key) {
++  const rows=sheet.getDataRange().getValues();
++  const matches=rows.slice(1).map((row,i)=>({row,index:i+2})).filter(x=>String(x.row[0])===key);
++  if(matches.length!==1) throw Error('Неоднозначная запись очереди'); return matches[0];
++}
++
++function processInboxItem_(sheet,item) {
++  if(['DONE','DEAD'].includes(String(item.row[1]))) return true;
++  const attempts=Number(item.row[2]);
++  if(!Number.isInteger(attempts)||attempts<0) throw Error('Некорректный счётчик очереди');
++  // PROCESSING counts even if the previous execution was killed without a catch.
++  if(attempts>=3) {
++    sheet.getRange(item.index,2).setValue('DEAD'); SpreadsheetApp.flush(); return true;
++  }
++  const update=JSON.parse(String(item.row[3]));
++  if(!update||!Number.isSafeInteger(update.update_id)||update.update_id<0||String(item.row[0])!=='U-'+update.update_id)
++    throw Error('Payload очереди не соответствует ключу');
++  sheet.getRange(item.index,3).setValue(attempts+1);
++  sheet.getRange(item.index,2).setValue('PROCESSING');
++  sheet.getRange(item.index,5).setValue(new Date()); SpreadsheetApp.flush();
++  let failed=false;
++  try {
++    if(update.message) processMessage_(update.message);
++    else if(update.callback_query) processCallback_(update.callback_query);
++  } catch(e) { failed=true; }
++  // Persistence errors escape: never acknowledge an unrecorded outcome.
++  sheet.getRange(item.index,6).setValue(failed?'Ошибка обработчика; требуется сверка по payload':'');
++  const terminal=failed && attempts+1>=3;
++  sheet.getRange(item.index,2).setValue(failed?(terminal?'DEAD':'RETRY'):'DONE');
++  sheet.getRange(item.index,5).setValue(new Date()); SpreadsheetApp.flush();
++  return !failed||terminal;
++}
++
++function replayDeadUpdate_(updateId) {
++  return withScriptLock_(()=>{
++    if(!/^[0-9]+$/.test(String(updateId))) throw Error('Некорректный update ID');
++    const sheet=updateInbox_(), item=inboxItem_(sheet,'U-'+updateId);
++    if(item.row[1]!=='DEAD') throw Error('Повтор разрешён только для DEAD');
++    const update=JSON.parse(String(item.row[3]));
++    if(String(update.update_id)!==String(updateId)) throw Error('Payload не соответствует ID');
++    sheet.getRange(item.index,3).setValue(0);
++    sheet.getRange(item.index,2).setValue('PENDING'); SpreadsheetApp.flush();
++    return processInboxItem_(sheet,inboxItem_(sheet,'U-'+updateId));
++  });
++}

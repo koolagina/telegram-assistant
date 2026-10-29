@@ -378,3 +378,9 @@ Calendar/Sheets/Drive/user messages/webhook/trigger/deployment операции 
 
 К tools/clasp/legacy-file-recovery.cjs добавлен350000byte conservativeUTF8 budget/8KiBreserve, без автоматической очистки; SAVEDreuse работает при отказе в новомcreate. Новый tools/clasp/legacy-file-review.cjs — offlinefilteredreceipts only, fixed actions/counts/hashed operation keys, no rawIDs/links/secrets/network/writes.2quota+4reviewtests, полный596Python+230Node PASS,6offline demos. [Подробности и recovery порядок](LEGACY_FILE_RECOVERY_CANDIDATE.md). Unknown Drive outcome всё ещё требует надёжного доказательства/решения владельца; нет заранее известногоDriveID/quarantine, поэтому live установка заблокирована. Следующий local шаг — изучить существующую реализацию кандидата2.0.5 для минимального совместимого переноса. РабочиеGoogleресурсы/relayallowlist не изменены.
 
+
+
+# 30.10.2026 — минимальный file+queue кандидат готов к согласованию
+
+Из существующей2.0.5 перенесён узкий durable inbox в offlinelegacyrecipe, не весь проект: poll+6helpers, строгие6technicalheaders/payloadID,3attempts/DEADoriginalpayload. Combinedfileguardtest:1неопределённыйcreate/1DEAD/следующийответсохранён, без второгофайла.8новыхtests; full596Python+238Node PASS,6offline demos. Actual8sourceoffline:1changedmain/7preserved/55globals/no collisions/syntaxPASS. [Конкретный состав/схема/приёмка/риски](LEGACY_FILE_QUEUE_CANDIDATE.md). Нетliveinstall/реальныхSheets/Telegram/Drivecalls/новойwriteallowlist. Добавление «Очередь updates» в реальнуюкнигу требует отдельного разрешения; старые2sourcefixes уже установлены и сохраняются. Нельзя заявлять exactlyonce всехlegacyкоманд, автоматическуюDrive reconciliation или безопасный автоматическийrollback.
+
