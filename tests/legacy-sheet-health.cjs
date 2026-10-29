@@ -1,0 +1,15 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const source=fs.readFileSync('src/tools/legacy_sheet_health.gs','utf8');
+const headers={students:['Студенты',['Имя']],tasks:['Поручения',['ID']],replies:['Ответы',['Ответ']],incoming:['Входящие',['Дата и время','Имя','Telegram username','Telegram chat ID','Тип сообщения','Текст / подпись','Telegram message ID','Ссылка на файл']],updates:['Очередь updates',['Ключ','Статус','Попытки','Payload JSON','Обновлено','Ошибка']],snapshots:['Снимки операций',['Ключ','Payload JSON','Создано']],notifications:['Уведомления ответов',['Ключ','Payload JSON','Статус','Telegram message ID','Обновлено','Ошибка']]};
+function fixture(mode){
+ const reads=[],logs=[];
+ const CFG={spreadsheetId:'private-synthetic-book',studentHeaders:headers.students[1],taskHeaders:headers.tasks[1],replyHeaders:headers.replies[1]};
+ const ctx=vm.createContext({...(mode==='no_config'?{}:{CFG}),console:{log:x=>logs.push(x)},SpreadsheetApp:{openById(id){assert.equal(id,CFG.spreadsheetId);if(mode==='denied')throw Error('PRIVATE_ACCESS_DETAIL');return {getSheetByName(name){const h=Object.values(headers).find(x=>x[0]===name)[1];if(mode==='missing'&&name==='Уведомления ответов')return null;return {getRange(r,c,n,m){assert.deepEqual([r,c,n,m],[1,1,1,h.length]);reads.push(name);return {getValues(){if(mode==='read_error'&&name==='Очередь updates')throw Error('PRIVATE_ROW');return [mode==='mismatch'&&name==='Студенты'?['changed']:h.slice()];}};}};}};}}});
+ vm.runInContext(source,ctx);return {ctx,reads,logs,run:()=>ctx.probeKulaginaLegacySheetsReadOnly()};
+}
+test('only seven header ranges are read; no user rows, IDs or errors escape',()=>{const f=fixture(),r=f.run();assert.equal(r.status,'verified');assert.equal(r.schemas_verified,true);assert.equal(f.reads.length,7);assert.equal(r.writes,0);assert.equal(r.messages_sent,0);assert.equal(r.polling_started,false);assert.ok(!JSON.stringify(r).includes('private-synthetic-book'));});
+test('revoked or unavailable resource is not falsely classified as a known permission cause',()=>{const f=fixture('denied'),r=f.run();assert.equal(r.status,'access_or_resource_unavailable');assert.equal(r.access_verified,false);assert.equal(f.reads.length,0);assert.ok(!JSON.stringify(r).includes('PRIVATE'));});
+test('missing configuration does not access Google',()=>{const f=fixture('no_config');assert.equal(f.run().status,'not_configured');assert.equal(f.reads.length,0);});
+for(const mode of ['missing','mismatch','read_error'])test('reports '+mode+' without repairing anything',()=>{const f=fixture(mode),r=f.run();assert.equal(r.status,'review_required');assert.equal(r.access_verified,true);assert.equal(r.schemas_verified,false);assert.equal(r.writes,0);});
+test('runner logs only the aggregate probe result',()=>{const f=fixture();f.ctx.showKulaginaLegacySheetHealth();assert.equal(JSON.parse(f.logs[0]).status,'verified');assert.equal(f.logs.length,1);});
