@@ -1,6 +1,8 @@
 # Подключение GitHub ↔ Apps Script: сначала резервная копия
 
-Согласован только подготовительный этап: чтение текущего проекта, резервная копия и сравнение. `clasp`3.4.1 установлен/проверен локально, зависимости зафиксированы в `tools/clasp/package-lock.json`. Google OAuth ещё не выполнен, исходники Apps Script не скачаны, запись/deployment/триггеры не запускались. Версия фактически развёрнутого бота неизвестна: заголовок открытого файла не является доказательством deployment.
+Согласован подготовительный этап: чтение текущего проекта, резервная копия и сравнение. По пользовательскому Windows-журналу OAuth через собственный Desktop client завершён и `pull` скачал8файлов (manifest, основнойкод,6helpers). Стандартный OAuth client до этого был заблокирован; блокировка не обходилась отключением защиты аккаунта. Реальные OAuth credentials/client JSON/IDs не в Git. Прямое cloud-подключение не появилось; локальные файлы ещё не переданы для сравнения. `clasp`3.4.1 зафиксирован в tools/clasp/package-lock.json. Запись/deployment/триггеры не запускались; версия фактически развёрнутого бота неизвестна.
+
+Повторять успешные preparation/login/pull сейчас не требуется. Ниже историческая инструкция для настройки; после скачивания оригинальную копию сохранять без изменений.
 
 Важно: **push меняет код проекта**. Даже без нового deployment действующие триггеры могут начать выполнять изменённые функции. Поэтому обычный push сейчас не допускается. Отдельная загрузка helper через неполный набор файлов тоже опасна: Apps Script updateContent заменяет содержимое проекта целиком, может удалить отсутствующие файлы. Не клонировать репозиторий с архивами поверх Apps Script и не подключать push-on-commit.
 
@@ -31,7 +33,7 @@ $backupRoot = Join-Path $env:LOCALAPPDATA ('KulaginaAssistant-Backup-' + [guid]:
 node $setupFile --destination $backupRoot --script-id $scriptId
 ```
 
-Preparer только создаёт локальные папки/config/инструкцию, не авторизуется и не вызывает Google/clasp. Проверяет explicit Script ID, fresh destination вне Git/symlink ancestors. На Windows до создания auth/bootstrap применяет ACL только текущему пользователю и SYSTEM через whoami/icacls; если ACL не удалось установить, останавливается. Реальная Windows-проверка ещё не выполнена, ACL branch локально проверен моками. На POSIX каталоги0700/файлы0600. Существующие файлы не перезаписываются.
+Preparer только создаёт локальные папки/config/инструкцию, не авторизуется и не вызывает Google/clasp. Проверяет explicit Script ID, fresh destination вне Git/symlink ancestors. На Windows до создания auth/bootstrap применяет ACL только текущему пользователю и SYSTEM через whoami/icacls; если ACL не удалось установить, останавливается. Пользователь сообщил Local setup prepared на Windows; независимой ACL-инспекции нет, локальный ACL branch проверен моками. На POSIX каталоги0700/файлы0600. Существующие файлы не перезаписываются.
 
 ## Однократный вход и скачивание
 
@@ -49,8 +51,15 @@ Preparer выведет **две команды** и сохранит их в `C
 ## Что проверено и что дальше
 
 - `npm install --ignore-scripts`, clasp3.4.1 version/help, команды login/pull/clone изучены на установленном CLI без авторизации. Node24в среде соответствует требованию>=20.
-- На настоящем scope builder установленного clasp offline проверено: use-project-scopes + readonly-only manifest не добавляет default write scopes. OAuth consent/Google GET ещё не выполнялись.
--6Node tests: local-only setup/readonly scopes, no overwrite/Git/ID guards, symlink parent, Windows ACL ordering/failure, private files/explicit auth/project paths/no ADC. Сначала tests red без preparer, затем green. Windows ACL вызовы mocked, реальный PowerShell/Google login не проверены.
+- На настоящем scope builder установленного clasp offline проверено: use-project-scopes + readonly-only manifest не добавляет default write scopes. OAuth consent и реальный source GET теперь отдельно подтверждены пользовательскими сообщениями, не запуском из Codexcloud.
+-6Node tests: local-only setup/readonly scopes, no overwrite/Git/ID guards, symlink parent, Windows ACL ordering/failure, private files/explicit auth/project paths/no ADC. Сначала tests red без preparer, затем green. Windows ACL вызовы в suite mocked; реальный preparer/login/pull отдельно выполнены пользователем, их внутренние данные независимо не проверены.
 - Полный `bash tools/check-local.sh`: **591Python +178Node PASS**,6offline demos.
 
 После успешного pull: сохранить исходную копию, проверить конфликты глобальных функций/manifest/существующих helpers, сравнить её с рабочим кандидатом2.0.5 и подготовить отдельный reviewable allowlist/полный набор проекта. Любую будущую запись отдельно согласовывать с учётом триггеров; bootstrap manifest не переносить в рабочий проект. Нет автоматического deployment, push или смены webhook.
+
+
+## Текущий следующий шаг после успешного pull
+
+Пользовательский локальный backup8files не виден этой среде. Для первого сравнения нужны только приватные передаваемые копии `Код.js` и `appsscript.json`. Auth JSON/`.clasprc.json`/client-secret JSON/`.clasp.json`/полную родительскую папку не передавать. Если код содержит реальные tokens/passwords/private keys, заменить их placeholders только в отдельной копии для передачи; оригинальный backup сохранить. Переданные working source не коммитить без проверки на секреты/пользовательские данные.
+
+Далее установить отличия основного кода и manifest, затем проверить все helpers/коллизии до составления любого полного upload set. Ни наличие резервной копии, ни успешный readonly pull не разрешают запись в production.

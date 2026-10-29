@@ -323,3 +323,8 @@ Protection diagnosis received complete: attendees-field11/description5, no write
 ## Clasp backup preparation — 29.10.2026
 
 User approved preparing backup connection; Windows device. tools/clasp pins3.4.1; prepare-backup.cjs local-only creates fresh private config/readonly bootstrap and prints explicit login/pull commands, no OAuth/remoteIO. WindowsACL mocked/no realWindowslogin. Readonly scope builder verified offline; no broaddefault/includeextras/ADC. Never push partialhelper set: updateContent replacesprojectfiles; triggers can run changedcode without deployment. No Google auth/sourcebackup/directCodex connection yet; Windowslogin stays local. Authfiles/privateprojectconfig/working source outsideGit; no credentialuploads/callbacks inchat.6Node/full591Python178Node PASS6demos. Latestmanualsnapshot weekly02–08.11again/11exact; not fourweekbatch. docs/APPS_SCRIPT_CONNECTION.md.
+
+
+## Windows backup received as report — 29.10.2026
+
+User reported custom Desktop OAuth success then Pulled8files (manifest+main+6helpers). Standard OAuth client had been blocked; ownclient used, no security-policy bypass. Files remain user-local, not in Codex; no inspectedsource/deploymentversion/independent grants orACL evidence. Do not replay successfullogin/pull or overwritebackup; credentials/clientsecret/callbacks/IDs notGit/chat. Need private mainsource+manifest copies for firstdiff, redacthardcodedsecrets in separatecopies only. No implicitpushauthorization; fullproject/helperreview stillrequired. Docs only/last591Python178Node PASS6demos not rerun. docs/APPS_SCRIPT_CONNECTION.md.

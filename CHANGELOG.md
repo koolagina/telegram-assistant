@@ -1,3 +1,9 @@
+# 29.10.2026 — owner-run Apps Script source backup downloaded
+
+- User reports successful Windows custom-client OAuth after standard-client block; explicit read-only pull returned8files. No remote source writes/deployments claimed.
+- Backup remains on user device, not cloud; source contents/diff/deployed version still unknown. Next: main source+manifest copies, no credentials/private config uploads.
+- Documentation only, last591Python178Node PASS6demos not rerun. docs/APPS_SCRIPT_CONNECTION.md.
+
 # 29.10.2026 — prepare read-only Apps Script backup connection
 
 - Windows local-only preparer with fresh private paths/ACL, explicit auth/target, readonly manifest scopes, generated login/pull commands. No OAuth or remote backup/push/deployment performed.

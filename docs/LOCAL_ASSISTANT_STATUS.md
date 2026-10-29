@@ -1,3 +1,13 @@
+# 29.10.2026 — пользовательский clasp pull завершён
+
+По пользовательскому журналу Windows: local preparation завершена; стандартный OAuth-вход был заблокирован Google, затем пользователь создал отдельный Cloud проект, включил Apps Script API, настроил Desktop OAuth client и сообщил успешный вход с --creds/--use-project-scopes. После этого explicit-auth/project `pull` вернул **Pulled 8 files**: manifest, основной код и6вспомогательных JS-файлов. OAuthclient/authfile/callback/реальныеIDs в Git не сохранены. Это доказательство ручного authenticated source read по пользовательскому сообщению; grants/ACL/deployment не проверены независимо.
+
+Копия находится локально у пользователя Windows, а не в Codexcloud. Содержимое скачанных файлов здесь пока недоступно; сравнение с кандидатом2.0.5/manifest/helpers ещё не выполнено. JS extension при pull не означает изменение версии Apps Script. Source backup не включает Script Properties/triggers/data/full deployment history; фактическая deployed version неизвестна. Pull не меняет remote code; push/deploy/run/triggers не выполнялись по текущему отчёту.
+
+Следующий вход для первого сравнения — приватные копии основного кода и appsscript.json, без OAuth/credentials/config files. Не публиковать исходник вслепую: hardcoded secrets, если есть, редактировать только в отдельной передаваемой копии, сохраняя оригинальную резервную копию. Не запускать повторный pull поверх неё/не делать push. Изменена только документация; последний suite **591Python+178Node PASS**,6offline demos, повторно не запускался. [Инструкция/статус](APPS_SCRIPT_CONNECTION.md).
+
+---
+
 # 29.10.2026 — повторный weekly snapshot + подготовка clasp без Google-записи
 
 Новый пользовательский snapshot (14:56местного времени) имеет weekly purpose и охват02–08.11, не November batch. Его checksum проверен, свежий NVSU перечитан существующим fetch_week:11exact time/title/room,missing0/duplicate0/unknown0, protected11. Другие3недели по этому JSON не проверены; причину выбора weekly функции/версии кода не угадываем.
