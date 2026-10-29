@@ -108,3 +108,8 @@ Owner backups/diff отдельно encrypted на random backup key из local 
 
 
 29.10.2026 — Google relay: после неподтверждённого PUT выполнена отдельная read-only сверка; все8файлов исходные, исправления не установлены. В transport добавлены только ограниченные http_failure_status (100–599) и http_failure_stage из фиксированных внутренних статусов; тела ответа, URLs, credentials не выводятся. Новый regression сначала воспроизвёл отсутствие диагностики, затем14relay+9legacy tests PASS. Неизвестный исход по-прежнему запрещает автоматический retry; текущая причина прошлой ошибки не восстановлена. Google mutation повторно не запускалась; workflow не запускается от этих code/docs изменений.
+
+
+## Повторная попытка: Google HTTP403 — 29.10.2026
+
+Protected run40909972837 после отдельного owner approval: prepare succeeded, encrypted backup artifact saved; PUT returned HTTP403, http_failure_stage=write_outcome_unknown, API acceptance false/verification false. Поэтому проблема не в отсутствии GitHub approval; write grant scope/target/source guards прошли доPUT. Подробный Google reason не сохранён; не угадывать причину и не утверждать, что достаточно расширить scopes/сменить OAuth project. Последующий read-only recovery run40910222576 (main257f6bf97aecb91191fa6346ecf0d7f4b03eaa7b), success: provenance/target/integrity проверены, все8source hashes исходные, изменений нет. После этой сверки новых PUT не выполнялось. Пользователю не предлагать повторять ту же авторизацию/approval без новой диагностики; сначала установить причину отказа, не расширяя права вслепую.
