@@ -7,7 +7,7 @@ const original=archive.slice(start,end);
 const marker=`  // pollTelegramUpdates serializes this path with its existing ScriptLock.
   // Keep durable receipts: a cache or a filename is not proof of file creation.
   const chatKey=String(message.chat.id), messageKey=String(message.message_id);
-  if(!/^-?\\d+$/.test(chatKey)||!/^\\d+$/.test(messageKey)||typeof data.file_id!=='string'||data.file_id.length>2048)
+  if(!/^-?\\d+$/.test(chatKey)||!/^\\d+$/.test(messageKey)||chatKey.length>24||messageKey.length>24||typeof data.file_id!=='string'||!data.file_id||data.file_id.length>2048)
     throw Error('Некорректный идентификатор вложения');
   const fileKey='KULAGINA_LEGACY_FILE_V1_'+chatKey+'_'+messageKey;
   const props=PropertiesService.getScriptProperties();
@@ -22,13 +22,21 @@ const marker=`  // pollTelegramUpdates serializes this path with its existing Sc
     // An uncertain Drive outcome requires review, never a second createFile.
     throw Error('Сохранение файла требует проверки: повторное создание остановлено');
   }
+  // Conservative local budget, not a promise about Google's remaining quota.
+  // Reserve space for the future SAVED receipt before making an external file.
+  const utf8Bytes=value=>encodeURIComponent(String(value)).replace(/%[A-F0-9]{2}/g,'x').length;
+  const properties=props.getProperties();
+  const used=Object.keys(properties).reduce((n,key)=>n+utf8Bytes(key)+utf8Bytes(properties[key]),0);
+  const intent=JSON.stringify({version:1,status:'SENDING',file_id:data.file_id,type});
+  if(used+utf8Bytes(fileKey)+8192>350000||utf8Bytes(intent)>6000)
+    throw Error('Недостаточно безопасного запаса хранилища подтверждений файлов');
 `;
 let replacement=original.replace('  try {',marker+'  try {');
 replacement=replacement.replace('    const file=folder.createFile(response.getBlob().setName(safeName));',`    const blob=response.getBlob().setName(safeName);
     props.setProperty(fileKey,JSON.stringify({version:1,status:'SENDING',file_id:data.file_id,type}));
     const file=folder.createFile(blob);
     const link=file.getUrl();
-    if(typeof link!=='string'||!/^https:\\/\\//.test(link)) throw Error('Некорректный результат Drive');
+    if(typeof link!=='string'||utf8Bytes(link)>2048||!/^https:\\/\\//.test(link)) throw Error('Некорректный результат Drive');
     props.setProperty(fileKey,JSON.stringify({version:1,status:'SAVED',file_id:data.file_id,type,link}));`);
 replacement=replacement.replace('return {type,link:file.getUrl(),description:label};','return {type,link,description:label};');
 replacement=replacement.replace("    log_('Ошибка файла',message.message_id,e.message);\n    return {type,link:'',description:label+' [Не удалось сохранить файл]'};","    // Do not acknowledge an update whose attachment has not been saved safely.\n    throw Error('Не удалось подтвердить сохранение вложения; требуется проверка');");

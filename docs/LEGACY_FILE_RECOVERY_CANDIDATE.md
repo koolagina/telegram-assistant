@@ -12,7 +12,7 @@ Legacy processMessage_ проверяет дубли по строкам «От�
 
 ## Проверки
 
-8новыхtests: Drive success+append failure+replay (1файл/1ответ), ambiguous create, receipt save failure, text/oversized, distinct chat/message с одинаковым именем/file_id, corrupt/conflicting receipt, preclaim/claim failures, only-one-function diff/double-apply/source drift/syntax. tests/legacy-file-recovery.cjs добавлен в tools/check-local.sh. Полный bash tools/check-local.sh:596Python+224Node PASS,6offline demos. Реальных Drive/Sheet/Telegram операций для этого патча не запускалось. Предыдущие live2исправления подтверждены отдельно, не этим тестом.
+Изначальные8tests: Drive success+append failure+replay (1файл/1ответ), ambiguous create, receipt save failure, text/oversized, distinct chat/message с одинаковым именем/file_id, corrupt/conflicting receipt, preclaim/claim failures, only-one-function diff/double-apply/source drift/syntax. tests/legacy-file-recovery.cjs добавлен в tools/check-local.sh. Полный bash tools/check-local.sh:596Python+224Node PASS,6offline demos. Реальных Drive/Sheet/Telegram операций для этого патча не запускалось. Предыдущие live2исправления подтверждены отдельно, не этим тестом.
 
 ## Ограничения до установки
 
@@ -24,3 +24,23 @@ Legacy processMessage_ проверяет дубли по строкам «От�
 - Не исправлено падение после appendRow до обновления поручения/уведомления: существующий duplicate check может пропустить завершение этих шагов. Нельзя объявлять весь обработчик exactly-once или полностью восстановимым.
 
 Следующий приоритет внутри этого же дефекта: безопасный read-only recovery report для SENDING и согласованный способ завершения, затем решить durable ledger/квоты. Установка требует отдельного конкретного согласования; прошлое разрешение на2legacy исправления не расширять.
+
+## Контроль бюджета и read-only recovery review — 30.10.2026
+
+Добавлен консервативный guard в том же storeFile_: UTF-8 размер всех Script Properties (ключи+значения),8KiB reserve на будущий SAVED, ceiling350000bytes. Intent≤6000bytes, link≤2048bytes. Проверка до download/create, но после попытки повторно использовать SAVED; при нехватке места новые файлы не создаются, имеющийся receipt не удаляется. Это локальный запас, не live quota reservation: другие writers/Google квоты всё ещё могут дать отказ после проверки. Чтение getProperties происходит только внутри Apps Script, значения не логируются/не экспортируются.
+
+2новых regression: заполненное хранилище/new-create denial/existing-receipt reuse и UTF-8 многобайтовые значения. Рецепт по-прежнему меняет только storeFile_; все остальные функции/7files сохранены при offline сравнении.
+
+Инструмент tools/clasp/legacy-file-review.cjs принимает только явный локальный JSON список `{key,value}` отфильтрованных KULAGINA_LEGACY_FILE_V1_* receipts. Полный properties export не нужен и запрещён как вход: неизвестный key отклоняется. CLI: `node tools/clasp/legacy-file-review.cjs /absolute/private/filtered-receipts.json`. Не извлекает properties/Drive/Sheets и не вызывает сеть. Вход приватен: никакого commit/upload в чат. Вывод: counts, SHA256 ключа вместо chat/message IDs, фиксированные state/action; file_id/links не печатаются, ready_for_apply=false, writes0. Не считать hash анонимизацией: он лишь исключает raw идентификаторы из обычного stdout.4tests: unknown не absence, SAVED не proof of current file/finished task, invalid/oversized/duplicates, rejection unfiltered secrets/no value leak.
+
+Полный `bash tools/check-local.sh`:596Python+230Node PASS,6offline demos. Offline combined syntax с реально полученным8файловым source PASS. Google operations для этих доработок0. Live2старые правки не затронуты; новая write allowlist не расширялась.
+
+## Порядок восстановления до любого ручного изменения
+
+1. При SENDING не запускать create/poll retry для преодоления маркера, не удалять его и не двигать offset вручную. Сохранить исходные update,receipt,данные строк в закрытой копии в согласованном объёме; не публиковать свойства/секреты.
+2. Read-only сверить конкретные chat/message с «Ответы» и «Входящие». Если строка уже есть, проверить task projection и ссылку; сам факт строки не завершает все legacy шаги. Не удалять повторные строки вслепую.
+3. SAVED: проверить реальное существование закрытого файла и соответствие ссылки/вложения исходному update. Только это позволяет рассматривать повтор существующего обработчика без нового create; автоматический CLI не даёт такого разрешения.
+4. SENDING: совпадение имени/даты/размера не доказывает принадлежность файла. Если надёжного подтверждения нет, итог manual_review; без решения владельца не привязывать файл, не сбрасывать marker, не пересоздавать и не продвигать offset. Инструмент не разрешает этот шаг автоматически.
+5. Изменение состояния для разблокировки требует конкретного проверенного плана по этой операции и отдельного решения владельца. После него — повторное чтение результата/контроль одного файла и одного ответа, без удаления чужих объектов.
+
+**Блокер live установки сохраняется:** этот минимальный кандидат не имеет заранее известного Drive ID и долговременной quarantine очереди. Поэтому математически безопасно восстановить неопределённый create исключительно по receipt нельзя. Квотный guard завершён, но автоматическая архивация/надёжная Drive reconciliation не заявляются реализованными. Следующее техническое направление — сравнить с уже существующей durable inbox/file operations кандидата2.0.5 и подготовить минимальный совместимый перенос, не изобретая второй общий механизм и не устанавливая весь2.0.5.
