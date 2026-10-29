@@ -1,6 +1,6 @@
 --- a/pollTelegramUpdates.gs
 +++ b/pollTelegramUpdates.gs
-@@ -3,20 +3,94 @@
+@@ -3,20 +3,105 @@
    try {
      const props=PropertiesService.getScriptProperties();
      let offset=Number(props.getProperty('TELEGRAM_UPDATE_OFFSET')||'0');
@@ -105,5 +105,16 @@
 +    sheet.getRange(item.index,3).setValue(0);
 +    sheet.getRange(item.index,2).setValue('PENDING'); SpreadsheetApp.flush();
 +    return processInboxItem_(sheet,inboxItem_(sheet,'U-'+updateId));
++  });
++}
++
++function prepareKulaginaUpdateQueue() {
++  return withScriptLock_(()=>{
++    const existed=!!ss_().getSheetByName('Очередь updates');
++    updateInbox_();
++    SpreadsheetApp.flush();
++    const result={status:'queue_ready',created:!existed,columns:6,business_writes:0,messages_sent:0,polling_started:false};
++    console.log(JSON.stringify(result));
++    return result;
 +  });
 +}

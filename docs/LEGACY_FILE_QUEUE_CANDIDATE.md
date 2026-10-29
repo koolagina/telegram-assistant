@@ -1,3 +1,5 @@
+Актуальное разрешение30.10.2026: пользователь ответил«+»на конкретный запрос установить файловую защиту/очередь и добавить технический лист в существующую Google Таблицу. Авторизация касается этого объёма, не запуска рабочих триггеров/poll/рассылок/deployment/Calendar/учебного журнала. Новая relay operation apply_legacy_file_queue подготовлена, но ещё не запущена; статус установки устанавливать по фактическому APIreceipt/re-read, не по этому разрешению.
+
 # Минимальный legacy-кандидат: файлы и durable очередь — 30.10.2026
 
 **Статус: локальный, не установлен; новая запись Google не разрешена.** Это конкретный набор двух патчей к установленному legacy source с уже исправленными accessStatus_/callback ACK. Не замена всем кандидатом2.0.5. [Файловая часть](LEGACY_FILE_RECOVERY_CANDIDATE.md).
@@ -35,3 +37,11 @@
 ## План отката
 
 Не откатывать данные и не удалять receipts/queue. Перед sourcerollback отдельно read-only проверить PROCESSING/RETRY/DEAD иoffset: возвращение старогоpoll при непросмотренномSENDING может вернуть дубли. Без такой сверки нет автоматического rollback. Надёжное восстановление требует сохранения источника операции, а не очистки состояния.
+
+## Подготовленный защищённый маршрут установки
+
+Google worker: prepare_file_queue/apply_file_queue, публичная очередь request: apply_legacy_file_queue, read-only review: review_legacy_file_queue. В отдельном backup operation=legacy_file_queue_v1; backup другого семейства отвергается. Требуются уже установленные access/ACKfixes;7другихsourcefiles обязаны совпасть с исходными reviewedpins. Конкретные file+queue recipes проверяются и применяются целиком; partial/drift не принимается. Полностью установленный exactpatch распознаётся как already_applied, без второгоPUT. Полный8file original/candidate encryptedbackup upload доPUT, reviewer/mainpolicy/freshsource/5minreceipt guards сохранены. UnknownPUT без autoretry.
+
+Добавлен prepareKulaginaUpdateQueue — только создание/проверка одного технического листа подScriptLock с flush и агрегатным queue_ready JSON. Не вызывает poll/handlers/Telegram/Drive/initialize; создан для исполнения уже разрешённого добавления листа, поскольку script.projects grant сам по себе не позволяет удалённое выполнение Apps Script. Его live выполнение пока не подтверждено. Existingpoll также создаст лист при первом штатном запуске. Всего56globalfunctions, безколлизий. Старые55относились к кандидату без setuphelper.
+
+4новыхrelaytests (familyguards/full8preservation/installedrequired/crossfamilybackup/unknownnoRetry/partialrefusal/explicitenum/protectedjob) +1setup-onlytest. Полный596Python+243Node PASS,6offline demos. Manifest/7неосновныхfiles не меняются; source и journalmetadata реальные интеграции ещё не проверены.

@@ -384,3 +384,9 @@ Calendar/Sheets/Drive/user messages/webhook/trigger/deployment операции 
 
 Из существующей2.0.5 перенесён узкий durable inbox в offlinelegacyrecipe, не весь проект: poll+6helpers, строгие6technicalheaders/payloadID,3attempts/DEADoriginalpayload. Combinedfileguardtest:1неопределённыйcreate/1DEAD/следующийответсохранён, без второгофайла.8новыхtests; full596Python+238Node PASS,6offline demos. Actual8sourceoffline:1changedmain/7preserved/55globals/no collisions/syntaxPASS. [Конкретный состав/схема/приёмка/риски](LEGACY_FILE_QUEUE_CANDIDATE.md). Нетliveinstall/реальныхSheets/Telegram/Drivecalls/новойwriteallowlist. Добавление «Очередь updates» в реальнуюкнигу требует отдельного разрешения; старые2sourcefixes уже установлены и сохраняются. Нельзя заявлять exactlyonce всехlegacyкоманд, автоматическуюDrive reconciliation или безопасный автоматическийrollback.
 
+
+
+# 30.10.2026 — установка file+queue разрешена, защищённый маршрут подготовлен
+
+Пользователь«+»явно разрешил новый file+queueпатч и технический лист «Очередь updates» в существующейботкниге. Новый apply_legacy_file_queue отделён от старых2fixes; existingaccess/ACK обязательны, exactfile+queuerecipes/7pins/full8backup/familybinding/ownerreview/main/freshGET guards. UnknownPUT не повторяется. Setup-only prepareKulaginaUpdateQueue добавлен для отдельного разрешённого создания листа безpoll/initialize/сообщений; его выполнение ещё не подтверждено. Actualsourceoffline:1mainchange/7preserved/56globals/syntaxPASS. Полный596Python+243Node PASS,6offline demos. Пока нет новогоGooglePUT, установки или подтверждённого создания листа. Новый маршрут требует фактического protectedrunиreread. [Состав и ограничения](LEGACY_FILE_QUEUE_CANDIDATE.md).
+

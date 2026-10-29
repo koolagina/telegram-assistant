@@ -26,9 +26,24 @@ const helper=names.map(n=>{
 `;
  return code;
 }).join('\n');
-const replacement=extract(current,'pollTelegramUpdates')+'\n'+helper;
+const setup=`function prepareKulaginaUpdateQueue() {
+  return withScriptLock_(()=>{
+    const existed=!!ss_().getSheetByName('Очередь updates');
+    updateInbox_();
+    SpreadsheetApp.flush();
+    const result={status:'queue_ready',created:!existed,columns:6,business_writes:0,messages_sent:0,polling_started:false};
+    console.log(JSON.stringify(result));
+    return result;
+  });
+}
+`;
+const replacement=extract(current,'pollTelegramUpdates')+'\n'+helper+'\n'+setup;
 function patchUpdateQueue(source){
- if(typeof source!=='string'||source.split(original).length!==2||names.some(n=>source.includes('function '+n+'(')))throw Error('Reviewed legacy queue precondition mismatch');
+ if(typeof source!=='string'||source.split(original).length!==2||[...names,'prepareKulaginaUpdateQueue'].some(n=>source.includes('function '+n+'(')))throw Error('Reviewed legacy queue precondition mismatch');
  return source.replace(original,replacement);
 }
-module.exports={patchUpdateQueue};
+function restoreUpdateQueue(source){
+ if(typeof source!=='string'||source.split(replacement).length!==2)throw Error('Exact installed patch required');
+ return source.replace(replacement,original);
+}
+module.exports={patchUpdateQueue,restoreUpdateQueue};

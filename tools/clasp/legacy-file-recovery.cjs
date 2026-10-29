@@ -44,4 +44,8 @@ function patchFileRecovery(source){
  if(typeof source!=='string'||source.split(original).length!==2||replacement===original)throw Error('Reviewed storeFile_ precondition mismatch');
  return source.replace(original,replacement);
 }
-module.exports={patchFileRecovery};
+function restoreFileRecovery(source){
+ if(typeof source!=='string'||source.split(replacement).length!==2)throw Error('Exact installed patch required');
+ return source.replace(replacement,original);
+}
+module.exports={patchFileRecovery,restoreFileRecovery};
