@@ -16,6 +16,7 @@ node --test tests/legacy-access-ack.cjs
 node --test tests/legacy-file-recovery.cjs
 node --test tests/legacy-file-review.cjs
 node --test tests/legacy-update-queue.cjs
+node --test tests/legacy-reply-recovery.cjs
 node --test tests/nvsu-approved-import.cjs
 node --test tests/google-actions-bridge.cjs
 "${KULAGINA_PYTHON:-python3}" tools/review_demo.py

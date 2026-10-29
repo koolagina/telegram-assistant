@@ -1,3 +1,7 @@
+# 30.10.2026 — queue schema принята; следующий reply-recovery кандидат локально проверен
+
+Owner-runsetup вернулqueue_ready/createdfalse/6columns/businesswrites0/messagessent0/pollingfalse: существующая совместимая схема подтверждена, без повторногосоздания. После этого3partialreplyprojectionсценария воспроизведены red→green: tools/clasp/legacy-reply-recovery.cjs меняет dedupbranchprocessMessage_+1helper, repairsmissingfields по сохранённомуtaskID/chat, closed/manualconflicts сохраняет.12новыхtests, full596Python+255Node PASS,6offline demos. Actualinstalled8sourceoffline:1changedmain/7preserved/57globals/syntaxPASS. Новаяrecoveryправка не установлена/новыхGoogleопераций0/relayallowlist неизменён. [Состав, таблица дефектов и границы](LEGACY_REPLY_RECOVERY_CANDIDATE.md). Уведомления/rowbindingsновыхответов/Sheetsformula/CASmanualedits остаются отдельными рисками; не называть весьhandlerexactlyonce.
+
 # 29.10.2026 — Git→Actions запуск подтверждён, Google credential отсутствует
 
 Workflow автоматически запущен push-коммитом04c75c5, run40894062838: request validation success, read остановлен status=connection_not_configured, write job skipped. В sanitized runner JSON google_gets0/google_writes0/messages0/source_exposedfalse. Это реальная проверка транспорта до worker, **не Google connection success**. GoogleSecret пользователь ещё не добавил; нужно однократное сохранение local offline packet через штатную GitHub Secret UI, не в чат. ПовторныйGooglelogin для чтения не требуется при valid refresh token.
