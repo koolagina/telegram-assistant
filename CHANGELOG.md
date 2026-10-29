@@ -1,3 +1,9 @@
+# 29.10.2026 — minimal legacy access/ACK candidate, complete helper review
+
+- All8uploadedfiles reviewed:49globals/no collisions; Novemberexport already installed in source. Probe formatting variant passes10existing tests; original helper bytes preserved.
+- Offline pinhash-guarded8file candidate builder and public minimaldiff: exactapproval/ACKonly,7files unchanged. Shared private-directory logic reused, no target/authconfig/clasp/Google invocation.
+-9newNode regressions firstred→green;591Python187Node fullPASS,6offline demos. Actual8upload bundle verified privately; no production upload/OAuth writegrant/deployment. docs/LEGACY_ACCESS_ACK_CANDIDATE.md.
+
 # 29.10.2026 — uploaded Apps Script source/manifest review
 
 - Compared uploaded445line/37function main with archive1.4.3:36function blocks identical, unguarded callback ACK and version header differ. Candidate2.0.5has80additional functions;5base headers match.

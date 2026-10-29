@@ -1,8 +1,7 @@
 'use strict';
 /** Local preparation only. Never logs in, invokes clasp, reads credentials or contacts Google. */
 const systemFs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
-function prepare({destination,scriptId,platform=process.platform,run=spawnSync,fs=systemFs}) {
- if(typeof scriptId!=='string'||!/^[A-Za-z0-9_-]{20,200}$/.test(scriptId))throw Error('Invalid explicit Script ID');
+function createPrivateDirectory({destination,platform=process.platform,run=spawnSync,fs=systemFs}) {
  if(typeof destination!=='string'||!path.isAbsolute(destination)||/[\r\n\0]/.test(destination))throw Error('Absolute private destination required');
  destination=path.resolve(destination);
  if(fs.existsSync(destination))throw Error('Destination already exists; use a fresh backup');
@@ -19,6 +18,11 @@ function prepare({destination,scriptId,platform=process.platform,run=spawnSync,f
   const acl=run('icacls.exe',[destination,'/inheritance:r','/grant:r','*'+sid[0]+':(OI)(CI)F','*S-1-5-18:(OI)(CI)F'],{encoding:'utf8',windowsHide:true,shell:false});
   if(acl.status!==0)throw Error('Private ACL setup failed; no credentials created');
  }else fs.chmodSync(destination,0o700);
+ return destination;
+}
+function prepare({destination,scriptId,platform=process.platform,run=spawnSync,fs=systemFs}) {
+ if(typeof scriptId!=='string'||!/^[A-Za-z0-9_-]{20,200}$/.test(scriptId))throw Error('Invalid explicit Script ID');
+ destination=createPrivateDirectory({destination,platform,run,fs});
  for(const name of ['bootstrap','backup','credentials'])fs.mkdirSync(path.join(destination,name),{mode:0o700});
  const write=(name,value)=>fs.writeFileSync(path.join(destination,name),value,{mode:0o600,flag:'wx'});
  const project=JSON.stringify({scriptId:scriptId,rootDir:'.'},null,2)+'\n';
@@ -30,7 +34,7 @@ function prepare({destination,scriptId,platform=process.platform,run=spawnSync,f
  write('COMMANDS.txt',commands.join('\n')+'\n');
  return {prepared:true,remote_access_performed:false,commands:commands};
 }
-module.exports={prepare};
+module.exports={prepare,createPrivateDirectory};
 if(require.main===module){
  try {
   const args=process.argv.slice(2);

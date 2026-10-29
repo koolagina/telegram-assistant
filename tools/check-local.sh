@@ -12,6 +12,7 @@ node --test tests/consultation-calendar-smoke.cjs
 node --test tests/nvsu-calendar-snapshot.cjs
 node --test tests/nvsu-calendar-protection.cjs
 node --test tests/apps-script-backup-setup.cjs
+node --test tests/legacy-access-ack.cjs
 "${KULAGINA_PYTHON:-python3}" tools/review_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/assistant_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/decision_demo.py

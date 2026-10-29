@@ -2,9 +2,9 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
-## Основной код Apps Script сопоставлен с GitHub
+## Минимальный кандидат рабочего исходника подготовлен
 
-Скачанные Код.js/manifest изучены: основной код близок к архиву1.4.3, но не содержит защиты от expired callback. Локально воспроизведены ошибочный доступ для «Не одобрен» и блокировка следующих updates.2.0.5исправляет их, но полный переход требует конфигурационной сверки; рабочий проект не менялся. [Отчёт и минимальный план](docs/APPS_SCRIPT_SOURCE_REVIEW.md).101Node candidate tests PASS;6helpers ещё нужны для полного сравнения. Прямого Googlecloud-доступа/разрешения push нет.
+Все8backupфайлов проверены:49глобальных функций, без конфликтов. [Кандидат и diff](docs/LEGACY_ACCESS_ACK_CANDIDATE.md) исправляют только negative approval и expiredcallback; manifest/6helpers сохраняются побайтно. **Не установлен**, writeавторизация/Googlewrites не выполнялись. Полный suite **591 Python +187 Node PASS**,6offline demos. Four-week export уже есть в полученном Apps Script source, codecopy для него не нужен.
 
 ## Подготовлена сверка четырёх недель ноября
 

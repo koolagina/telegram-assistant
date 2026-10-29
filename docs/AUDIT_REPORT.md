@@ -1,3 +1,13 @@
+# 29.10.2026 — полный набор helpers изучен; минимальный legacy кандидат готов
+
+Получены все8файлов backup:7JS совместно compile/49globalfunctions/no duplicate names.3helpers побайтно repo,2совпадают после strip внешних пробелов; connection probe reformatted,10его tests на точном uploadedфайле PASS. November four-week entrypoint уже в реальномsource; повторный codecopy ради него не нужен, execution batch всё ещё не подтверждён.
+
+Локальный minimalcandidate изменяет только accessStatus_ (exact approval) и processCallback_ (best-effort ACK). Manifest+6helpers побайтно сохранены; sourceconfig/Sheetheaders/statuses/offset/legacy selection/37mainfunctions не меняются. tools/clasp/prepare-legacy-candidate.cjs проверяет pinhash всех8файлов, fresh private destination и синтаксис/collisions, не копирует target/authconfig/не вызываетclasp/Google. Patch безresourceIDs: patches/legacy-access-ack.patch. Full private bundle проверен на actualuploads; исходники/IDs неGit. Это не новый2.0.5deployment.
+
+9новыхNode tests firstred→green; shared private-directory/ACL helper выделен без измененияbackupповедения,6existing testsPASS. Полный **591Python +187Node PASS**,6offline demos; дополнительный actualuploadedprobe10PASS не включён второй раз. No livepatchintegration/Googlewrites/sends/deploy. Windowscandidatebuilder пока не executed пользователем; authостаётсяread-only. [Кандидат/таблица дефектов/границы установки](LEGACY_ACCESS_ACK_CANDIDATE.md).
+
+---
+
 # 29.10.2026 — скачанные основной код и manifest изучены
 
 Пользователь передал Код.js/appsscript.json.445строк/37функций,36блоков совпадают с архивом1.4.3; отличиеprocessCallback_ — нет best-effortACK, заголовок1.4. Это фактический source snapshot, не proof deployedversion. Candidate2.0.5:117функций/80новых, все37старых имён сохранены;5общих CFG header arrays совпадают. Manifest:Asia/Yekaterinburg/V8/Calendar v3 alias сохранён; явноoauthScopesнет; webapp ANYONE_ANONYMOUS/USER_DEPLOYING — настройки, не доказательство фактического endpoint. Rawsource/ресурсныйID неGit.

@@ -333,3 +333,8 @@ User reported custom Desktop OAuth success then Pulled8files (manifest+main+6hel
 ## Uploaded main source reviewed — 29.10.2026
 
 Actualuploadedmain445lines/37functions differsarchive1.4.3onlyversionheader and unguardedcallback ACK;36functionblocksidentical. Mockreproducednegativeapproval/expiredcallbackblocking; candidate2.0.5fixes,101NodecandidatePASS.5baseheadersmatch butresourceconfig changes. UploadedmanifestV8/AsiaYekaterinburg/Calendarv3alias known; not proof of deployment or existingendpoint.6helperscontents stillmissing, nofullprojectcollisioncheck. No copiedrawsource/hardcodedresourceID inGit. Preferminimalcompatiblepatchfirst; nofull2.0.5push orarchive merge/bootstrapmanifestupload. docs/APPS_SCRIPT_SOURCE_REVIEW.md.
+
+
+## Complete helper review/minimal legacy candidate — 29.10.2026
+
+All8uploadfiles reviewed/49globals/no collisions. Novemberexport exists already; no helpercopyneeded, monthlyexecutionstillpending. Sourcevalidationshashes only inGit, rawsource/IDs private. tools/clasp/prepare-legacy-candidate.cjs builds fresh private8file candidate with2changes(accessStatus_ exactapproval/callbackACK),7filesbytepreserved; fullactualuploadsetverified offline. ExpectedpinhashesCLIhardcoded; mismatch/unknownfiles/symlinks/collisions/syntax failclosed; no auth/targetconfig copying, noremoteIO/ready_for_pushfalse. SharedcreatePrivateDirectory inprepare-backup.cjs preservesACL guards.9newNode/full591Python187Node PASS6demos; actualprobe10PASS extra. Candidate2.0.5unchanged, no productionpush/deploy/writeOAuthgrant; newlegacyWindowsbuildernotyetuserexecuted. Partialoutputerrorstop/noretryoverexisting, originalbackupuntouched. docs/LEGACY_ACCESS_ACK_CANDIDATE.md.
