@@ -338,3 +338,8 @@ Actualuploadedmain445lines/37functions differsarchive1.4.3onlyversionheader and 
 ## Complete helper review/minimal legacy candidate — 29.10.2026
 
 All8uploadfiles reviewed/49globals/no collisions. Novemberexport exists already; no helpercopyneeded, monthlyexecutionstillpending. Sourcevalidationshashes only inGit, rawsource/IDs private. tools/clasp/prepare-legacy-candidate.cjs builds fresh private8file candidate with2changes(accessStatus_ exactapproval/callbackACK),7filesbytepreserved; fullactualuploadsetverified offline. ExpectedpinhashesCLIhardcoded; mismatch/unknownfiles/symlinks/collisions/syntax failclosed; no auth/targetconfig copying, noremoteIO/ready_for_pushfalse. SharedcreatePrivateDirectory inprepare-backup.cjs preservesACL guards.9newNode/full591Python187Node PASS6demos; actualprobe10PASS extra. Candidate2.0.5unchanged, no productionpush/deploy/writeOAuthgrant; newlegacyWindowsbuildernotyetuserexecuted. Partialoutputerrorstop/noretryoverexisting, originalbackupuntouched. docs/LEGACY_ACCESS_ACK_CANDIDATE.md.
+
+
+## Four-week comparison received — 29.10.2026
+
+ActualuserNovemberbatch2chunks validchecksum/4weeks/sametarget accepted. FreshNVSU/Calendar:11/11exactfirstweek,9/0second,9/0third,0/0last explicitnoschedule. Missing18/duplicatesexact0/unknown0. Private18payloadhumanpreview prepared;18create0update0delete11preserve, not executable/ownershipfalse/teachingfalse. No redoexportnow; realclasswrites need separateuserpermission/freshCalendarSource/ledger/unknownrecovery, no inferencefromTEST permission.78Python+13Node targetedPASS,codeunchanged,lastfull591Python187Node6demos not rerun. No Googlecalls fromCodex/calendarwrites, legacyhotfixstilluninstalled. docs/NVSU_NOVEMBER_REVIEW.md.

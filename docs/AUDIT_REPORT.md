@@ -1,3 +1,13 @@
+# 29.10.2026 — четыре недели сравнены;18занятий отсутствуют в Calendar
+
+Полный пользовательский Novemberbatch принят:2части/checksumvalid/4правильные недели/одинtarget. Источник freshly fetched существующим parser. НВГУ/Calendar/exact/missing:02–08ноября11/11/11/0;09–15ноября9/0/0/9;16–22ноября9/0/0/9;23–29ноября0/0/0/0(явное«Расписание отсутствует»).11существующих protectedсобытий совпадают и сохраняются;0duplicateexact/unknown. Это выбранныйCalendar/конкретныйпериод, не все календари/семестр.
+
+Предварительный план:18create candidates,0updates/0deletes/11preserved. Private human-readable18row preview иpayload-onlyJSON подготовлены внеGit; source refs/groups/streams не включены вeventpayload. Existingnvsu_sync используется без новогоалгоритма; always ready_for_applyfalse/teachingverifiedfalse/ownershipfalse. Реальные Calendar/code/данные не менялись; TESTразрешение не разрешает18настоящихзанятий. Перед записью нужно отдельное userразрешение иfreshsource/Calendar/ledger/idempotency/reconciliation proof.
+
+Точечные проверки:78Python NVSUtests PASS+13Node exporttests PASS. Последний full591Python187Node/6demos не повторялся, codeunchanged. [Предварительный план и ограничения](NVSU_NOVEMBER_REVIEW.md). Legacy access/ACK candidate по-прежнему не установлен.
+
+---
+
 # 29.10.2026 — полный набор helpers изучен; минимальный legacy кандидат готов
 
 Получены все8файлов backup:7JS совместно compile/49globalfunctions/no duplicate names.3helpers побайтно repo,2совпадают после strip внешних пробелов; connection probe reformatted,10его tests на точном uploadedфайле PASS. November four-week entrypoint уже в реальномsource; повторный codecopy ради него не нужен, execution batch всё ещё не подтверждён.

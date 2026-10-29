@@ -434,3 +434,8 @@ Uploadedmain37functions36sameasarchive1.4.3, missingguardedACK. Mockverifiednega
 ## 55. Полный helper review + minimallegacycandidate — 29.10.2026
 
 8filesreviewed49globalscompile/no collisions; monthlyexportpresentinactualsource. Separateofflinecandidate preserves7files andchangesmain2hunks only; guardedhashbuilder+publicpatch, no full2.0.5migration/Googlewrite/authgrant.9Node regressions/full591Python187Node PASS6demos,actualprobe10extraPASS. Installationneedsseparateuserdecision/freshsource/targetpreservation; currentauthreadonly, deployedversion/triggersstillunknown. docs/LEGACY_ACCESS_ACK_CANDIDATE.md.
+
+
+## 56. Four-week comparison/18missing lessons — 29.10.2026
+
+Fullvaliduserbatch accepted; freshsource11/9/9/0vsCalendar11/0/0/0. Exact11/missing18/duplicates0/unknown0; protected11preserved. Private18rowpayloadpreview/no execution/noownership/no fullteachingproof.78Python13Node targetedPASS,docs only. Need explicitrealclasspermission/freshrevalidation/ledger before applying; TESTpermission insufficient. Legacycriticalfix remains candidate. docs/NVSU_NOVEMBER_REVIEW.md.

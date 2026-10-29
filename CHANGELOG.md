@@ -1,3 +1,9 @@
+# 29.10.2026 — four-week Calendar snapshot compared with fresh NVSU
+
+- Verified complete userbatch checksum/scope/target; publicsource29lessons vs11Calendar events:11exact/18missing, duplicateexact0/unknown0. Lastweek explicitnoschedule/emptyCalendar.
+- Private payload-only18row humanpreview prepared with existing planner:18add candidates,0update/delete,11preserved. No writes/ownership adoption/teachingcompleteness claim; separate permission/fresh revalidation required.
+-78Python NVSU+13Node export PASS; docs only, lastfull591Python187Node not rerun. docs/NVSU_NOVEMBER_REVIEW.md. Legacyhotfix remains uninstalled.
+
 # 29.10.2026 — minimal legacy access/ACK candidate, complete helper review
 
 - All8uploadedfiles reviewed:49globals/no collisions; Novemberexport already installed in source. Probe formatting variant passes10existing tests; original helper bytes preserved.
