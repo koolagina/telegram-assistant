@@ -1,3 +1,13 @@
+# 29.10.2026 — повторный weekly snapshot + подготовка clasp без Google-записи
+
+Новый пользовательский snapshot (14:56местного времени) имеет weekly purpose и охват02–08.11, не November batch. Его checksum проверен, свежий NVSU перечитан существующим fetch_week:11exact time/title/room,missing0/duplicate0/unknown0, protected11. Другие3недели по этому JSON не проверены; причину выбора weekly функции/версии кода не угадываем.
+
+По согласованию пользователя подготовлен `tools/clasp/prepare-backup.cjs`, pinned clasp3.4.1/package-lock. Local-only preparer создаёт fresh private auth/bootstrap/backup config внеGit; выводит только login с readonly-only project scopes и pull, сам не авторизуется/не запускаетclasp. Windows указан пользователем; WindowsACL branch проверен mocked, сам Windows/Googlelogin не проверен. Credentials/ScriptID/config/actualsource не вGit; ignorepatterns добавлены. Установленный CLI/help и настоящий scope builder проверены offline: readonly manifest не добавляет broad default scopes.
+
+Googleconnection/backupsource ещё отсутствуют, Windowslogin не даёт автоматически Codexcloud доступ. Push может повлиять на trigger execution без deployment; не допускается partial-file updateContent/подменарабочегоmanifest/архивов/автопубликация. Статус productionversion не установлен по заголовку исходника.6новыхNode tests firstred→green; полный **591Python +178Node PASS**,6offline demos. [Windowsинструкция/границы](APPS_SCRIPT_CONNECTION.md).
+
+---
+
 # 29.10.2026 — четыре недели ноября: источник проверен, Calendar-снимок подготовлен
 
 Свежие разрешённые public GET через существующий `nvsu_source.fetch_week`:02–08.11 parsed11;09–15.11 parsed9;16–22.11 parsed9;23–29.11 source_reports_no_schedule0. Учебная неделя/дата/преподаватель проверены существующим parser; это не результат Calendar-импорта. Private source proofs вне Git. Отсутствие расписания не разрешает удаление ручных/неподтверждённых событий.

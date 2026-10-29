@@ -20,3 +20,8 @@ __pycache__/
 
 # Private assistant registry/policy snapshots
 .assistant-state/
+
+# Private Apps Script auth/target configuration and downloaded working source
+.clasprc*
+.clasp.json
+.apps-script-private/

@@ -1,0 +1,8 @@
+{
+  "name": "kulagina-apps-script-transfer-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned clasp tooling; no automatic login, push or deployment",
+  "engines": {"node": ">=20"},
+  "devDependencies": {"@google/clasp": "3.4.1"}
+}

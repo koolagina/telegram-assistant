@@ -318,3 +318,8 @@ nvsu_calendar_protection.gs / inspectKulaginaNvsuProtectionReadOnly — standalo
 ## Four-week November snapshot — 29.10.2026
 
 Protection diagnosis received complete: attendees-field11/description5, no writes/ownership proof. Не повторять эту диагностику. Существующий nvsu_calendar_snapshot.gs расширен новым exportKulaginaNvsuNovemberReadOnly через тот же internal collector; old weekly entrypoint сохранён. Fixed02–29Nov,4weeks/one buffered batch/24GET/200total events; allfail/no partial chunks on incompleteweek/targetchange/limits. Новая Calendar-проверка не executed live. Pythonbatch comparator delegates to old planner, не ownership/writepermission/full semester proof; Nov30outside. Freshpublicsource11/9/9/0, last explicit no schedule не deletion authority.1newPython4newNode/full591Python172Node PASS6demos. Пользователь заменяет только свой вспомогательный файл экспорта, не основнойбот/не duplicateglobals. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## Clasp backup preparation — 29.10.2026
+
+User approved preparing backup connection; Windows device. tools/clasp pins3.4.1; prepare-backup.cjs local-only creates fresh private config/readonly bootstrap and prints explicit login/pull commands, no OAuth/remoteIO. WindowsACL mocked/no realWindowslogin. Readonly scope builder verified offline; no broaddefault/includeextras/ADC. Never push partialhelper set: updateContent replacesprojectfiles; triggers can run changedcode without deployment. No Google auth/sourcebackup/directCodex connection yet; Windowslogin stays local. Authfiles/privateprojectconfig/working source outsideGit; no credentialuploads/callbacks inchat.6Node/full591Python178Node PASS6demos. Latestmanualsnapshot weekly02–08.11again/11exact; not fourweekbatch. docs/APPS_SCRIPT_CONNECTION.md.

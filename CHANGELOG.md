@@ -1,3 +1,9 @@
+# 29.10.2026 — prepare read-only Apps Script backup connection
+
+- Windows local-only preparer with fresh private paths/ACL, explicit auth/target, readonly manifest scopes, generated login/pull commands. No OAuth or remote backup/push/deployment performed.
+- Pinned clasp3.4.1 with lock; installed CLI/help and actual scope builder verified offline.6Node tests/591Python178Node fullPASS,6demos; WindowsACL mocked.
+- Repeated user snapshot is weekly, not four-week batch: checksum validated, freshsource11exactmatches again. Broader coverage remains unverified. docs/APPS_SCRIPT_CONNECTION.md.
+
 # 29.10.2026 — four-week read-only comparison candidate
 
 - Reused existing weekly collector for one fixed02–29Nov batch; weekly entrypoint preserved. GET-only, complete buffering, shared target, total200event/24GET limits; no writes or deployment. Not executed live.

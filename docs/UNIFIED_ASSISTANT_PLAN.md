@@ -419,3 +419,8 @@ User report complete: events11/protected11, attendees11/description5, otherreaso
 ## 52. Четыре недели одним read-only запуском — 29.10.2026
 
 Existingweeklycollector reused for exportKulaginaNvsuNovemberReadOnly,02–29Nov fixed4weeks; no Calendar writes/mainbot changes/deployment. Existingplanner reused perweek, sharedtarget/bufferall/failclosed/200total events. FreshNVSU11/9/9/0; realCalendar comparisonawaits manualbatch.591Python172Node PASS6demos, noownership/fullcoverage. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## 53. Read-only clasp connection preparation — 29.10.2026
+
+Windows local-only bootstrap prepared/pinned3.4.1+lock/6newNode;591Python178Node fullPASS6demos. No GoogleOAuth/pull/push/deploy; user participation needed for browserlogin, no credentialchat. Localidentity != Codexcloudconnection. Existingcode must be backedup/reviewed before any complete-project write; trigger risk evenwithout deployment. New receivedsnapshot onlyweekly02–08.11/checksumvalid/fresh11exact, broaderscope stillpending. docs/APPS_SCRIPT_CONNECTION.md.
