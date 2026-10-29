@@ -1,0 +1,77 @@
+--- legacy-current.gs
++++ legacy-sheet-literals-candidate.gs
+@@ -58,7 +58,7 @@
+   if(!folders.hasNext()) root.createFolder(folderName);
+ }
+ function log_(type,object,details) {
+-  try { tab_('Журнал бота',CFG.logHeaders).appendRow([new Date(),type,String(object||''),String(details||'').slice(0,2000)]); }
++  try { tab_('Журнал бота',CFG.logHeaders).appendRow([new Date(),legacySheetLiteral_(type),legacySheetLiteral_(String(object||'')),legacySheetLiteral_(String(details||'').slice(0,2000))]); }
+   catch(e) { console.error(e); }
+ }
+ function tg_(method,payload) {
+@@ -91,7 +91,7 @@
+     if(String(found.row[2]||'')!==username) sheet.getRange(found.index,3).setValue(username);
+     return found.row[0]||name;
+   }
+-  sheet.appendRow([name,'',username,id,new Date(),'Новый контакт — требует проверки']);
++  sheet.appendRow([legacySheetLiteral_(name),'',username,id,new Date(),'Новый контакт — требует проверки']);
+   send_(owner_(),'Новый пользователь бота: '+name+' (@'+username+'), chat ID '+id+'. Проверьте имя в листе «Студенты».');
+   return name;
+ }
+@@ -244,18 +244,18 @@
+   if(taskId&&!task) throw Error('Поручение изменилось при сохранении файла; требуется сверка');
+   if(isOwner_(chatId) && !task) {
+     const incoming=tab_('Входящие',['Дата и время','Имя','Telegram username','Telegram chat ID','Тип сообщения','Текст / подпись','Telegram message ID','Ссылка на файл']);
+-    incoming.appendRow([new Date(),name,m.from.username||'',chatId,stored.type,stored.description,m.message_id,stored.link]);
++    incoming.appendRow([new Date(),legacySheetLiteral_(name),m.from.username||'',chatId,stored.type,legacySheetLiteral_(stored.description),m.message_id,stored.link]);
+     send_(chatId,'Сообщение сохранено в личных входящих.');
+     return;
+   }
+-  replies.appendRow([new Date(),name,m.from.username||'',chatId,stored.type,stored.description,m.message_id,taskId,stored.link]);
++  replies.appendRow([new Date(),legacySheetLiteral_(name),m.from.username||'',chatId,stored.type,legacySheetLiteral_(stored.description),m.message_id,taskId,stored.link]);
+   if(taskId) {
+     const s=tab_('Поручения',CFG.taskHeaders);
+     task=legacyTaskForId_(chatId,taskId);
+     if(!task) throw Error('Поручение изменилось после записи ответа; требуется сверка');
+     s.getRange(task.index,6).setValue('Ответ получен');
+     s.getRange(task.index,7).setValue(new Date());
+-    s.getRange(task.index,8).setValue(stored.description||'['+stored.type+']');
++    s.getRange(task.index,8).setValue(legacySheetLiteral_(stored.description||'['+stored.type+']'));
+     if(stored.link) s.getRange(task.index,9).setValue(stored.link);
+     clearLegacyTaskSelection_(chatId,taskId);
+   }
+@@ -281,7 +281,7 @@
+   if(!row[6] && (!(reply[0] instanceof Date)||isNaN(reply[0].getTime())))
+     throw Error('Дата сохранённого ответа требует сверки');
+   if(!row[6]) sheet.getRange(item.index,7).setValue(reply[0]);
+-  if(!row[7]) sheet.getRange(item.index,8).setValue(content);
++  if(!row[7]) sheet.getRange(item.index,8).setValue(legacySheetLiteral_(content));
+   if(!row[8] && link) sheet.getRange(item.index,9).setValue(link);
+   if(status!=='Ответ получен') sheet.getRange(item.index,6).setValue('Ответ получен');
+   clearLegacyTaskSelection_(chatId,linkedId);
+@@ -596,7 +596,7 @@
+   if(isOwner_(chatId)) return send_(id,'Владелец уже имеет доступ.');
+   const sheet=tab_('Студенты',CFG.studentHeaders), rows=sheet.getDataRange().getValues();
+   for(let i=1;i<rows.length;i++) if(String(rows[i][3])===chatId) {
+-    sheet.getRange(i+1,1).setValue(name);
++    sheet.getRange(i+1,1).setValue(legacySheetLiteral_(name));
+     sheet.getRange(i+1,6).setValue('Одобрен');
+     send_(id,'Доступ разрешён: '+name+' ('+chatId+').');
+     try { send_(chatId,'Доступ к помощнику подтверждён. Для списка поручений отправьте /tasks.'); } catch(e) { log_('Ошибка уведомления об одобрении',chatId,e.message); }
+@@ -623,7 +623,7 @@
+   const sheet=tab_('Личные задачи',CFG.personalHeaders);
+   const key='L-'+Utilities.formatDate(new Date(),CFG.timezone,'yyyyMMdd-HHmmss')+
+     '-'+Math.floor(Math.random()*1000);
+-  sheet.appendRow([key,'Личное',text,'','Открыто','Обычный','',new Date()]);
++  sheet.appendRow([key,'Личное',legacySheetLiteral_(text),'','Открыто','Обычный','',new Date()]);
+   send_(id,'Добавила задачу '+key+': '+text);
+ }
+ function ownerDone_(id,raw) {
+@@ -703,3 +703,7 @@
+   ScriptApp.newTrigger('sendDailyBriefing').timeBased().everyDays(1).atHour(7).inTimezone(CFG.timezone).create();
+   log_('Настройка','Автоматизация','Триггеры установлены');
+ }
++
++function legacySheetLiteral_(value) {
++  return typeof value==='string'&&/^[=']/.test(value)?"'"+value:value;
++}
