@@ -46,3 +46,8 @@ Read-only export helper и source/Calendar normalization реализованы 
 ## Локальная маршрутизация updates — 29.10.2026
 
 Следующий локальный компонент реализован отдельно: [CONSULTATION_WORKER.md](CONSULTATION_WORKER.md). Handler и reply receipt атомарны, UI dispatch имеет отдельный fresh owner gate; demo проходит worker с mocks. Это не real runtime/executor, локальные планы не исполняются и рабочие ресурсы не меняются. Актуальная полная проверка483Python/110Node PASS.
+
+
+## Отдельный Calendar-stage candidate — 29.10.2026
+
+[CONSULTATION_EXECUTOR.md](CONSULTATION_EXECUTOR.md): disabled-by-default stage с original source/event evidence и read-only reconcile. Старые unbound local plans не исполняются автоматически. Ни actual APIs, ни source writes/notifications; external races требуют source CAS/writer coordination до live приёмки.521Python/110Node PASS,5offline demos.

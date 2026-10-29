@@ -1,3 +1,10 @@
+# 29.10.2026 — consultation Calendar-stage executor candidate
+
+- Strict original-evidence BoundPlan, current owner/student/source/hold/busy/teaching/ETag preflight. Unbound legacy plans denied, propose/create absent.
+- Separate private durable claims before side effect, unknown/inflight no retry; read-only marker/state/absence recovery. Calendar API receipt does not finalize Sheet or notify students.
+- Port reuses existing GoogleCalendarAdapter, conditional same-event PATCH/DELETE, no time/note rewrite, private operation marker, sendUpdates=none. Defaults off, all tests mocked.
+- 38 новыхPython tests;521Python/110Node PASS,5offline demos. Source CAS/writer coordination/finalization/notifications/template/sandbox acceptance remain; production unchanged. docs/CONSULTATION_EXECUTOR.md.
+
 # 29.10.2026 — atomic local consultation worker
 
 - Existing inbox/action sandbox/dispatch связаны отдельным opt-in worker; action processing вне read-only send preparation. Локальный receipt атомарен с plan/intent/status через SAVEPOINT.

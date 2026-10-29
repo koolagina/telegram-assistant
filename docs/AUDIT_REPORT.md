@@ -1,3 +1,13 @@
+# Календарный этап консультаций — 29.10.2026
+
+Добавлены tools/consultation_executor.py и consultation_calendar.py: отдельный disabled-by-default Calendar-stage executor, existing GoogleCalendarAdapter transport, strict BoundPlan с original owner/source/event evidence. Старые unbound планы автоматически не исполняются. Current policy/student identity/row revision/ownership/busy/full teaching/range/age/ETag сверяются до и после durable claim; marker прошлого attempt требует review. PATCH того же event без изменения времени/заметок, DELETE exact own hold, If-Match, no create/no retry/sendUpdates=none. НВГУ parser/sync/GAS snapshots не менялись.
+
+Private SQLite journal фиксирует claim до side effect. Unknown/active/rejected/blocked не повторяются. Read-only reconcile различает observed matching operation state и absent deleted hold; отсутствие не приписывается именно нашему запросу. Definite API Calendar receipt — не завершённая заявка и не доставка. Всегда source_status=not_written,notifications=not_sent: source CAS/finalization и per-recipient notifications отдельно. Между row/busy reads и Calendar остаётся внешняя гонка; этот кандидат не разрешён к live use, нужен source claim/CAS и координация writers. Legacy description намеренно сохраняется, возможный pending text требует проверенного template перед live включением.
+
+Новые38Python tests сначала красные до модулей:29executor/demo+9port. Дополнительные red→green: prior marker, slow absence, blocked receipt write failure. Полная локальная приёмка **521Python PASS +110Node PASS**,5synthetic demos. Fake HTTP+реальный port/executor/SQLite проверяют accepted→timeout/reconciliation без второго PATCH, ETag412, source changes/rights/ownership/staleness/concurrency/restart/crash. Реальные API/бот/Sheets/Calendar/уведомления/триггеры/deploy не запускались. Контракт/остатки/таблица исходов: [CONSULTATION_EXECUTOR.md](CONSULTATION_EXECUTOR.md), [пример](CONSULTATION_EXECUTION_DEMO.md).
+
+---
+
 # Локальный обработчик действий консультаций — 29.10.2026
 
 Добавлен tools/consultation_worker.py: existing private inbox → atomic local handler+reply receipt → separate DispatchLedger UI reply. Mutation не вызывается из send/prepare_fresh. ConsultationActions.process_update добавляет action_updates и nested SAVEPOINT; локальные status/intent/plan/receipt фиксируются атомарно. bot_id optional для прежних callers, обязателен и immutable для worker. Старый synthetic v1 store получает только добавочную таблицу, планы/ownership сохранены и проверены тестом; это не миграция рабочих Sheets.

@@ -1,3 +1,9 @@
+# Дополнение 29.10.2026: Calendar-stage executor
+
+Disabled-by-default candidate с original-evidence preflight/ETag/claims/reconciliation готов;521Python/110Node PASS. Mock-only HTTP, реального Google вызова нет. Только Calendar stage: source_status=not_written,notifications=not_sent. Live binding/consent bridge/source CAS/координация writers/finalization/уведомления/приёмка — отдельно. Контракт CONSULTATION_EXECUTOR.md.
+
+---
+
 # Дополнение 29.10.2026: action worker
 
 Отдельный локальный consultation worker готов: atomic handler+receipt, separate UI dispatch, defaults off. 24 новыхtests, полный483Python/110Node PASS. Demo synthetic, sender mock. Никакого real action executor/authoritative Sheet update/student notification/развёртывания. Контракт CONSULTATION_WORKER.md.

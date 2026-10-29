@@ -53,3 +53,8 @@ Private `action_updates` содержит update ID, canonical source payload ha
 | Чужой bot/project использует локальные решения | Отсутствие stable binding | Explicit metadata + triple namespace/bot match | Mismatch/rebind/old-store preservation PASS | Реальные bindings только после sandbox-приёмки |
 
 Следующие отдельные компоненты: verified live identity/collection/ownership/import completeness, source CAS/preflight и external executor с per-operation uncertain recovery; затем student agreement на предложенный перенос. До отдельного разрешения реальные Google/Telegram вызовы, триггеры и deploy не запускать.
+
+
+## Отдельный Calendar-stage candidate — 29.10.2026
+
+[CONSULTATION_EXECUTOR.md](CONSULTATION_EXECUTOR.md): disabled-by-default stage с original source/event evidence и read-only reconcile. Старые unbound local plans не исполняются автоматически. Ни actual APIs, ни source writes/notifications; external races требуют source CAS/writer coordination до live приёмки.521Python/110Node PASS,5offline demos.

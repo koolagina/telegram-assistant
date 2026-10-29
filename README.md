@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Календарный этап консультаций — текущая локальная проверка
+
+Готов выключенный по умолчанию executor с исходной привязкой решения, ETag, durable claim и read-only восстановлением после timeout. **521 Python +110 Node PASS** (`bash tools/check-local.sh`). [Контракт и ограничения](docs/CONSULTATION_EXECUTOR.md), [пример одного mock PATCH и восстановления](docs/CONSULTATION_EXECUTION_DEMO.md). Это отдельный Calendar stage: реальные API не вызывались, статусы источника и уведомления не записываются; live включение требует source CAS/verified bindings и отдельной приёмки.
+
 ## Обработчик консультаций — текущий локальный кандидат
 
 Кнопки проходят durable inbox, атомарную запись локального решения/ответа и отдельный UI dispatch с новой проверкой прав. Повтор/restart не создаёт второй handler/план; сбой local receipt откатывает решение. **483 Python +110 Node PASS** (`bash tools/check-local.sh`). [Контракт](docs/CONSULTATION_WORKER.md), [пример](docs/CONSULTATION_ACTIONS_DEMO.md). Реальные отправки и календарные операции не выполнялись, рабочий бот не изменён.

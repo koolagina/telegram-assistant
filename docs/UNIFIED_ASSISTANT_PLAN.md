@@ -349,3 +349,8 @@ ConsultationFeed/BusyFeed и отдельный read-only GAS export helper ка
 ## 38. Atomic local consultation worker — 29.10.2026
 
 Отдельный inbox→action/receipt→UI dispatch worker готов,24новыхtests,483Python/110Node PASS. Plan/status/intent/reply локально atomic, send preparation read-only, owner gate свежий. Synthetic v1 upgrade additive, stable bot binding. Meeting plan not_executed, sender mocks. Дальше: verified live sources/identity/import proof/source CAS, external executor/reconciliation и student agreement; production не подключён. CONSULTATION_WORKER.md.
+
+
+## 39. Calendar-stage executor — 29.10.2026
+
+Executor+existing Google port с original owner/source/event-bound plan, ETag, durable claim и read-only recovery готовы:38новыхPython tests,521Python/110Node PASS,5offline demos. Ни real API, ни source status/notify. Defaults off, old unbound plans denied. Следующее: trusted consent/live evidence, source claim/CAS и writer coordination, authoritative finalization и независимые notifications; live rollout до этого запрещён. Legacy descriptions требуют безопасного template. CONSULTATION_EXECUTOR.md.
