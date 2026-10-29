@@ -1,5 +1,6 @@
 # Завершение консультации — только искусственные данные
 
+Синтетические Telegram updates: карточка → original review → отдельный confirm → registry/source claim.
 После потери Calendar ответа: calendar_pending / unknown.
 Read-only сверка: calendar_reconciled_present; local CAS/status/outbox: finalized.
 Локальная строка: Подтверждена; Google Таблица не изменялась.

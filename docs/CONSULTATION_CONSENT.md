@@ -32,3 +32,6 @@ BoundConsultationWorker требует совпадение project/bot у priva
 Полная локальная приёмка: **572 Python PASS +110 Node PASS**. Новые24tests:14registry +10bound worker. Tests first; red→green дополнительная регрессия — current owner gate перенесён перед private review lookup (direct confirm/cancel). Проверены original topic/event/identity, cancelled/expired review, repeated verified update, publication failure/retry timestamp, state restart, current actor, no automatic Calendar action without explicit flag, complete bound workflow, UI unknown/mark failure/revoke, calendar reads вне DB locks, legacy proposal path, unsupported reports deferred.
 
 Настоящие OAuth/scopes, Google source claim/CAS, writer coordination, полнота НВГУ, operator recovery и sandbox rollout пока не проверялись. Прямой bypass registry, импорт старых unbound plans, создание fake consent на реальных ресурсах и выставление полноты из пустого Calendar запрещены. Этот local bridge не снимает ни одного production ограничения.
+
+
+Актуальная комплексная проверка после safe description fix:577Python/110Node PASS,6offline demos. CONSULTATION_WORKFLOW_DEMO.md теперь проходит synthetic Bot API inbox и этот registry, без ручного создания BoundPlan в demo. Реальная приёмка требует отдельно выбранных ресурсов: CONSULTATION_SANDBOX_ACCEPTANCE.md.

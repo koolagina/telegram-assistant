@@ -28,7 +28,7 @@ class FakeCalendar:
         if self.error:raise self.error
         if request['method']=='delete':self.event=None
         else:
-            self.event=replace(self.event,etag='v2',title=request['title'],location=request['location'],extensions=copy.deepcopy(request['extensions']))
+            self.event=replace(self.event,etag='v2',title=request['title'],location=request['location'],extensions=copy.deepcopy(request['extensions']),description=request.get('description',self.event.description))
         if self.after_apply:self.after_apply()
         return MutationReceipt(self.calendar_id,request['event_id'],request['method'],request['operation_id'])
 
@@ -241,3 +241,27 @@ class ExecutorTests(unittest.TestCase):
             output=run_execution_demo()
         self.assertIn('Всего mock PATCH: 1',output);self.assertIn('calendar_reconciled_present',output)
         self.assertIn('Реальных HTTP-запросов, событий, изменений таблицы и сообщений: 0',output)
+
+    def test_known_pending_description_changes_only_bot_prefix_and_keeps_manual_notes(self):
+        pending='Заявка synthetic-request; тема: Synthetic topic; предварительная запись, решение преподавателя ещё не получено.'
+        suffix='\n[assistant:CONSULT:synthetic-request]\nSynthetic manual note'
+        self.calendar.event=replace(self.calendar.event,description=pending+suffix)
+        self.bound=replace(self.bound,event_revision=event_revision(self.calendar.event))
+        self.assertEqual(self.execute()['status'],'calendar_api_confirmed')
+        self.assertEqual(self.calendar.event.description,'Заявка synthetic-request; тема: Synthetic topic; подтверждена владельцем.'+suffix)
+    def test_unknown_pending_description_blocks_approve_instead_of_guessing(self):
+        self.calendar.event=replace(self.calendar.event,description='Synthetic manual prefix; предварительная запись, решение преподавателя ещё не получено.')
+        self.bound=replace(self.bound,event_revision=event_revision(self.calendar.event))
+        with self.assertRaises(ExecutorError):self.execute()
+        self.assertEqual(self.calendar.calls,[])
+    def test_manual_post_edit_of_updated_bot_description_not_blindly_reconciled(self):
+        pending='Заявка synthetic-request; тема: Synthetic topic; предварительная запись, решение преподавателя ещё не получено.'
+        self.calendar.event=replace(self.calendar.event,description=pending)
+        self.bound=replace(self.bound,event_revision=event_revision(self.calendar.event))
+        def lost():raise TimeoutError('mock accepted')
+        self.calendar.after_apply=lost;self.execute()
+        self.calendar.event=replace(self.calendar.event,description=self.calendar.event.description+'\nNew manual note')
+        self.assertEqual(self.executor.reconcile(self.ctx,self.bound.id)['status'],'unknown')
+    def test_reject_does_not_rewrite_or_block_ambiguous_description(self):
+        self.calendar.event=replace(self.calendar.event,description='Synthetic manual prefix; предварительная запись, решение преподавателя ещё не получено.')
+        self.rejection();self.assertEqual(self.execute()['status'],'calendar_api_confirmed');self.assertIsNone(self.calendar.event)

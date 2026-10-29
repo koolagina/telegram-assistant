@@ -1,3 +1,9 @@
+# 29.10.2026 — safe legacy description + complete local consent workflow
+
+- Exact source-bound pending bot prefix changes to confirmed, manual suffix/marker retained; unknown pending template blocks approve, reject untouched. Reconcile includes optional reviewed description postcondition.
+- 5red→green regression tests,577Python/110Node PASS,6offline demos. Full workflow demo now uses verified synthetic inbox→consent registry/bound worker rather than handwritten BoundPlan.
+- Concrete sandbox resource/read/write/send plan prepared in docs/CONSULTATION_SANDBOX_ACCEPTANCE.md; no actual resources selected/accessed, live actions not authorized. Existing source/GAS schemas preserved.
+
 # 29.10.2026 — original-evidence consultation consent registry/worker
 
 - OwnerReview captures source/event/actor before final confirm; immutable BoundPlan+source claim publication atomic, original confirmation timestamp survives retry.

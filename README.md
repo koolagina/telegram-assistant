@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Актуальная локальная приёмка
+
+**577Python +110Node PASS**,6offline demos: `bash tools/check-local.sh`. Комплексный цикл approve/reject проходит original-evidence consent, Calendar recovery, local fixture CAS/status и independent notices; exact legacy bot description обновляется без потери заметок. [Пример](docs/CONSULTATION_WORKFLOW_DEMO.md), [отчёт](docs/AUDIT_REPORT.md), [план отдельной sandbox-приёмки](docs/CONSULTATION_SANDBOX_ACCEPTANCE.md). Рабочие ресурсы/бот не изменены; реальная версия deployment не подтверждена. SQLite source не заменяет real Google Sheets adapter.
+
 ## Исходные данные подтверждения — текущая локальная проверка
 
 Реестр original-evidence review и bound worker связывают отдельное owner confirm со строкой/событием, не заменяют исходные данные после решения. Calendar reads вне DB locks, legacy proposals сохранены; всё opt-in/mock-only. **572Python +110Node PASS** (`bash tools/check-local.sh`). [Контракт](docs/CONSULTATION_CONSENT.md). Рабочие ресурсы не подключены.

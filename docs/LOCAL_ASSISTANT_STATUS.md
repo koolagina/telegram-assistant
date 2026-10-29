@@ -1,3 +1,9 @@
+# Актуально29.10.2026:577Python/110Node PASS
+
+Bound consultation flow проверен целиком на synthetic inbox/Calendar/notice mocks,6demos. Safe legacy prefix replacement сохраняет manual suffix. Google Sheets source CAS/real bindings/full-import verification/rollout отсутствуют. Нужен выбор отдельных test bot/Calendar для следующей разрешённой приёмки: CONSULTATION_SANDBOX_ACCEPTANCE.md. Production не менялся.
+
+---
+
 # Дополнение29.10.2026: original owner consent
 
 Registry и bound worker готовы,572Python/110Node PASS. Original source/event evidence до confirm, stable timestamp/replay, atomic local publication+claim, no locked Calendar reads. Все API mocks/default off, no production. CONSULTATION_CONSENT.md.

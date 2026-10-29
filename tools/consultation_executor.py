@@ -220,8 +220,16 @@ class ConsultationExecutor:
         if MARKER in private:raise ExecutorError('Previous calendar attempt requires reconciliation')
         operation_id=digest([self.namespace,bound.calendar_id,bound.id,bound.fingerprint])
         private[MARKER]=operation_id
+        pending_phrase='предварительная запись, решение преподавателя ещё не получено.'
+        old_prefix='Заявка '+plan['booking_id']+'; тема: '+row.record.topic+'; '+pending_phrase
+        description=None
+        if method=='update':
+            if actual.description.startswith(old_prefix):
+                description='Заявка '+plan['booking_id']+'; тема: '+row.record.topic+'; подтверждена владельцем.'+actual.description[len(old_prefix):]
+            elif pending_phrase in actual.description:raise ExecutorError('Legacy pending description requires review')
         request={'calendar_id':bound.calendar_id,'method':method,'event_id':actual.id,'etag':actual.etag,'operation_id':operation_id,
                  'start':_utc(start),'end':_utc(end),'title':'Консультация — подтверждена','location':'Кабинет 317','extensions':extensions}
+        if description is not None:request['description']=description
         return bound,request
     def execute(self,context,plan_id,*,execution_enabled=False):
         if execution_enabled is not True or getattr(self.calendar,'writes_enabled',False) is not True:raise ExecutorError('Calendar execution disabled')
@@ -270,6 +278,7 @@ class ConsultationExecutor:
                 if (request['method']=='update' and actual.calendar_id==request['calendar_id'] and actual.id==request['event_id']
                         and _utc(actual.starts_at)==request['start'] and _utc(actual.ends_at)==request['end']
                         and actual.protected is False and actual.title==request['title'] and actual.location==request['location']
-                        and actual.extensions==request['extensions']):return self._finish(plan_id,'calendar_reconciled_present')
+                        and actual.extensions==request['extensions']
+                        and ('description' not in request or actual.description==request['description'])):return self._finish(plan_id,'calendar_reconciled_present')
             return self.result(context,plan_id)  # Still unknown/active, never reset for retry.
         except Exception:raise ExecutorError('Calendar reconciliation unavailable; review required') from None

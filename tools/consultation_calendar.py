@@ -44,7 +44,7 @@ class ConsultationCalendarPort:
         if not self.writes_enabled:raise ExecutorError('Calendar writes disabled')
         try:
             fields={'calendar_id','method','event_id','etag','operation_id','start','end','title','location','extensions'}
-            if (type(request) is not dict or set(request)!=fields or request['calendar_id']!=self.calendar_id
+            if (type(request) is not dict or set(request) not in (fields,fields|{'description'}) or request['calendar_id']!=self.calendar_id
                     or request['method'] not in ('update','delete') or not identifier(request['event_id'])
                     or type(request['etag']) is not str or not request['etag'] or len(request['etag'])>512
                     or any(ord(c)<32 for c in request['etag']) or type(request['operation_id']) is not str
@@ -52,20 +52,24 @@ class ConsultationCalendarPort:
                     or request['extensions'].get('private',{}).get(MARKER)!=request['operation_id']
                     or request['title']!='Консультация — подтверждена' or request['location']!='Кабинет 317'):
                 raise ExecutorError('Invalid conditional operation')
+            if 'description' in request and (request['method']!='update' or type(request['description']) is not str or len(request['description'])>20000):raise ExecutorError('Invalid reviewed description')
             start,end=dt.datetime.fromisoformat(request['start']),dt.datetime.fromisoformat(request['end'])
             if not aware(start) or not aware(end) or end-start!=dt.timedelta(minutes=20):raise ExecutorError('Invalid time proof')
             path='/events/'+quote(request['event_id'],safe='');headers={'If-Match':request['etag']};params={'sendUpdates':'none'}
             if request['method']=='delete':
                 self.adapter._request('DELETE',path,params=params,headers=headers)
             else:
-                # PATCH only chosen fields; no insertion or time/description/attendee rewrite.
-                raw=self.adapter._request('PATCH',path,params=params,headers=headers,body={
-                    'summary':request['title'],'location':request['location'],'extendedProperties':copy.deepcopy(request['extensions'])})
+                # PATCH only chosen fields; no insertion or time/attendee rewrite.
+                # Optional description is an exact source-bound bot prefix replacement.
+                body={'summary':request['title'],'location':request['location'],'extendedProperties':copy.deepcopy(request['extensions'])}
+                if 'description' in request:body['description']=request['description']
+                raw=self.adapter._request('PATCH',path,params=params,headers=headers,body=body)
                 event=self.adapter._event(raw)
                 if (event is None or event['id']!=request['event_id'] or not event.get('etag')
                         or dt.datetime.fromisoformat(event['start'])!=start or dt.datetime.fromisoformat(event['end'])!=end
                         or event['title']!=request['title'] or event['location']!=request['location']
-                        or raw.get('extendedProperties')!=request['extensions']):raise ExecutorError('Unexpected mutation acknowledgement')
+                        or raw.get('extendedProperties')!=request['extensions']
+                        or ('description' in request and event['description']!=request['description'])):raise ExecutorError('Unexpected mutation acknowledgement')
             return MutationReceipt(self.calendar_id,request['event_id'],request['method'],request['operation_id'])
         except CalendarError as error:
             if type(error.status) is int and 400<=error.status<=499 and error.status!=408:raise MutationRejected(error.status) from None

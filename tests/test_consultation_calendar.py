@@ -65,3 +65,9 @@ class CalendarTests(unittest.TestCase):
         self.assertTrue(self.port.read('synthetic-hold').protected)
     def test_missing_read_is_absence_not_an_empty_busy_snapshot(self):
         self.assertIsNone(self.port.read('missing'))
+
+    def test_explicit_reviewed_description_patch_preserves_other_fields(self):
+        self.port.adapter.allow_writes=True;request=self.request();request['description']='Synthetic approved prefix\nSynthetic manual note'
+        self.assertEqual(self.port.apply(request).method,'update')
+        self.assertEqual(self.session.events['synthetic-hold']['description'],request['description'])
+        self.assertEqual(self.session.calls[-1][2]['json']['description'],request['description'])

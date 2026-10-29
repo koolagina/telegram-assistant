@@ -364,3 +364,8 @@ Fixture SQLite claim/CAS, atomic status+jobs и independent business-key notices
 ## 41. Original owner consent bridge — 29.10.2026
 
 Original review/confirm registry и bound worker готовы,24новыхtests,572Python/110Node PASS. Immutable original source/event/actor evidence, atomic publication+local source claim, durable first-click timestamp; no Calendar reads under DB locks, default off. Legacy proposal доступен, no automatic move. Следующее: безопасный legacy description template и concrete sandbox acceptance; Google CAS/writer coordination/import proof/operator recovery всё ещё отсутствуют. CONSULTATION_CONSENT.md.
+
+
+## 42. Safe legacy description и sandbox handoff — 29.10.2026
+
+5новыхtests/577Python+110Node PASS,6offline demos. Exact source-bound bot description prefix меняется с сохранением manual suffix; unknown format deny, reconcile checks description. Demo закрывает synthetic inbox→consent→workflow. Реальное подключение требует выбора отдельных bot/Calendar, private binding config и последующего конкретного approved preview; план CONSULTATION_SANDBOX_ACCEPTANCE.md. Google source CAS/import proof/coordinated writers/production rollout по-прежнему не выполнены.

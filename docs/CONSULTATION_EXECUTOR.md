@@ -34,8 +34,8 @@ Preflight выполняется до claim и после него, **вне SQL
 
 - Writes запрещены и executor flag, и default `adapter.allow_writes=False`. Флаг не заменяет разрешение пользователя.
 - PATCH/DELETE по exact event ID, `If-Match` с исходным ETag. Нет POST/create, слепого повторного PATCH/DELETE или повторного GET с подменой stale precondition на новый ETag.
-- PATCH меняет только summary «Консультация — подтверждена», location «Кабинет317» и технические extendedProperties. Существующие private/shared properties копируются, добавляется private operation marker. Время, description/заметки, reminders и остальные поля не переписываются. Google `sendUpdates=none`, Telegram здесь не вызывается.
-- Legacy description может ещё содержать прежний текст ожидания: произвольный текст автоматически не переписывается, чтобы не затереть ручные заметки. До реального включения нужен проверенный контракт отделения бот-статуса от пользовательских заметок; title/технический marker сами по себе эту миграцию не решают.
+- PATCH меняет summary «Консультация — подтверждена», location «Кабинет317» и технические extendedProperties; description меняется только для точно распознанного исходного bot prefix. Существующие private/shared properties копируются, добавляется private operation marker. Время, произвольные заметки, reminders и остальные поля не переписываются. Google `sendUpdates=none`, Telegram здесь не вызывается.
+- Известный prefix текущего GAS-кандидата «Заявка ID; тема: ТОЧНАЯ_ТЕМА; предварительная запись, решение преподавателя ещё не получено.» заменяется на подтверждённый статус; весь suffix, включая marker/ручные заметки, сохраняется побайтно. Точное совпадение привязано к original source/event evidence. Если pending phrase есть, но prefix другой, approve блокируется для сверки; не угадывать шаблон. Reject не переписывает description. При read-only reconcile проверяется и новая description, если она входила в mutation.
 - 4xx, кроме408, — явное API rejection, без auto retry. Timeout/5xx/неправильный acknowledgement/неизвестная ошибка — unknown. MutationReceipt валидируется по calendar/event/method/operation identity; PATCH response должен подтвердить нужные поля и исходные времена.
 
 ## Read-only восстановление
@@ -58,11 +58,11 @@ Preflight выполняется до claim и после него, **вне SQL
 3. **Source CAS/claim и координация внешних writers.** Между последней проверкой строки и Calendar API остаётся гонка; Calendar ETag защищает Calendar event, но не Google Sheet и не появление другого занятого события. Реальное включение до решения этой границы запрещено. API Calendar не предоставляет транзакционный запрет новых пересечений от независимых writers.
 4. Завершение authoritative статуса/решения заявки только по подтверждённому Calendar-stage outcome с row preconditions. Здесь `source_status=not_written` всегда. Безусловное перезаписывание изменившейся строки недопустимо.
 5. Независимые durable уведомления студенту/владельцу после окончательной сверки статуса, с отдельными per-recipient outcomes. Здесь `notifications=not_sent` всегда, ни один sender не вызывается. Сбой одного уведомления не должен повторять Calendar или лишать второго адресата сообщения.
-6. Операторский recovery для blocked/rejected/старых attempts, проверенный description template, права/квоты и разрешённая sandbox-приёмка. Propose/student agreement/перенос — отдельно. Никаких production polling/triggers/deploy.
+6. Операторский recovery для blocked/rejected/старых attempts, проверка реальных legacy description форматов, права/квоты и разрешённая sandbox-приёмка. Propose/student agreement/перенос — отдельно. Никаких production polling/triggers/deploy.
 
 ## Тесты
 
-`bash tools/check-local.sh`: **521 Python PASS +110 Node PASS**,5offline demos. Новые **38 Python tests**:29executor/demo +9Calendar port. Сначала тесты падали до реализации; дополнительные red→green regressions: prior marker, stale absence, blocked receipt write failure.
+`bash tools/check-local.sh`: **577 Python PASS +110 Node PASS**,6offline demos. Текущий Calendar-stage corpus: **43 Python tests** (33executor/demo +10port); из них5добавлены для safe legacy description после исходного этапа38tests. Сначала тесты падали до реализации; дополнительные red→green regressions: prior marker, stale absence, blocked receipt write failure.
 
 Проверены update/delete того же hold, conditional ETag/412, сохранение времени/заметок/custom properties, wrong owner/student/revoke, row/event/coverage/ownership mismatch, pre/post claim changes, malformed receipt, accepted→timeout, restart/peer/KeyboardInterrupt/write failure, source recheck после Calendar read, same-booking competing plan, read-only recovery и default disabled. Integration test использует реальный port/executor/SQLite с fake HTTP session, не реальный Google API.
 

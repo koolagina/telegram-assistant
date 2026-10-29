@@ -1,3 +1,20 @@
+# Комплексный локальный цикл и safe description — 29.10.2026
+
+Полный bound consultation path проверен через synthetic Bot API inbox: card→original review→explicit confirm→registry/source claim→Calendar journal→reconcile→local CAS/status/jobs→independent notices. Workflow demo больше не собирает BoundPlan вручную, использует consent registry и bound worker. Никаких actual APIs/реальных source/status/send/deploy.
+
+Исправлен воспроизводимый legacy defect: confirmed title при оставшемся pending description. Только exact source-bound bot prefix current GAS заменяется на confirmed, suffix/marker/ручные заметки сохраняются. Unknown pending template блокирует approve; reject не переписывает description. Reconcile проверяет новую description и не объявляет success после непонятной manual post-edit.5tests сначала красные, потом зелёные. НВГУ parser/схемы Sheets/архивные GAS/working resources не менялись.
+
+Актуальный итог **577Python PASS +110Node PASS**,6offline demos (`bash tools/check-local.sh`). Source backend fixture SQLite, не actual Sheets CAS. Все ранее описанные Google writer/import verification/runtime acceptance границы сохраняются. Конкретный предварительный объём отдельной Calendar/Telegram sandbox-приёмки и требуемый выбор ресурсов: [CONSULTATION_SANDBOX_ACCEPTANCE.md](CONSULTATION_SANDBOX_ACCEPTANCE.md). До выбора/согласования real read/write/send не выполнять.
+
+| Дефект | Причина | Исправление | Проверка | Остаток |
+|---|---|---|---|---|
+| Confirmed title + pending description | Менялся только summary | Exact original bot prefix replacement, suffix сохранён | Red→green; notes/marker unchanged PASS | Реальные legacy форматы ещё не проверены |
+| Перезапись неизвестного pending template | Эвристическая замена статуса | Unknown template→review before claim | Red→green/no mutation PASS | Нужен operator review конкретного случая |
+| Reconcile после нового изменения description | Проверялись не все patched fields | Optional reviewed description входит в postcondition | Red→green/manual post-edit PASS | Никакого blind rewrite |
+| Consent руками создаётся в demo | Отдельные components вместо end-to-end | Verified synthetic inbox→registry→workflow | Existing integration/demo suites PASS | Это mock auth/transport, не actual integration |
+
+---
+
 # Original-evidence owner consent и bound worker — 29.10.2026
 
 Добавлены consultation_consent.py и consultation_bound_worker.py. Owner видит student/topic/date/calendar title, original row/event evidence сохраняется до отдельного confirm. Current identity/ownership/availability и те же fingerprints проверяются перед публикацией; первый click timestamp не renew на retry. Confirmed BoundPlan + source claim атомарны в fixture source DB. Core/source partial publication восстанавливается по старой evidence, не исполняет orphan core plan. Owner gate до private lookup исправлен red→green.
