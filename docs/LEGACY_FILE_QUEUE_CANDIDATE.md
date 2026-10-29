@@ -1,8 +1,12 @@
+# 30.10.2026 — file+queue live read-only preflight прошёл
+
+Run40941826064, main25f22054da65364049b1e8cb6632d1a58b9598de: review_ready,1GET/0writes/1changedmain. Encrypted artifact принят только после проверки workflow/run/headSHA, target/runID/fingerprint; original совпал с ранее подтверждённым source с2hotfixes, candidate digest совпал с локальным полным8file построением; combined syntax PASS. Полный596Python+243Node PASS,6offline demos. Разрешение владельца на установкуfile+queue/техническийлист получено ранее30.10.2026. Подготовлен отдельный protectedapplyrequest; GooglePUT и создание листа ещё не подтверждены. Не запускать рабочийpoll/триггеры/сообщения автоматически. Setup-onlyhelper не является initialize и не меняет бизнеслисты; script.projects grant не позволяет его удалённое выполнение через этотrelay.
+
 Актуальное разрешение30.10.2026: пользователь ответил«+»на конкретный запрос установить файловую защиту/очередь и добавить технический лист в существующую Google Таблицу. Авторизация касается этого объёма, не запуска рабочих триггеров/poll/рассылок/deployment/Calendar/учебного журнала. Новая relay operation apply_legacy_file_queue подготовлена, но ещё не запущена; статус установки устанавливать по фактическому APIreceipt/re-read, не по этому разрешению.
 
 # Минимальный legacy-кандидат: файлы и durable очередь — 30.10.2026
 
-**Статус: локальный, не установлен; новая запись Google не разрешена.** Это конкретный набор двух патчей к установленному legacy source с уже исправленными accessStatus_/callback ACK. Не замена всем кандидатом2.0.5. [Файловая часть](LEGACY_FILE_RECOVERY_CANDIDATE.md).
+**Статус: установка разрешена владельцем, не выполнена; защищённый запуск ожидает подтверждения GitHub.** Это конкретный набор двух патчей к установленному legacy source с уже исправленными accessStatus_/callback ACK. Не замена всем кандидатом2.0.5. [Файловая часть](LEGACY_FILE_RECOVERY_CANDIDATE.md).
 
 ## Проверяемый состав
 
