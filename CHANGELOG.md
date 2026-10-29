@@ -1,3 +1,9 @@
+# 29.10.2026 — Calendar TEST CRUD принят по журналу пользователя
+
+- Создание, обновление и удаление одного временного TEST-события подтверждены; cleanup завершён, повторный запуск не требуется. Три write requests, ноль сообщений.
+- Полнота расписания не подтверждена. Свежая публичная проверка НВГУ: 26.10–01.11 занятий нет; 02.11–08.11 — 11 занятий. Calendar-сверка и импорт не выполнялись.
+- Обновлена документация; рабочий код/ресурсы в этом шаге не изменялись. Последняя локальная проверка: 577 Python +151 Node PASS, 6 demos; повторно не запускалась.
+
 # 29.10.2026 — reported Calendar REST preview + scoped one-event CRUD candidate
 
 - User enabled Calendar API after accessNotConfigured and reported preview_ready for30Oct10:00–10:20+05; no writes/messages/full timetable proof.

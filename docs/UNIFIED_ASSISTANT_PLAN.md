@@ -389,3 +389,8 @@ User подтвердил actual one-message receipt после API ack; deliver
 ## 46. Calendar preview → exact-window CRUD acceptance — 29.10.2026
 
 User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id TEST-only round-trip helper/read-only inspect готовы,11newNode/577Python+151Node PASS, yet unexecuted live. Pending necessary external evidence — user-run testKulaginaCalendarOnce JSON. No production deployment/full timetable/real Sheets CAS/student booking claims. CONSULTATION_PERSONAL_RESOURCES.md.
+
+
+## 47. Calendar TEST завершён → сверка занятий — 29.10.2026
+
+Получен пользовательский результат complete: create/update verified, cleanup confirmed, cleanup_required=false, 3 write requests, 0 сообщений. TEST завершён, повтор/очистка не нужны. Полнота расписания false; новый bot/worker не развёрнут. Свежий публичный НВГУ: 26.10–01.11 нет занятий, 02.11–08.11 — 11. Далее read-only сравнение существующих Calendar events с источником через текущий planner; перед импортом нужен конкретный план, без присвоения ручным событиям ownership. Direct Google connection у Codex не появился.

@@ -2,9 +2,9 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
-## Текущий шаг: Calendar CRUD после успешного preview
+## Текущий шаг: сверка расписания после успешного Calendar TEST
 
-Пользователь подтвердил Calendar REST preview30.10.2026 10:00–10:20+05, без writes. Подготовлен one-shot TEST create/update/cleanup сstable ID/marker/ETag/durable claims; реальный запуск ещё впереди. [Инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). **577Python +151Node PASS**,6offline demos. Existing appointments/Sheets/poller/deploy не затрагиваются.
+По журналу пользователя одно временное TEST-событие успешно создано, обновлено и удалено; cleanup завершён, повторять тест не нужно. [Результат и границы проверки](docs/CONSULTATION_PERSONAL_RESOURCES.md). Полнота расписания ещё не проверена: следующий этап — read-only сравнение НВГУ с календарём, без импорта и запуска записи студентов. Последняя локальная проверка: **577 Python +151 Node PASS**, 6 offline demos. Новый бот не развёрнут.
 
 ## Текущий шаг: Calendar preview после получения owner test
 
