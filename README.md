@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Импорт18занятий согласован, runner готов
+
+[Ограниченный ручной Apps Script runner](docs/NVSU_APPROVED_IMPORT.md) подготовлен для согласованных18созданий09–22ноября. Existing planner/ID scheme, свежая source/Calendar проверка, no updates/deletes/unknown resend. Свежий НВГУ не изменил утверждённые payloads. Реальный запуск ещё впереди; Google-доступ остаётся у пользователя, повторного разрешения на эти18не требуется. **596 Python +201 Node PASS**,6offline demos.
+
 ## Минимальный кандидат рабочего исходника подготовлен
 
 Все8backupфайлов проверены:49глобальных функций, без конфликтов. [Кандидат и diff](docs/LEGACY_ACCESS_ACK_CANDIDATE.md) исправляют только negative approval и expiredcallback; manifest/6helpers сохраняются побайтно. **Не установлен**, writeавторизация/Googlewrites не выполнялись. Полный suite **591 Python +187 Node PASS**,6offline demos. Four-week export уже есть в полученном Apps Script source, codecopy для него не нужен.

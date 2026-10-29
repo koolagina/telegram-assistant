@@ -439,3 +439,8 @@ Uploadedmain37functions36sameasarchive1.4.3, missingguardedACK. Mockverifiednega
 ## 56. Four-week comparison/18missing lessons — 29.10.2026
 
 Fullvaliduserbatch accepted; freshsource11/9/9/0vsCalendar11/0/0/0. Exact11/missing18/duplicates0/unknown0; protected11preserved. Private18rowpayloadpreview/no execution/noownership/no fullteachingproof.78Python13Node targetedPASS,docs only. Need explicitrealclasspermission/freshrevalidation/ledger before applying; TESTpermission insufficient. Legacycriticalfix remains candidate. docs/NVSU_NOVEMBER_REVIEW.md.
+
+
+## 57. Approved18creates → guarded manual transport — 29.10.2026
+
+Exact18permission received; fresh2source payloadsets unchanged. Existingplanner/privatecompiler + thincreate-onlyGAS with freshproof/target/owner/emptyweek guards, durablejournal/sameIDs/readonlypartialreconcile. No application changes/triggers/deployment/sourceparser rewrite.5Python14Node/full596Python201Node PASS6demos, actualimportawaitsuserexecution. Scope persistsno reconfirmation; futureupdate/ledgertransfer/consultationscompleteness separate. docs/NVSU_APPROVED_IMPORT.md.

@@ -1,3 +1,13 @@
+# 29.10.2026 —18созданий разрешены, ограниченный runner подготовлен
+
+User «+» ответил на конкретный вопрос о18реальных занятиях09–22ноября; scope принят, повторного разрешения не требуется. Остальные11events/Sheets/legacycode/triggers/webhook/poll/deploy/studentmessages не разрешены этим ответом. Свежие2NVSUproofs HTTP200/no redirect совпали с исходными18payloads.
+
+Existingplan_sync operationkeys/renderpayloads используются в private bounded AppScript handoff. Generic nvsu_approved_import.gs — create-only transport/18max, targethash/sourcebytehash/date guards, full fresh Calendar checks/owner, same deterministicIDs as GoogleCalendarAdapter, durable pre-POST claim/APIreceipts/known-IDreadonlyreconcile. No PATCH/DELETE/resend unknown; successfulreplay0POST, partialrunnotresumedblindly. Root/binding records external to events, no visible service text/groups. No new parser/general sync engine. Privatecapsule outsideGit; publictemplates contain no targetID/hash/lesson data.
+
+5Python+14Node newtests firstred→green. Полный **596Python +201Node PASS**,6offline demos; privatewrapperdigest/combined51globalfunctionsyntaxPASS. Реальные Calendarwrites0 — нужен manual AppsScript run из авторизованного пользователя; OAuth изWindows не подключаетCodexcloud. Готовыйprivaterunner ещё не installed/executed, legacyhotfix тоженеinstalled. [Инструкция/сбои/границы](NVSU_APPROVED_IMPORT.md).
+
+---
+
 # 29.10.2026 — четыре недели сравнены;18занятий отсутствуют в Calendar
 
 Полный пользовательский Novemberbatch принят:2части/checksumvalid/4правильные недели/одинtarget. Источник freshly fetched существующим parser. НВГУ/Calendar/exact/missing:02–08ноября11/11/11/0;09–15ноября9/0/0/9;16–22ноября9/0/0/9;23–29ноября0/0/0/0(явное«Расписание отсутствует»).11существующих protectedсобытий совпадают и сохраняются;0duplicateexact/unknown. Это выбранныйCalendar/конкретныйпериод, не все календари/семестр.

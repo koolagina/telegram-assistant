@@ -1,3 +1,9 @@
+# 29.10.2026 — approved18 create-only handoff prepared
+
+- User authorized exact18real lesson creates; freshNVSU payloads unchanged. No other resource/code/trigger scope inferred.
+- Private plan compiler reuses nvsu_sync; thin GAS transport uses same IDs, source byte proof/freshCalendar owner/target checks, durable pre-send state and per-event provenance. No patch/delete/notifications/unknown POST retry; partial rerun is read-only inspection.
+-5Python14Node tests firstred→green; full596Python201Node PASS6demos. Real import not executed; private capsule outsideGit, only generic code/tests committed. docs/NVSU_APPROVED_IMPORT.md.
+
 # 29.10.2026 — four-week Calendar snapshot compared with fresh NVSU
 
 - Verified complete userbatch checksum/scope/target; publicsource29lessons vs11Calendar events:11exact/18missing, duplicateexact0/unknown0. Lastweek explicitnoschedule/emptyCalendar.
