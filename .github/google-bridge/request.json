@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "request_id": "77a98bee-1f26-4e53-9cf4-973f958eb41d",
-  "issued_at": "2026-10-29T20:55:52.985Z",
-  "operation": "verify",
+  "request_id": "dc23894e-5dae-439f-a793-71b9d5b44283",
+  "issued_at": "2026-10-29T21:33:10.377Z",
+  "operation": "review_legacy_sheet_literals",
   "recipient_public_key": "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAwhrAQUJ0b/2V9qze8wj2VbfGNWThJQUYgO0l3DKawmpiNx8yha5uTkE+rZHytW8gIEk5CE7IwXo+KPiP5gvjCbrWj/gt6IAYzMvmGXJHvrbQ8cxMq6fDf8as7WA2NpHuzCU8jBBMsHKP5vV8uVLNlVffhinpidz3dPeOdgrZRLmo9OswZhl3YPQKdYWuTnpjPL+aTkqR6bIEWbwj9QXZG2MvxRdcJWbTXKfRo67I2DXRAyxeAfWq75077A37YohVOEZOM9NYPUMDUemI3sTs98EunNtS198WL9XUMh9AR8iecYSbQKkjADK+zR08vODCTNn2SqFSXBFTDqp2G6zGi8wpfHiUb3hwAgK7qceG46XKOSZ23EZ+JyuoALa8Bi2V3GVnwnm8tLj0mppq7Af/fy8hbNhB+cmN63XZUj7ixgxxFQD2szn0g4o3IVWkcenrRr4/VAVof1eFHOoMwKTrE/9l77qvBu8wy/PNM6doY85GRAYNIVBGw6KTpf2rDhzrAgMBAAE="
 }

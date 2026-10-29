@@ -13,7 +13,7 @@ for(const text of ['=1+1','=HYPERLINK("https://invalid.example","x")',"'=literal
  f.ctx.processMessage_(f.message(text));const expected=/^[=']/.test(text)?"'"+text:text;
  assert.deepEqual(writes,[expected,expected]);
 });
-test('patch refuses repeated installation and unrelated source drift',()=>{const out=patch(parent);assert.throws(()=>patch(out));assert.throws(()=>patch(parent.replace('stored.description,m.message_id','changed,m.message_id')));new vm.Script(out);});
+test('patch refuses repeated installation and unrelated source drift',()=>{const out=patch(parent);const restore=require('../tools/clasp/legacy-sheet-literals.cjs').restoreSheetLiterals;assert.equal(restore(out),parent);assert.throws(()=>restore(out+'// drift'));assert.throws(()=>patch(out));assert.throws(()=>patch(parent.replace('stored.description,m.message_id','changed,m.message_id')));new vm.Script(out);});
 test('partial reply recovery also writes a literal, using simulated Sheets apostrophe decoding',()=>{
  const f=fixture('src/telegram_assistant_v2_0_5_candidate.gs');vm.runInContext(patch(parent).slice(parent.indexOf('function prop_(')),f.ctx);
  f.ctx.log_=()=>{};f.ctx.send_=()=>({message_id:1});f.ctx.tg_=()=>true;f.ctx.storeFile_=()=>({type:'Текст',description:'=1+1',link:''});
