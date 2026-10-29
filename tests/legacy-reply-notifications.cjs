@@ -82,3 +82,11 @@ test('denied access never prepares or sends reply notifications',()=>{
  const {f}=make();f.sheet('Студенты').rows[1][5]='Не одобрен';f.ctx.send_=()=>({message_id:1});f.ctx.processMessage_(f.message('Synthetic answer'));
  assert.equal(f.ctx.ss_().getSheetByName('Уведомления ответов'),null);assert.equal(f.sheet('Ответы').rows.length,1);
 });
+test('setup only creates or verifies six technical columns, with no sends or business rows',()=>{
+ const {f}=make();f.ctx.console={log(){}};f.ctx.send_=()=>{throw Error('unexpected send');};const before=JSON.stringify(f.sheet('Ответы').rows);
+ const first=f.ctx.prepareKulaginaReplyNotifications();assert.equal(first.status,'reply_notifications_ready');assert.equal(first.created,true);assert.equal(first.columns,6);assert.equal(first.business_writes,0);assert.equal(first.messages_sent,0);assert.equal(first.polling_started,false);
+ assert.equal(f.ctx.prepareKulaginaReplyNotifications().created,false);assert.equal(JSON.stringify(f.sheet('Ответы').rows),before);
+ const source=currentSource(),out=patch(source),restore=require('../tools/clasp/legacy-reply-notifications.cjs').restoreReplyNotifications;
+ assert.equal(restore(out),source);assert.throws(()=>restore(out+'// drift'));
+ f.sheet('Уведомления ответов').rows[0][0]='Wrong header';assert.throws(()=>f.ctx.prepareKulaginaReplyNotifications());
+});

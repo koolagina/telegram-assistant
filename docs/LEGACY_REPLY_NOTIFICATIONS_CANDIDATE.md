@@ -1,3 +1,9 @@
+# 30.10.2026 — установка уведомлений и технический лист разрешены
+
+Владелец ответил «да» на конкретное предложение установить патч и добавить лист «Уведомления ответов». Повторное разрешение на этот объём не требуется. Добавлены фиксированные review_legacy_reply_notifications/apply_legacy_reply_notifications и worker prepare_reply_notifications/apply_reply_notifications; семейство резервной копии legacy_reply_notifications_v1. Строго требуется установленная защита текстовых полей; семь остальных файлов закреплены. Сохраняются reviewer/main, полный encrypted backup до PUT, свежая сверка, 5 минут и отсутствие автоматического повтора неизвестного PUT. Exact already-applied определяется через restoreReplyNotifications и повторное построение, без отката.
+
+Добавлена setup-only prepareKulaginaReplyNotifications: только создание/проверка шести технических колонок, flush и агрегатный JSON reply_notifications_ready, без сообщений/poll/бизнес-записей. Всего четыре новых helper, 71 функция проекта. Четыре новых регрессионных теста маршрута/setup; полный tools/check-local.sh: 596 Python +346 Node успешно, 6 демонстраций. Publicdiff: patches/legacy-reply-notifications.patch. Следующий запрос — только read-only preflight; установка и создание листа в Google ещё не подтверждены. Настоящее выполнение setup недоступно через script.projects relay; после подтверждённой установки понадобится один запуск владельцем, не повторное согласование. Не запускать initialize/setupAutomation/poll.
+
 # Уведомления о сохранённых ответах: локальный кандидат
 
 30.10.2026. **Не установлен. Реальные сообщения не отправлялись.**

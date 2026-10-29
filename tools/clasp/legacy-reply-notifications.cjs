@@ -6,6 +6,14 @@ const start=archive.indexOf("  send_(chatId,task?'Ответ сохранён");
 const end=archive.indexOf('\n}',start);
 const oldSends=archive.slice(start,end);
 const helpers=String.raw`
+function prepareKulaginaReplyNotifications() {
+  return withScriptLock_(()=>{
+    const existed=!!ss_().getSheetByName('Уведомления ответов');
+    legacyReplyNotificationSheet_();SpreadsheetApp.flush();
+    const report={status:'reply_notifications_ready',created:!existed,columns:6,business_writes:0,messages_sent:0,polling_started:false};
+    console.log(JSON.stringify(report));return report;
+  });
+}
 function legacyReplyNotificationSheet_() {
   const headers=['Ключ','Payload JSON','Статус','Telegram message ID','Обновлено','Ошибка'];
   const existing=ss_().getSheetByName('Уведомления ответов');
@@ -86,11 +94,21 @@ const pairs=[
  ["    incoming.appendRow(","    prepareLegacyReplyNotifications_(chatId,messageId,name,'',stored,true);\n    incoming.appendRow("],
  ["    send_(chatId,'Сообщение сохранено в личных входящих.');","    flushLegacyReplyNotifications_(chatId,messageId);"],
  ["  replies.appendRow(","  prepareLegacyReplyNotifications_(chatId,messageId,name,taskId,stored,false);\n  replies.appendRow("],
- [oldSends,'  flushLegacyReplyNotifications_(chatId,messageId);']
+ [oldSends,'  // Dispatch the complete prepared reply plan.\n  flushLegacyReplyNotifications_(chatId,messageId);']
 ];
 function patchReplyNotifications(source){
  if(source.includes('function legacyReplyNotificationSheet_('))throw Error('Already patched');
  for(const [old,next]of pairs){if(!old||source.split(old).length!==2)throw Error('Reviewed notification precondition mismatch');source=source.replace(old,next);}
  return source+helpers;
 }
-module.exports={patchReplyNotifications};
+function restoreReplyNotifications(source){
+ if(typeof source!=='string'||!source.endsWith(helpers))throw Error('Exact notification patch required');
+ let before=source.slice(0,-helpers.length);
+ for(const [old,next] of pairs.slice().reverse()){
+  if(before.split(next).length!==2)throw Error('Exact notification patch required');
+  before=before.replace(next,old);
+ }
+ if(patchReplyNotifications(before)!==source)throw Error('Exact notification patch required');
+ return before;
+}
+module.exports={patchReplyNotifications,restoreReplyNotifications};
