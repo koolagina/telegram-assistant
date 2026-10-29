@@ -1,3 +1,9 @@
+# 29.10.2026 — reported Calendar REST preview + scoped one-event CRUD candidate
+
+- User enabled Calendar API after accessNotConfigured and reported preview_ready for30Oct10:00–10:20+05; no writes/messages/full timetable proof.
+- Standalone exact-window smoke helper: owner/busy/target guard, private TEST event/no reminders, stable client ID/marker, durable applying phases, conditional If-Match PATCH/DELETE; no retry unknown/restart, read-only inspection.
+-11newNode tests;577Python/151Node PASS,6offline demos. Helper not yet run live; no actual write acceptance claimed. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
 # 29.10.2026 — reported owner receipt + read-only Calendar REST preview
 
 - User provided api_confirmed test send log and separately confirmed receipt; API delivered remains unknown, no blanket student/delivery/deployment claim.

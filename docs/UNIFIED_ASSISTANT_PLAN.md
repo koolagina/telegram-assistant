@@ -384,3 +384,8 @@ Manual sanitized report12:30:08: Telegram/Calendar read verified,time zone true,
 ## 45. Owner receipt → Calendar REST preview — 29.10.2026
 
 User подтвердил actual one-message receipt после API ack; delivered вAPI не переписывать. GET-only preview helper готов,10newNode/577Python+140Node PASS; ищет temporary TEST slot без create/props/send/новых grants. Следующий необходимый вход — manual preview JSON; не считать metadata read подтверждением REST/write/НВГУ completeness. CONSULTATION_PERSONAL_RESOURCES.md.
+
+
+## 46. Calendar preview → exact-window CRUD acceptance — 29.10.2026
+
+User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id TEST-only round-trip helper/read-only inspect готовы,11newNode/577Python+151Node PASS, yet unexecuted live. Pending necessary external evidence — user-run testKulaginaCalendarOnce JSON. No production deployment/full timetable/real Sheets CAS/student booking claims. CONSULTATION_PERSONAL_RESOURCES.md.

@@ -20,9 +20,9 @@ Receipt `KULAGINA_OWNER_MESSAGE_PROBE_V1` фиксируется в новом �
 
 Пользователь предоставил JSON ручного запуска12:57:58: status=api_confirmed,messages_attempted_this_run=1,api_accepted=true,delivered=null. На отдельный вопрос о получении ответил «да». Поэтому API acceptance и human-observed receipt **этого конкретного** owner test сообщения подтверждены по пользовательским данным. Telegram API delivered остаётся null; не распространять этот результат на студентов/другие сообщения или общий end-to-end bot deployment. Повторять owner-message runner не требуется.
 
-## Следующий шаг — read-only Calendar REST preview
+## Read-only Calendar REST preview — уже выполнен
 
-`src/tools/consultation_calendar_preview.gs` подготовлен, **ещё не запускался на настоящем ресурсе**. Создать отдельный файл `ПроверкаКалендаря`, вставить только этот код, выбрать `previewKulaginaCalendarTest` и выполнить. Прислать только JSON. Existing code/settings не менять, «Развернуть»/initialize/setupAutomation/poller не запускать.
+`src/tools/consultation_calendar_preview.gs` уже запущен пользователем; последующий успешный результат13:21:43 приведён ниже. Инструкция оставлена как справка, повторять preview сейчас не требуется. Создать отдельный файл `ПроверкаКалендаря`, вставить только этот код, выбрать `previewKulaginaCalendarTest` и выполнить. Прислать только JSON. Existing code/settings не менять, «Развернуть»/initialize/setupAutomation/poller не запускать.
 
 Helper использует тот же explicit ASSISTANT_CALENDAR_ID и собственный OAuth текущего Apps Script (ScriptApp.getOAuthToken); token/ID/сведения о встречах не печатает и в чат не передаёт. Только fixed-origin HTTPS GET Calendar v3 metadata и узких20min windows, no redirects/TLS verify. CalendarApp read gate сохраняет существующую авторизацию. Нет create/PATCH/DELETE, sendMessage/getUpdates, Sheet access или property updates.
 
@@ -30,7 +30,27 @@ Helper использует тот же explicit ASSISTANT_CALENDAR_ID и соб
 
 При status=preview_ready пользователь видит exact RFC3339 start/end в Asia/Yekaterinburg; Calendar writes0/messages0/write_access_verified=false/teaching_schedule_verified=false. Пустое окно выбранного Calendar не доказывает отсутствие неимпортированных занятий. Test event по этому preview ещё не создаётся: сначала нужны реальные date/API результаты. При403/accessNotConfigured или иной ошибке код не включает API/права сам; прислать sanitized JSON для диагностики.
 
-10новыхNode VM tests first red→green, включая slow read/30min regression и unread page. Полный577Python/140Node PASS,6offline demos. Actual Calendar REST preview/create/update/delete ещё не подтверждены; metadata native CalendarApp уже подтверждена пользователем.
+10новыхNode VM tests first red→green, включая slow read/30min regression и unread page. Полный577Python/140Node PASS,6offline demos. Calendar REST preview впоследствии подтверждён пользователем, create/update/delete пока нет; metadata native CalendarApp также подтверждена.
+
+## Реальный Calendar REST preview получен
+
+Пользователь сообщил13:17:26:403/accessNotConfigured,no writes. После добавления Calendar API service в своём Apps Script предоставил13:21:43 JSON preview_ready: test_start2026-10-30T10:00:00+05:00,end10:20,Asia/Yekaterinburg,busy_count0,http_gets2,no API error,writes/messages0,write_access_verified=false,teaching_schedule_verified=false. Таким образом Calendar REST read/выбранное тестовое окно подтверждены по пользовательскому результату; Calendar writes всё ещё не проверены. Рабочая полнота НВГУ не заявляется.
+
+## Следующий разовый Calendar CRUD smoke test
+
+Подготовлен `src/tools/consultation_calendar_smoke.gs`, **ещё не executed live**. Новый отдельный `.gs` файл `ТестКалендаря`, вставить только этот helper, выбрать **testKulaginaCalendarOnce** и выполнить. Скрипт сам логирует sanitized JSON. Это первый real Calendar write test при пользовательском запуске: ровно одно новое TEST событие для **уже просмотренного**30.10.2026 10:00–10:20+05, одно изменение его title и cleanup только этого event. Reminders disabled, visibility private, sendUpdates=none, messages/Sheets/polling/triggers/deploy отсутствуют.
+
+Перед create повторно проверяются explicit current target/native timezone, CalendarList accessRole=owner, REST identity и занятость20min. Если окно занято/прошло либо30min lead не соблюдается, записи не будет; другой день автоматически не выбирается. Полнота занятий этим не доказывается, это не student booking.
+
+Отдельный private Script Property KULAGINA_CALENDAR_TEST_V1 хранит client-generated stable Google event ID, unique private marker и applying phase **до** первого create. До каждого PATCH/DELETE фиксируется отдельная phase, свежий event обязан совпасть с id/marker/start/end/title/description и последним acknowledged ETag. PATCH/DELETE имеют If-Match. Другие встречи/ручные notes не переписываются и не удаляются; ручная правка/412 останавливает cleanup для review.
+
+Short ScriptLock только на technical receipt, не во время HTTP, рабочие settings/poller не меняются. Повтор/restart не создаёт нового события и не повторяет writes. При timeout/неправильном ответе/receipt failure — needs_review/inflight_or_unknown, без blind retry. Не удалять/reset test receipt или менять scope даты, чтобы «попробовать ещё раз».
+
+Ожидаемый happy-path JSON: status=complete,create_verified=true,update_verified=true,cleanup_confirmed=true,cleanup_required=false,write_requests_this_run=3,messages_sent0. Cleanup означает отсутствие активного test event, не очистку Calendar Trash. Это Apps Script manual REST acceptance, не rollout Python/GAS candidate или production timetable sync.
+
+При needs_review прислать только JSON; **inspectKulaginaCalendarTest** выполняет только GET exact journal event ID, сообщает owned_test_event_found/unchanged_since_ack/cleanup_required и подтверждает отсутствие после uncertain delete. Он не удаляет и не меняет receipt. Даже если create response потерян, stable ID/marker позволяют найти конкретный test record без сканирования чужих встреч. Если operator изменил test record, forced cleanup запрещён.
+
+11newNode VM tests first red→green: round-trip,conditional etags,no repeat/restart,owner/busy/date guard,create/patch/delete accepted→timeout,manual change/412,receipt failure,config/corrupt-state/working-lock safety. Полный577Python/151Node PASS,6offline demos. Real CRUD результата пока нет.
 
 ## Текущий доступ из чата
 

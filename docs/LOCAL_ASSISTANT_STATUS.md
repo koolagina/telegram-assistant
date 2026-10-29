@@ -1,3 +1,9 @@
+# Актуально29.10.2026: Calendar REST preview ready, CRUD pending
+
+User actual preview13:21:43 after API activation:30Oct10:00–10:20+05,busy0,2GET,writes0. One-shot exact-window TEST CRUD helper/readonly inspect готов,577Python/151Node PASS, ещё не executed live. Owner message receipt ранее подтверждён, full timetable/production rollout/Sheets CAS не проверены. CONSULTATION_PERSONAL_RESOURCES.md.
+
+---
+
 # Актуально29.10.2026: owner message received, Calendar REST preview pending
 
 Owner manual test API ack + human receipt подтверждены по пользовательским данным. Calendar native metadata/timezone доступны; REST/write/full timetable ещё не проверены. Standalone GET-only preview готов,577Python/140Node PASS, ещё не executed live. CONSULTATION_PERSONAL_RESOURCES.md.

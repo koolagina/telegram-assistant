@@ -1,3 +1,13 @@
+# Calendar REST preview verified; exact-window CRUD smoke test подготовлен — 29.10.2026
+
+User-run report13:17:26:403/accessNotConfigured. После пользовательского добавления Calendar API service13:21:43 получен preview_ready на30.10.2026 10:00–10:20+05 сbusy_count0/2GET/no writes/messages. Calendar REST read verified по пользовательскому report; write/full timetable ещё нет, direct Codex credential access не появился.
+
+Новый standalone consultation_calendar_smoke.gs готов, ещё не executed live: один TEST-only exact-window create→title PATCH→cleanup, fresh owner role/target/busy guard. Client-generated stable event ID/private marker и Script Property applying claim до RPC; PATCH/DELETE If-Match и fresh acknowledged ETag, no dates fallback/other events/notifications/Sheets/poll/deploy. Unknown/receipt failure/restart не write retry. Read-only inspect exact owned record позволяет определить presence/absence без мутаций; manual edits требуют review.
+
+11новыхNode tests first red→green, полный **577Python PASS +151Node PASS**,6offline demos. Actual expected scope: не более1create+1patch+1delete test-owned event, без reminders/guest notifications, только дата из просмотренного preview. Подготовлен конкретный reviewable helper, пользователь запускает в своём existing Apps Script; до JSON complete нельзя заявлять real write acceptance. Инструкция/остатки: [CONSULTATION_PERSONAL_RESOURCES.md](CONSULTATION_PERSONAL_RESOURCES.md).
+
+---
+
 # Owner test receipt подтверждён; read-only Calendar REST preview подготовлен — 29.10.2026
 
 User-run JSON12:57:58: owner probe api_confirmed,attempts1,api_acceptedtrue,deliverednull. Пользователь отдельно подтвердил получение («да»). Это proof API acceptance + human receipt одного test message по сообщению пользователя, не автоматическое изменение delivered и не receipt всех будущих отправок/студентов. Повторный send не нужен; нет student messages/полного bot deployment.

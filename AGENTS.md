@@ -295,3 +295,6 @@ Safe legacy description fix: exact source-bound current GAS bot prefix меня�
 
 
 29.10.2026 user сообщил api_confirmed owner probe12:57:58 и отдельно подтвердил receipt («да»). Proof только одного сообщения, API deliverednull не менять, не делать общий delivery/auth/deployment вывод. Следующий consultation_calendar_preview.gs GET-only existing Apps Script OAuth/Calendar REST, no secret/ID/event text output/writes/props/poll.20min TEST-only weekday slot/30min lead послеread, unread page not empty; no teaching completeness.10Node tests,577Python/140Node PASS. Actual REST preview ещё не выполнен; ждать sanitized JSON, не запрашивать заново owner-test permission/отправку. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
+
+29.10.2026 user Calendar REST preview succeeded13:21:43 after API enable:30Oct10:00–10:20+05,busy0,no writes. consultation_calendar_smoke.gs prepared NOT executed live: exact-window one TEST create/PATCH/DELETE, stable eventID/private marker/durable KULAGINA_CALENDAR_TEST_V1 applying phases, owner-role/fresh busy guard, If-Match/ack ETag. No date fallback/forced cleanup/manual notes overwrite/no retry unknown/reset receipt. inspectKulaginaCalendarTest GET-only exact ID/no mutation.11Node tests,577Python/151Node PASS. No student/Sheet/poll/triggers/deploy; actual CRUD awaits user log. docs/CONSULTATION_PERSONAL_RESOURCES.md.
