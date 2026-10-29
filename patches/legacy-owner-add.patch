@@ -1,0 +1,43 @@
+--- legacy-current.gs
++++ legacy-owner-add-candidate.gs
+@@ -211,7 +211,7 @@
+   if(isOwner_(chatId)) {
+     if(/^\/approve(?:\s|$)/.test(raw)) return ownerApprove_(chatId,raw);
+     if(/^\/revoke(?:\s|$)/.test(raw)) return ownerRevoke_(chatId,raw);
+-    if(/^\/add(?:\s|$)/.test(raw)) return ownerAdd_(chatId,raw);
++    if(/^\/add(?:\s|$)/.test(raw)) return ownerAdd_(chatId,raw,m.message_id);
+     if(/^\/done(?:\s|$)/.test(raw)) return ownerDone_(chatId,raw);
+     if(/^\/calendar/.test(raw)) return ownerCalendar_(chatId);
+     if(/^\/plan/.test(raw)) return ownerPlan_(chatId);
+@@ -617,14 +617,24 @@
+   }
+   send_(id,'Пользователь с таким chat ID не найден.');
+ }
+-function ownerAdd_(id,raw) {
++function ownerAdd_(id,raw,messageId) {
++  if(!isOwner_(id))throw Error('Требуются права владельца');
+   const text=raw.replace(/^\/add(?:\s+|$)/,'').trim();
+-  if(!text) return send_(id,'Напишите: /add Купить корм Уле');
+-  const sheet=tab_('Личные задачи',CFG.personalHeaders);
+-  const key='L-'+Utilities.formatDate(new Date(),CFG.timezone,'yyyyMMdd-HHmmss')+
+-    '-'+Math.floor(Math.random()*1000);
+-  sheet.appendRow([key,'Личное',legacySheetLiteral_(text),'','Открыто','Обычный','',new Date()]);
+-  send_(id,'Добавила задачу '+key+': '+text);
++  if(!text)return send_(id,'Напишите: /add Купить корм Уле');
++  const chat=String(id),message=String(messageId);
++  if(!/^[1-9][0-9]{0,23}$/.test(chat)||!Number.isSafeInteger(Number(chat))||!Number.isSafeInteger(Number(message))||!/^[1-9][0-9]{0,23}$/.test(message))
++    throw Error('Для добавления задачи требуется исходное Telegram сообщение');
++  return withScriptLock_(()=>{
++    const sheet=tab_('Личные задачи',CFG.personalHeaders),key='L-TG-'+chat+'-'+message;
++    const matches=sheet.getDataRange().getValues().slice(1).filter(row=>String(row[0])===key);
++    if(matches.length>1)throw Error('Дубликат ID личной задачи; требуется сверка');
++    if(matches.length){
++      if(String(matches[0][2])!==text)throw Error('Текст личной задачи отличается; требуется сверка');
++      return send_(id,'Эта задача уже записана: '+key+' — '+text);
++    }
++    appendOnce_(sheet,[key,'Личное',legacySheetLiteral_(text),'','Открыто','Обычный','',new Date()]);
++    return send_(id,'Добавила задачу '+key+': '+text);
++  });
+ }
+ function ownerDone_(id,raw) {
+   const key=raw.replace(/^\/done(?:\s+|$)/,'').trim();
