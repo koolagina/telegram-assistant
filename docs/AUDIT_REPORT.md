@@ -1,3 +1,13 @@
+# Реальная metadata-проверка пользователя; owner-only send probe подготовлен — 29.10.2026
+
+Пользователь предоставил sanitized JSON12:30:08 ручного showKulaginaConnectionProbe в своём Apps Script: Telegram verified,explicit Calendar accessible/timezone_matches,owner routing configured,ready_for_private_preview=true,writes0/messages0/pollingfalse. Это реальное manual metadata evidence по сообщению пользователя, не прямой API access из Codex и не proof send/write/delivery/полноты расписания. Идентификаторы/credentials не сохранены. Working deployment version не установлен по одному code header.
+
+Следующий bounded runner src/tools/consultation_owner_message_probe.gs подготовлен, **ещё не запущен на реальном проекте**: один generic test sendMessage только configured positive OWNER_CHAT_ID, separate durable Script Property claim до HTTP, short lock вне network, strict bot/private-chat/message receipt checks. Ни Calendar/Sheets/polling/triggers/deploy. Повтор/restart/unknown/rejected/target change не send автоматически; status/API accepted не delivery. Текущие рабочие settings не переписываются, только отдельный test receipt key.
+
+10new Node tests first red→green; полный **577Python PASS +130Node PASS**,6offline demos. Next required evidence — manual runner JSON и факт получения пользователем test message, без передачи токена. Инструкция/подтверждённый результат: [CONSULTATION_PERSONAL_RESOURCES.md](CONSULTATION_PERSONAL_RESOURCES.md).
+
+---
+
 # Разрешены ограниченные тесты на ресурсах владельца — 29.10.2026
 
 Пользователь явно уточнил «можно тестить в моих»; отдельный test bot/Calendar больше не обязательное условие. Тесты только на помеченных test records/сообщениях владельцу; существующие встречи/журнал/студенты, webhook/poller/triggers/deploy не затрагиваются. Это пользовательское разрешение выше прежнего isolated-only AGENTS плана; инструкции обновлены.

@@ -289,3 +289,6 @@ Safe legacy description fix: exact source-bound current GAS bot prefix меня�
 
 
 29.10.2026: User разрешил «можно тестить в моих». Текущий read-only probe src/tools/consultation_connection_probe.gs — standalone, existing Script Properties only, getMe+explicit Calendar metadata, no events/poll/send.10Node VM tests,577Python/120Node полныйPASS; real probe не запущен. Из этого чата bot token отсутствует, ready Google identity не подтверждён (selectors есть, connections=[]); не брать значения из архивов/secret files. Manual showKulaginaConnectionProbe logs only safe JSON, не требовать cloud publication/передачи token. docs/CONSULTATION_PERSONAL_RESOURCES.md; реальные student/data writes/deploy по-прежнему не разрешены.
+
+
+29.10.2026 user-run metadata JSON реально подтвердил getMe/explicit Calendar metadata/timezone (12:30:08), no writes/sends/poll; не приписывать это Codex direct connection или delivery/full timetable/deployment. consultation_owner_message_probe.gs — one generic OWNER_CHAT_ID message candidate, yet unexecuted live; separate durable KULAGINA_OWNER_MESSAGE_PROBE_V1 claim before HTTP, short locks not around network, no retry unknown/rejected/target change. Не сбрасывать receipt/не отправлять студентам/не менять рабочие settings.10Node tests,577Python/130Node PASS; docs/CONSULTATION_PERSONAL_RESOURCES.md.

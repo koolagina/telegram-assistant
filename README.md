@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Проверка реального подключения — текущий шаг
+
+Пользовательский manual metadata probe подтвердил Telegram getMe и доступ к выбранному Calendar с нужным часовым поясом; send/write ещё не проверялись. Подготовлен idempotent owner-only test message runner, не запущенный на реальном проекте. [Инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). Полная локальная проверка: **577Python +130Node PASS**,6demos. Не является deployment или проверкой полноты расписания.
+
 ## Проверка подключения на ресурсах владельца
 
 Владелец разрешил ограниченные тесты на своих ботe/Calendar. Подготовлена read-only проверка в существующем Apps Script без токенов в чате и без публикации среды: [инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). Доступ из этой сессии ещё не подтверждён, реальных bot/Calendar вызовов не было. Актуально **577Python +120Node PASS** (`bash tools/check-local.sh`).

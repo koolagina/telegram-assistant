@@ -1,3 +1,9 @@
+# Актуально29.10.2026: manual metadata successful, send probe pending
+
+Пользовательский JSON подтвердил реальный getMe/Calendar read metadata/timezone; owner identity/delivery/send/write/full timetable ещё не проверены. Direct runtime credentials в Codex не появились. Owner-only durable once send helper подготовлен, не выполнялся на реальном ресурсе.577Python/130Node PASS. CONSULTATION_PERSONAL_RESOURCES.md.
+
+---
+
 # Актуально29.10.2026: разрешены owner-resource тесты
 
 577Python/120Node PASS. Standalone metadata-only Apps Script probe подготовлен, не установлен/не запущен. Реального bot token/ready Google connection из чата нет; selectors сами доступ не доказывают. Отдельные test resources больше не требуются по user override. Инструкция без secret transfer/publication: CONSULTATION_PERSONAL_RESOURCES.md. Existing data/poller/webhook/triggers/deploy не менялись.

@@ -1,3 +1,9 @@
+# 29.10.2026 — reported live metadata success + one-shot owner message candidate
+
+- Получен user-run sanitized report: bot verified, Calendar accessible/timezone matches, owner routing configured; actual send/write/delivery не доказаны.
+- Standalone owner-message probe sends one generic text only to existing OWNER_CHAT_ID; durable pre-send separate Script Property, no network under ScriptLock/no retry unknown/target change.
+-10newNode tests;577Python/130Node PASS,6demos. New runner not yet executed on real Apps Script, no Calendar/Sheets/poll/deploy changes. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
 # 29.10.2026 — owner-resource test permission + secret-free metadata probe
 
 - По явному разрешению пользователя допускаются ограниченные тесты на его ресурсах; separate test resources больше не требуются, active data/poller/triggers/deploy untouched.

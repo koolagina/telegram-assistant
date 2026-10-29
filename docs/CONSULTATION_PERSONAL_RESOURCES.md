@@ -2,6 +2,20 @@
 
 29.10.2026 пользователь явно разрешил: **«можно тестить в моих»**. Это уточнение приоритетнее прежнего локального требования использовать только отдельный test bot/Calendar. Не требовать повторно создания отдельных ресурсов или того же разрешения. Оно не разрешает рассылки студентам, изменение рабочих встреч/журнала, запуск второго poller, изменение webhook/triggers/deploy или прав доступа.
 
+## Полученная реальная metadata-проверка
+
+По присланному пользователем JSON ручного запуска29.10.2026 в12:30:08: telegram credential_present/verified=true,status=verified; calendar configured/read_access_verified/timezone_matches=true,status=accessible; owner_target.configured=true,identity_verified=false; ready_for_private_preview=true. Writes/messages0,polling_started=false. Это свидетельство ручного getMe/Calendar metadata в пользовательском Apps Script, не запуска из Codex и не подтверждение send/write/полноты НВГУ/deployment. Реальные IDs/token/названия в репозиторий не включены. Предыдущий report12:25 показывал отсутствие Calendar setting; пользователь затем настроил ASSISTANT_CALENDAR_ID в своём редакторе.
+
+## Следующая проверка — одно сообщение владельцу
+
+Подготовлен `src/tools/consultation_owner_message_probe.gs`. Добавить только его в отдельный `.gs` файл существующего проекта и выбрать `testKulaginaOwnerMessageOnce`; он сам выводит sanitized JSON. Это первый **реальный send** при ручном запуске: один фиксированный неперсональный test text в существующий OWNER_CHAT_ID. Ни сообщений студентам, ни Calendar/Sheets/polling/webhook/triggers/deploy.
+
+Receipt `KULAGINA_OWNER_MESSAGE_PROBE_V1` фиксируется в новом отдельном Script Property до HTTP. Значения рабочих token/owner/calendar properties не меняются. Short ScriptLock только при claim/receipt, не держится во время HTTP и не запускает вторую очередь. Повтор/restart не send; unknown/sending/rejected/смена target требуют review, не удаления/reset этого ключа. При malformed bot/private chat/message ID response outcome unknown.
+
+Ожидаемый первый JSON: status=api_confirmed,messages_attempted_this_run=1,api_accepted=true,delivered=null. Это API acknowledgement, а не доказательство доставки: пользователь отдельно сообщает, появилось ли test сообщение в Telegram. На повторе status=already_api_confirmed и attempts0. При ошибке прислать только JSON, без Script Properties/токена/HTTP traces; не сбрасывать receipt для повторной попытки.
+
+10новыхNode VM tests до реализации; полный577Python/130Node PASS,6offline demos. **Реальный send пока не выполнен/не подтверждён**; текущая доступность metadata проверена пользователем, остальное локально. Доступ из Codex остаётся отдельным вопросом, этот runner credentials в чат не передаёт.
+
 ## Текущий доступ из чата
 
 Проверены только безопасные признаки runtime, без чтения/печати secret values:
