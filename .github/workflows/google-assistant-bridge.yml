@@ -1,0 +1,120 @@
+name: Google assistant controlled bridge
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/google-bridge/request.json']
+  workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        default: verify
+        required: true
+        options:
+          - verify
+          - review_legacy_patch
+          - apply_legacy_patch
+      recipient_public_key:
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  request:
+    if: github.repository == 'koolagina/telegram-assistant' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    outputs:
+      operation: ${{ steps.plan.outputs.operation }}
+      recipient_key: ${{ steps.plan.outputs.recipient_key }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: plan
+        env:
+          GOOGLE_BRIDGE_OPERATION: ${{ inputs.operation }}
+          GOOGLE_BRIDGE_RECIPIENT_PUBLIC_KEY: ${{ inputs.recipient_public_key }}
+        run: node tools/google-actions-bridge.cjs plan
+
+  read:
+    needs: request
+    if: needs.request.outputs.operation != 'apply_legacy_patch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    concurrency:
+      group: google-assistant-read
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Read-only Google check or encrypted review
+        id: bridge
+        env:
+          OPERATION: ${{ needs.request.outputs.operation }}
+          GOOGLE_BRIDGE_RECIPIENT_PUBLIC_KEY: ${{ needs.request.outputs.recipient_key }}
+          KULAGINA_GOOGLE_READ_CONNECTION_V1: ${{ secrets.KULAGINA_GOOGLE_READ_CONNECTION_V1 }}
+        run: node tools/google-actions-bridge.cjs "$OPERATION"
+      - name: Deliver source only encrypted to the request recipient
+        if: always() && steps.bridge.outputs.source_exported == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: google-source-encrypted
+          path: ${{ runner.temp }}/google-bridge-state/source.enc.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Keep only encrypted review backup
+        if: needs.request.outputs.operation == 'review_legacy_patch' && steps.bridge.outputs.change_required == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: google-reviewed-source-encrypted
+          path: ${{ runner.temp }}/google-bridge-state/backup.enc.json
+          if-no-files-found: error
+          retention-days: 7
+
+  write:
+    needs: request
+    if: needs.request.outputs.operation == 'apply_legacy_patch'
+    environment: google-assistant-production
+    permissions:
+      contents: read
+      actions: read
+      deployments: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    concurrency:
+      group: google-assistant-write
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare exact reviewed update, never write yet
+        id: prepare
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KULAGINA_GOOGLE_WRITE_CONNECTION_V1: ${{ secrets.KULAGINA_GOOGLE_WRITE_CONNECTION_V1 }}
+        run: node tools/google-actions-bridge.cjs prepare_write
+      - name: Persist encrypted original before any project update
+        id: backup
+        if: steps.prepare.outputs.change_required == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: google-before-legacy-update-encrypted
+          path: ${{ runner.temp }}/google-bridge-state/backup.enc.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Apply only after backup and fresh source comparison
+        if: steps.prepare.outputs.change_required == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          KULAGINA_GOOGLE_WRITE_CONNECTION_V1: ${{ secrets.KULAGINA_GOOGLE_WRITE_CONNECTION_V1 }}
+          KULAGINA_BACKUP_UPLOADED: ${{ steps.backup.outputs.artifact-id != '' && 'true' || 'false' }}
+        run: node tools/google-actions-bridge.cjs apply_write

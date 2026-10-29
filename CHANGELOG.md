@@ -1,3 +1,9 @@
+# 29.10.2026 — controlled Google Actions channel prepared
+
+- Added main-only fixed-operation request queue + short manual Actions jobs. Read scopes enforced; encrypted source return, no source/credential logs. Local private packet exporter uses existing authorized clasp account only.
+- Reviewed legacy-write path prepared with protection checks, exact8pins, encrypted backup upload before1PUT, drift/unknown handling. No live Google writes or write grant; Calendar/functions/deployments not relay operations.
+-13newNode tests red→green;596Python214Node fullPASS6demos. GitHub secret API403/env setup401 block automatic credential/config entry; userUI setup needed. Google connection not yet verified. docs/GOOGLE_AUTOMATION_CHANNEL.md.
+
 # 29.10.2026 — approved18 create-only handoff prepared
 
 - User authorized exact18real lesson creates; freshNVSU payloads unchanged. No other resource/code/trigger scope inferred.

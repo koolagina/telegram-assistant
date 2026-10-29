@@ -1,3 +1,13 @@
+# 29.10.2026 — автоматический Google channel подготовлен, credential pending
+
+По новой задаче пользователя создан controlled Git→Actions→Google relay, не повтор локальногоclasp. GitHubrepo/workflowreads/Gitpush доступны; Secretsmetadata403/EnvironmentPUT401, поэтому credential storage/protection требует штатнойUI-настройкивладельцем. Секреты не читались/не передавались в чат. Reader exporter использует имеющийся Windowsclasp offlinegrant, не делаетlogin/network и не экспортируетcachedaccess/другиеаккаунты.
+
+Request queue main-only/enum/timestamp, nativeHTTPS refresh/scopechecks/getContent; source только RSA-OAEP256/AES256-GCM encryptedartifact с private controllerkey внеGit, metadata-onlylogs. Prepared legacyupdate path gated on protectedenv/requiredreviewer/mainpolicy/отдельныйwritegrant+конкретное userразрешение/full8pinreview/persistedbackupbefore1PUT. Егоне запускали; CalendarAPI/remoteAppScriptrun не включены в relay.18Calendar approval сохраняется, execution всё ещё не подтверждён.
+
+13новыхNode tests red→green (включаятегGCM128бит), full **596Python +214Node PASS**,6offline demos. New Googleconnection пока **не подключён** до readersecret/connected_readonly/runartifact проверки; publicationrunner smoke ещё не выполнен. [Настройка/реальныеграницы](GOOGLE_AUTOMATION_CHANNEL.md).
+
+---
+
 # 29.10.2026 —18созданий разрешены, ограниченный runner подготовлен
 
 User «+» ответил на конкретный вопрос о18реальных занятиях09–22ноября; scope принят, повторного разрешения не требуется. Остальные11events/Sheets/legacycode/triggers/webhook/poll/deploy/studentmessages не разрешены этим ответом. Свежие2NVSUproofs HTTP200/no redirect совпали с исходными18payloads.

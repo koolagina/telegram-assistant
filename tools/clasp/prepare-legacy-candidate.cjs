@@ -13,13 +13,13 @@ const EXPECTED=Object.freeze({
  'ПроверкаЗащитыРасписания.js':'8f8b4cea58583ffa20bd891e2e2cc6b88dafd855e41ab915ed6d2e7c207eca55',
  'ПроверкаПодключения.js':'0211b4a84bae55f206212f024a25000a20ca7625df3cd8bc8d75b477a8b8f8f1'
 });
-function patchMain(source) {
- const replacements=[
+const REPLACEMENTS=Object.freeze([
   ["if(note.includes('одобрен')) return 'approved';","if(note.trim()==='одобрен') return 'approved';"],
   ["  tg_('answerCallbackQuery',{callback_query_id:q.id});", "  // An expired ACK must not block this or subsequent Telegram updates.\n  try { tg_('answerCallbackQuery',{callback_query_id:q.id}); }\n  catch(e) { log_('Устаревший callback',q.id,'Подтверждение кнопки недоступно'); }"]
- ];
- for(const [old] of replacements)if(source.split(old).length!==2)throw Error('Source patch precondition mismatch; review required');
- for(const [old,replacement] of replacements)source=source.replace(old,replacement);
+ ].map(Object.freeze));
+function patchMain(source) {
+ for(const [old] of REPLACEMENTS)if(source.split(old).length!==2)throw Error('Source patch precondition mismatch; review required');
+ for(const [old,replacement] of REPLACEMENTS)source=source.replace(old,replacement);
  return source;
 }
 function prepareCandidate({backup,destination,expected=EXPECTED,platform=process.platform,run,fs=systemFs}) {
@@ -54,5 +54,5 @@ function prepareCandidate({backup,destination,expected=EXPECTED,platform=process
  for(const n of names)fs.writeFileSync(path.join(destination,n),contents[n],{mode:0o600,flag:'wx'});
  return {prepared:true,files:names.length,changed_files:1,patches:2,global_functions:functions.length,remote_access_performed:false,ready_for_push:false};
 }
-module.exports={EXPECTED,patchMain,prepareCandidate};
+module.exports={EXPECTED,REPLACEMENTS,patchMain,prepareCandidate};
 if(require.main===module){try{const args=process.argv.slice(2);if(args.length!==4||args[0]!=='--backup'||args[2]!=='--destination')throw Error('Usage: node prepare-legacy-candidate.cjs --backup ABSOLUTE_BACKUP --destination ABSOLUTE_NEW_CANDIDATE');console.log(JSON.stringify(prepareCandidate({backup:args[1],destination:args[3]})));}catch{console.error('Candidate preparation stopped. Verify the original reviewed backup, fresh private destination and local permissions. No remote operation performed; do not use partial output.');process.exitCode=1;}}

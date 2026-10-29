@@ -444,3 +444,8 @@ Fullvaliduserbatch accepted; freshsource11/9/9/0vsCalendar11/0/0/0. Exact11/miss
 ## 57. Approved18creates → guarded manual transport — 29.10.2026
 
 Exact18permission received; fresh2source payloadsets unchanged. Existingplanner/privatecompiler + thincreate-onlyGAS with freshproof/target/owner/emptyweek guards, durablejournal/sameIDs/readonlypartialreconcile. No application changes/triggers/deployment/sourceparser rewrite.5Python14Node/full596Python201Node PASS6demos, actualimportawaitsuserexecution. Scope persistsno reconfirmation; futureupdate/ledgertransfer/consultationscompleteness separate. docs/NVSU_APPROVED_IMPORT.md.
+
+
+## 58. Actualremotechannel via GitHub Actions prepared — 29.10.2026
+
+ControlledGitrequest→Actions→Google, encryptedsource return, localofflinepacket exporter; no perfilemanualcopyafterconnection.13Node/full596Python214Node PASS6demos. PendinguserencryptedsecretUI (integration403)/actualGoogleGET/artifact receipt; writeenv setupAPI401blocked, sourcewrite pathpreparedbutnotauthorized/connected, Calendarrelaynotimplemented.18approvedimportsstillpendingnotrevoked; oldlocalWindowsOAuth not falselycalledcloudconnection. docs/GOOGLE_AUTOMATION_CHANNEL.md.

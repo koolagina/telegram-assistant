@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Подготовлен автоматический Google channel
+
+[GitHub Actions relay](docs/GOOGLE_AUTOMATION_CHANNEL.md) позволит читать текущий Apps Script без ручных source uploads: fixed request queue, readonly OAuth, source encrypted до контроллера. Workflow/code/test готовы, Google credential ещё нужно однократно сохранить в GitHub Secret; **успешное подключение пока не подтверждено**. Protected write path только для reviewed2fixes подготовлен, но без writegrant/environment/usercodeapproval не исполняется. Calendar-операции этим relay пока не поддержаны. **596 Python +214 Node PASS**,6offline demos.
+
 ## Импорт18занятий согласован, runner готов
 
 [Ограниченный ручной Apps Script runner](docs/NVSU_APPROVED_IMPORT.md) подготовлен для согласованных18созданий09–22ноября. Existing planner/ID scheme, свежая source/Calendar проверка, no updates/deletes/unknown resend. Свежий НВГУ не изменил утверждённые payloads. Реальный запуск ещё впереди; Google-доступ остаётся у пользователя, повторного разрешения на эти18не требуется. **596 Python +201 Node PASS**,6offline demos.
