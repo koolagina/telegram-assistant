@@ -1,3 +1,9 @@
+# 29.10.2026 — owner-run protection diagnosis recorded
+
+- User reported complete read-only diagnosis:11events/protected11, attendees field11, description5, other reasons0, writes/messages0. Field presence does not establish non-empty guest lists or ownership.
+- Preserve descriptions/attendees and existing events; no duplicate imports or implicit adoption. Repeat probe not needed; other-week coverage and trusted ownership history still outstanding.
+- Documentation only; last full suite590Python/168Node PASS,6demos, not rerun. No bot/calendar/Sheet/trigger changes.
+
 # 29.10.2026 — read-only protection diagnostics prepared
 
 - Added standalone inspectKulaginaNvsuProtectionReadOnly for the already-compared week: aggregate reason counts only, GET-only/explicit target/bounded complete pagination, no private values or writes. Not executed live.

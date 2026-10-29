@@ -409,3 +409,8 @@ User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id
 ## 50. Причины защиты без изменения событий — 29.10.2026
 
 Standalone GET-only aggregate helper prepared, not executed live: inspectKulaginaNvsuProtectionReadOnly. Fixed previousweek02–08.11, no raw private fields/IDs/extension contents, no writes/ownership adoption.8Node regressions,590Python168Node fullPASS,6demos. Need manual aggregate to distinguish protection reasons; even plain events still require trusted ownership ledger. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## 51. Причины защиты подтверждены вручную — 29.10.2026
+
+User report complete: events11/protected11, attendees11/description5, otherreasons0,writes0/messages0. Field presence includes empty arrays, not guest count or ownership. Existing exact11week snapshot remains separate evidence; no mutation/metadata stripping/adoption. Repeatdiagnosisnotneeded. Next remaining boundaries: otherweeks/full source coverage/trusted existing ledger/fresh plan before separately authorized changes. Docs only; last590Python168Node PASS6demos not rerun.
