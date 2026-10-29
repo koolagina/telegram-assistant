@@ -1,0 +1,46 @@
+--- a/storeFile_.gs
++++ b/storeFile_.gs
+@@ -6,16 +6,39 @@
+   const label=message.caption||'';
+   if(data.file_size && data.file_size>CFG.maxFileBytes)
+     return {type,link:'',description:label+' [Файл слишком велик для автоматического сохранения]'};
++  // pollTelegramUpdates serializes this path with its existing ScriptLock.
++  // Keep durable receipts: a cache or a filename is not proof of file creation.
++  const chatKey=String(message.chat.id), messageKey=String(message.message_id);
++  if(!/^-?\d+$/.test(chatKey)||!/^\d+$/.test(messageKey)||typeof data.file_id!=='string'||data.file_id.length>2048)
++    throw Error('Некорректный идентификатор вложения');
++  const fileKey='KULAGINA_LEGACY_FILE_V1_'+chatKey+'_'+messageKey;
++  const props=PropertiesService.getScriptProperties();
++  const prior=props.getProperty(fileKey);
++  if(prior) {
++    let receipt;
++    try { receipt=JSON.parse(prior); } catch(error) { throw Error('Требуется проверка операции сохранения файла'); }
++    if(receipt.version!==1||receipt.file_id!==data.file_id||receipt.type!==type)
++      throw Error('Требуется проверка операции сохранения файла');
++    if(receipt.status==='SAVED'&&typeof receipt.link==='string'&&/^https:\/\//.test(receipt.link))
++      return {type,link:receipt.link,description:label};
++    // An uncertain Drive outcome requires review, never a second createFile.
++    throw Error('Сохранение файла требует проверки: повторное создание остановлено');
++  }
+   try {
+     const meta=tg_('getFile',{file_id:data.file_id});
+     const response=UrlFetchApp.fetch('https://api.telegram.org/file/bot'+token_()+'/'+meta.file_path);
+     const folder=DriveApp.getFoldersByName('Файлы Telegram-помощника').next();
+     const safeName=(data.file_name||('telegram_'+message.chat.id+'_'+message.message_id+'_'+type)).replace(/[\\/:*?"<>|]/g,'_');
+-    const file=folder.createFile(response.getBlob().setName(safeName));
++    const blob=response.getBlob().setName(safeName);
++    props.setProperty(fileKey,JSON.stringify({version:1,status:'SENDING',file_id:data.file_id,type}));
++    const file=folder.createFile(blob);
++    const link=file.getUrl();
++    if(typeof link!=='string'||!/^https:\/\//.test(link)) throw Error('Некорректный результат Drive');
++    props.setProperty(fileKey,JSON.stringify({version:1,status:'SAVED',file_id:data.file_id,type,link}));
+     // Файлы остаются закрытыми: доступ только по правам Google Drive.
+-    return {type,link:file.getUrl(),description:label};
++    return {type,link,description:label};
+   } catch(e) {
+-    log_('Ошибка файла',message.message_id,e.message);
+-    return {type,link:'',description:label+' [Не удалось сохранить файл]'};
++    // Do not acknowledge an update whose attachment has not been saved safely.
++    throw Error('Не удалось подтвердить сохранение вложения; требуется проверка');
+   }
+ }

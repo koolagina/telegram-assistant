@@ -366,3 +366,9 @@ User requested actualremoteconnection after Windowsclasp distinction. .github/wo
 
 Calendar/Sheets/Drive/user messages/webhook/trigger/deployment операции не выполнялись. Разрешение18Calendar creates сохраняется отдельно; импорт не подтверждён, этот relay Calendar не поддерживает. Кандидат2.0.5 остаётся локальным кандидатом, исходные архивы сохранены. Причина прошлых403 точно не доказана, но после включения пользовательского API этот же ограниченный путь записи сработал. Следующий шаг — отдельная безопасная проверка поведения бота и завершение подключения Calendar, без расширения разрешений молча.
 
+
+
+30.10.2026: локальный кандидат против дублей Drive после сбоя Sheets
+
+Воспроизведены3сценария до исправления; новый tools/clasp/legacy-file-recovery.cjs меняет только storeFile_, review diff patches/legacy-file-recovery.patch. SENDING/SAVED Script Properties по chat/message предотвращают повторное create после сохранённой ссылки и запрещают blind retry при неизвестном исходе.8регрессионных tests; полный596Python+224Node PASS,6offline demos. Реальный source8files проверен offline в памяти/совокупный syntax PASS, Google writes0 для нового патча. Не установлен: unknown receipt пока блокирует очередь, recovery/квоты требуют завершения. Подробности [LEGACY_FILE_RECOVERY_CANDIDATE.md](LEGACY_FILE_RECOVERY_CANDIDATE.md). Предыдущие2исправления уже установлены; новые не включены в relay allowlist.
+
