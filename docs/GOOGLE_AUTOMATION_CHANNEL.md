@@ -1,3 +1,14 @@
+# 30.10.2026 — две минимальные legacy правки установлены в Apps Script
+
+После включения владельцем Apps Script API и owner approval protected run [40936196524](https://github.com/koolagina/telegram-assistant/actions/runs/40936196524) завершился success: encrypted original backup сохранён до записи;1PUT, API accepted=true, post-GET verified=true, status=applied. Независимый read-only run40936525532 (main4a595c4117636b287923baf0ddd76f6057951188) подтвердил target/provenance/integrity:8файлов, ровно1основной файл отличается и точно равен ранее проверенному patchMain(original);7файлов, включая manifest/6helpers, побайтно сохранены. Общий JavaScript синтаксис PASS. Последние локальные targeted15relay+9legacy tests PASS; runtime handlers на реальных Telegram updates не запускались. Активный deployment/version/trigger inventory не проверены; обновление source не считать развёртыванием кандидата2.0.5. Код существующих триггеров может читать изменённый HEAD без нового deployment, но триггеры не создавались/не запускались этой операцией.
+
+| Дефект | Исправление | Проверка | Оставшийся риск |
+|---|---|---|---|
+| «Не одобрен» давал доступ через substring | accessStatus_: точное сравнение нормализованной строки со статусом «одобрен» | mock regression + actual Google source equality | Не выполнен runtime тест с реальной таблицей/студентом |
+| Устаревший callback ACK блокировал очередь | processCallback_: try/catch только answerCallbackQuery, существующая обработка сохранена | mock offset/next-update regression + actual Google source equality | Другие исключения/дубли legacy потока этим патчем не устраняются |
+
+Calendar/Sheets/Drive/user messages/webhook/trigger/deployment операции не выполнялись. Разрешение18Calendar creates сохраняется отдельно; импорт не подтверждён, этот relay Calendar не поддерживает. Кандидат2.0.5 остаётся локальным кандидатом, исходные архивы сохранены. Причина прошлых403 точно не доказана, но после включения пользовательского API этот же ограниченный путь записи сработал. Следующий шаг — отдельная безопасная проверка поведения бота и завершение подключения Calendar, без расширения разрешений молча.
+
 # Управляемый канал Google через GitHub Actions — 29.10.2026
 
 ## Цель и текущие границы
