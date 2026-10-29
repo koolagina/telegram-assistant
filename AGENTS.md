@@ -303,3 +303,8 @@ Safe legacy description fix: exact source-bound current GAS bot prefix меня�
 ## Read-only private Calendar comparison — 29.10.2026
 
 User-run CRUD complete/cleanup confirmed: не повторять smoke и не сбрасывать receipt. Новый nvsu_calendar_snapshot.gs только GET фиксированной недели02–08.11, не executed live. Частный chunked log содержит time/hash equality, не считать анонимным/не Git. nvsu_private_snapshot.py использует текущий plan_sync только для агрегатов, не реального ledger/ownership; всегда ready_for_apply=false/teaching_schedule_verified=false. Не преобразовывать hashes в real IDs и snapshot counts в исполнимый план. Unknown/moved/protected события требуют review. Доверенные источник/дата/полнота/реальный ledger устанавливаются отдельно. Новый suite включён в tools/check-local.sh;587Python/160Node PASS,6demos. Инструкция docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## Реальная недельная сверка — 29.10.2026
+
+User snapshot02–08.11 accepted:2chunks checksum valid; freshNVSU11/source vs11/events exact time/title/room,missing0,duplicate exact0,unknown0. Все protected: review_overlap не считать отсутствующим занятием/ошибкой и не снимать защиту. nvsu_private_snapshot теперь имеет separate exact/protected/missing/duplicate aggregate counts,3regressions/590Python+160Node PASS. No Calendar writes/ownership/full teaching verification; screenshot/manual snapshot не direct Google connection. Не повторять выполненный экспорт без свежей необходимости, не Git private artifacts. Remaining: other relevant weeks/ownership ledger/coordinated live updates. docs/NVSU_PRIVATE_COMPARISON.md.

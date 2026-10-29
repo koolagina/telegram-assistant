@@ -49,6 +49,15 @@ class SnapshotTests(unittest.TestCase):
    with self.assertRaises(ValueError):compare_snapshot(w,x,requested_date=w['week_start'])
  def test_no_schedule_never_deletes_manual_events(self):
   w=small_week();s=snapshot(w);s['events']=[event(w['lessons'][0])];w.update(status='source_reports_no_schedule',lessons=[]);r=compare_snapshot(w,s,requested_date=w['week_start']);self.assertEqual(r['operations'],{});self.assertEqual(r['unknown_events'],1);self.assertFalse(r['ready_for_apply'])
+ def test_protected_exact_match_is_reported_without_authorizing_writes(self):
+  w=small_week();s=snapshot(w);e=event(w['lessons'][0]);e['protected']=True;s['events']=[e]
+  r=compare_snapshot(w,s,requested_date=w['week_start']);self.assertEqual(r['exact_match_lessons'],1);self.assertEqual(r['protected_exact_match_lessons'],1);self.assertEqual(r['missing_exact_match_lessons'],0);self.assertEqual(r['duplicate_exact_match_lessons'],0);self.assertFalse(r['ready_for_apply']);self.assertEqual(r['operations'],{'review_overlap':1})
+ def test_duplicate_exact_events_are_counted_and_never_bound(self):
+  w=small_week();s=snapshot(w);e=event(w['lessons'][0]);s['events']=[e,dict(e,id_hash='c'*64)]
+  r=compare_snapshot(w,s,requested_date=w['week_start']);self.assertEqual(r['exact_match_lessons'],1);self.assertEqual(r['duplicate_exact_match_lessons'],1);self.assertEqual(r['operations'],{'review_overlap':1})
+ def test_time_only_match_does_not_hide_wrong_room(self):
+  w=small_week();s=snapshot(w);e=event(w['lessons'][0]);e['location_hash']=fingerprint('different room');s['events']=[e]
+  r=compare_snapshot(w,s,requested_date=w['week_start']);self.assertEqual(r['exact_match_lessons'],0);self.assertEqual(r['missing_exact_match_lessons'],1);self.assertEqual(r['unknown_events'],1)
  def test_extra_raw_fields_rejected(self):
   w=small_week();s=snapshot(w);e=event(w['lessons'][0]);e['summary']='private';s['events']=[e]
   with self.assertRaises(ValueError):compare_snapshot(w,s,requested_date=w['week_start'])

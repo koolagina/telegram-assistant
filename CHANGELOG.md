@@ -1,3 +1,9 @@
+# 29.10.2026 — weekly source/Calendar snapshot comparison accepted
+
+- Обе части пользовательского снимка проверены по checksum. Свежий НВГУ 02–08.11: 11 уроков /11 Calendar events, exact time/title/room matches11, missing0/duplicates0/unknown0. No event changes needed from this snapshot; no Calendar writes.
+- All events protected: planner review_overlap remains a write guard, not an assertion of schedule mismatch. Ownership/full teaching coverage still unverified.
+- Separate exact/protected/missing/duplicate aggregates;3 regressions first red→green. Full590Python/160Node PASS,6offline demos. Private evidence stays outside Git. docs/NVSU_PRIVATE_COMPARISON.md.
+
 # 29.10.2026 — private read-only NVSU comparison candidate
 
 - Standalone weekly Calendar GET snapshot: redacted fields, full bounded pagination, buffered chunks/checksum, no writes or deployment. Not run live.

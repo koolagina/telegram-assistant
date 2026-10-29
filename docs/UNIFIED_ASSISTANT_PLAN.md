@@ -399,3 +399,8 @@ User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id
 ## 48. Частный снимок для read-only сверки — 29.10.2026
 
 Подготовлен manual Apps Script GET-only экспорт выбранной недели02–08.11 без raw event text/IDs и decoder/comparator на существующем nvsu_sync planner. Нет нового механизма синхронизации/ledger/записей.587Python/160Node PASS,6demos; live запуск ещё не состоялся. Следующий необходимый вход — complete private chunk log пользователя; после него свежая проверка НВГУ и агрегатный план без apply. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## 49. Недельный снимок сопоставлен — 29.10.2026
+
+Получен полный checksum-valid пользовательский снимок02–08.11; свежее НВГУ11 и Calendar11 совпадают по всем трём разрешённым полям, missing/duplicate/unknown0. Protected11 остаются без изменений/ownership adoption. Не требуется повторный helper или запись по этому снимку. Added3regressions/exact counters;590Python/160Node PASS,6demos. Full-calendar coverage/otherweeks/ledger/durable live sync всё ещё отдельно, teachingverifiedfalse. docs/NVSU_PRIVATE_COMPARISON.md.

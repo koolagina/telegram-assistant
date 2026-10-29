@@ -56,9 +56,19 @@ def compare_snapshot(week,snapshot,*,requested_date):
     # No ownership inferred from matching text/hashes. Existing planner supplies
     # deduplication/conflict classification only; no ledger or write adapter used.
     plan=plan_sync(week,existing,[],requested_date=requested_date)
+    # Protected exact matches still require review in the planner; report that
+    # fact separately so review_overlap is not mistaken for missing lessons.
+    # Count unique desired occurrences, not duplicate source group rows.
+    desired={(instant(l['start']),instant(l['end']),fingerprint(l['title']),fingerprint(l['location'])) for l in week['lessons']}
+    exact=protected_exact=duplicate_exact=0
+    for start,end,title_hash,room_hash in desired:
+        matches=[e for e in events if instant(e['start'])==start and instant(e['end'])==end and e['title_hash']==title_hash and e['location_hash']==room_hash]
+        exact+=bool(matches);protected_exact+=any(e['protected'] for e in matches);duplicate_exact+=len(matches)>1
     return dict(purpose='nvsu_read_only_comparison',target_mode='redacted_snapshot',
         week_start=week['week_start'],week_end=week['week_end'],observed_at=snapshot['observed_at'],
         lessons=len(week['lessons']),calendar_events=len(existing),unknown_events=unknown,
+        exact_match_lessons=exact,protected_exact_match_lessons=protected_exact,
+        missing_exact_match_lessons=len(desired)-exact,duplicate_exact_match_lessons=duplicate_exact,
         operations=dict(collections.Counter(o['action'] for o in plan['operations'])),
         review_required=True,ownership_history_verified=False,ready_for_apply=False,
         teaching_schedule_verified=False,writes_performed=False)
