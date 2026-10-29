@@ -313,3 +313,8 @@ User snapshot02–08.11 accepted:2chunks checksum valid; freshNVSU11/source vs11
 ## Protection diagnosis candidate — 29.10.2026
 
 nvsu_calendar_protection.gs / inspectKulaginaNvsuProtectionReadOnly — standalone GET-only fixed02–08.11 aggregate reasons,not executed live. No event text/IDs/extension contents/sends/writes/settings. Reasons mirror previous snapshot flag, not ownership, counts overlap and empty arrays/objects may protect. Do not auto-adopt plain events or strip metadata to bypass protection.8newNode tests/full590Python168Node PASS,6demos. Existing verified11exact snapshot unchanged; next manual aggregate only, no repeatCRUD/chunks. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## Four-week November snapshot — 29.10.2026
+
+Protection diagnosis received complete: attendees-field11/description5, no writes/ownership proof. Не повторять эту диагностику. Существующий nvsu_calendar_snapshot.gs расширен новым exportKulaginaNvsuNovemberReadOnly через тот же internal collector; old weekly entrypoint сохранён. Fixed02–29Nov,4weeks/one buffered batch/24GET/200total events; allfail/no partial chunks on incompleteweek/targetchange/limits. Новая Calendar-проверка не executed live. Pythonbatch comparator delegates to old planner, не ownership/writepermission/full semester proof; Nov30outside. Freshpublicsource11/9/9/0, last explicit no schedule не deletion authority.1newPython4newNode/full591Python172Node PASS6demos. Пользователь заменяет только свой вспомогательный файл экспорта, не основнойбот/не duplicateglobals. docs/NVSU_PRIVATE_COMPARISON.md.

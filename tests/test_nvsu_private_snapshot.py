@@ -2,7 +2,7 @@
 import copy,hashlib,json,sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-from nvsu_private_snapshot import decode_chunks, compare_snapshot, fingerprint
+from nvsu_private_snapshot import decode_chunks, compare_snapshot, fingerprint, compare_november_snapshots
 from test_nvsu_sync import small_week
 
 def snapshot(week):
@@ -58,6 +58,17 @@ class SnapshotTests(unittest.TestCase):
  def test_time_only_match_does_not_hide_wrong_room(self):
   w=small_week();s=snapshot(w);e=event(w['lessons'][0]);e['location_hash']=fingerprint('different room');s['events']=[e]
   r=compare_snapshot(w,s,requested_date=w['week_start']);self.assertEqual(r['exact_match_lessons'],0);self.assertEqual(r['missing_exact_match_lessons'],1);self.assertEqual(r['unknown_events'],1)
+ def test_four_week_batch_is_explicit_and_never_executable(self):
+  import datetime as dt
+  weeks=[];snaps=[]
+  for day in (2,9,16,23):
+   w=small_week();w.update(week_start=f'2026-11-{day:02}',week_end=f'2026-11-{day+6:02}',lessons=[],status='source_reports_no_schedule');weeks.append(w);snaps.append(snapshot(w))
+  batch=dict(format_version=1,purpose='nvsu_read_only_november_comparison',snapshots=snaps)
+  r=compare_november_snapshots(weeks,batch);self.assertEqual(len(r['weeks']),4);self.assertFalse(r['ready_for_apply']);self.assertFalse(r['teaching_schedule_verified'])
+  for broken in [snaps[:3],list(reversed(snaps)),[snaps[0]]*4]:
+   with self.assertRaises(ValueError):compare_november_snapshots(weeks,dict(batch,snapshots=broken))
+  changed=copy.deepcopy(batch);changed['snapshots'][3]['calendar_hash']='b'*64
+  with self.assertRaises(ValueError):compare_november_snapshots(weeks,changed)
  def test_extra_raw_fields_rejected(self):
   w=small_week();s=snapshot(w);e=event(w['lessons'][0]);e['summary']='private';s['events']=[e]
   with self.assertRaises(ValueError):compare_snapshot(w,s,requested_date=w['week_start'])

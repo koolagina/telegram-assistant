@@ -1,3 +1,15 @@
+# 29.10.2026 — четыре недели ноября: источник проверен, Calendar-снимок подготовлен
+
+Свежие разрешённые public GET через существующий `nvsu_source.fetch_week`:02–08.11 parsed11;09–15.11 parsed9;16–22.11 parsed9;23–29.11 source_reports_no_schedule0. Учебная неделя/дата/преподаватель проверены существующим parser; это не результат Calendar-импорта. Private source proofs вне Git. Отсутствие расписания не разрешает удаление ручных/неподтверждённых событий.
+
+Расширен существующий `src/tools/nvsu_calendar_snapshot.gs`: старый `exportKulaginaNvsuWeekReadOnly` сохранён; общий внутренний collector используется новой `exportKulaginaNvsuNovemberReadOnly` для четырёх фиксированных недель02–29.11. GET-only, прежняя защита/редакция полей, единый checksum/chunks только после всех недель. До24REST GET/200событий суммарно; ошибка любой недели/смена target/лимиты не выдают частичный успешный снимок. Новое чтение пока не executed live; бот/настройки/события не менялись.
+
+`tools/nvsu_private_snapshot.py` принимает явный November batch, проверяет4даты/порядок/один target/лимиты и вызывает прежний `compare_snapshot`/`nvsu_sync.plan_sync` по каждой неделе. Никакого нового sync engine/ownership ledger/write adapter; всегда ready_for_apply=false/teaching_schedule_verified=false. Период не включает30ноября и не доказывает весь семестр.
+
+1новыйPython test и4Node tests сначала red→green; старые weekly tests сохранены. Полный `bash tools/check-local.sh`: **591Python +172Node PASS**,6offline demos; отдельно проверен настоящий JS batch→Python decoder/comparator. Следующий необходимый вход — один ручной four-week export пользователя. [Инструкция](NVSU_PRIVATE_COMPARISON.md#четыре-недели-ноября-одним-запуском).
+
+---
+
 # 29.10.2026 — реальная диагностика защиты получена
 
 Пользователь предоставил status=complete для недели02–08.11: events11/protected11; attendees11, description5; all_day/tentative/recurrence/extended_properties/attachments/conference/transparent/special_event0; Calendar writes0/messages0. Это ручное read-only свидетельство Apps Script пользователя, не прямой Google-доступ из Codex. Повторная диагностика сейчас не нужна.

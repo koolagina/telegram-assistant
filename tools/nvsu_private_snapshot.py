@@ -73,6 +73,20 @@ def compare_snapshot(week,snapshot,*,requested_date):
         review_required=True,ownership_history_verified=False,ready_for_apply=False,
         teaching_schedule_verified=False,writes_performed=False)
 
+def compare_november_snapshots(weeks,snapshot):
+    """Fixed four-week batch; never infer trust, ownership or write permission."""
+    starts=['2026-11-02','2026-11-09','2026-11-16','2026-11-23']
+    if not isinstance(snapshot,dict) or set(snapshot)!={'format_version','purpose','snapshots'} or type(snapshot['format_version']) is not int or snapshot['format_version']!=1 or snapshot['purpose']!='nvsu_read_only_november_comparison':raise ValueError('Invalid November batch')
+    items=snapshot['snapshots']
+    if not isinstance(items,list) or len(items)!=4 or not isinstance(weeks,list) or len(weeks)!=4:raise ValueError('Incomplete November evidence')
+    if any(not isinstance(x,dict) for x in items+weeks):raise ValueError('Invalid November weeks')
+    if [x.get('week_start') for x in items]!=starts or [x.get('week_start') for x in weeks]!=starts:raise ValueError('November week mismatch')
+    if len({x.get('calendar_hash') for x in items})!=1:raise ValueError('Mixed Calendar targets')
+    results=[compare_snapshot(w,s,requested_date=d) for w,s,d in zip(weeks,items,starts)]
+    if sum(r['calendar_events'] for r in results)>200:raise ValueError('November event limit')
+    return dict(purpose='nvsu_read_only_november_comparison',weeks=results,
+        ready_for_apply=False,teaching_schedule_verified=False,ownership_history_verified=False,writes_performed=False)
+
 def main(argv=None):
     import argparse,sys
     from pathlib import Path
@@ -84,7 +98,11 @@ def main(argv=None):
     try:
         if args.source_proof.stat().st_size>2*1024*1024 or args.snapshot_log.stat().st_size>300000:raise ValueError('Input limit')
         proof=json.loads(args.source_proof.read_text())
-        result=compare_snapshot(proof['week'],decode_chunks(args.snapshot_log.read_text()),requested_date=args.date)
+        snapshot=decode_chunks(args.snapshot_log.read_text())
+        if snapshot.get('purpose')=='nvsu_read_only_november_comparison':
+            if args.date!='2026-11-02':raise ValueError('November batch starts on 2026-11-02')
+            result=compare_november_snapshots(proof['weeks'],snapshot)
+        else:result=compare_snapshot(proof['week'],snapshot,requested_date=args.date)
     except (OSError,ValueError,TypeError,KeyError,AttributeError):
         print('Comparison unavailable: incomplete or invalid local evidence',file=sys.stderr)
         return 1

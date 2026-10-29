@@ -1,3 +1,9 @@
+# 29.10.2026 — four-week read-only comparison candidate
+
+- Reused existing weekly collector for one fixed02–29Nov batch; weekly entrypoint preserved. GET-only, complete buffering, shared target, total200event/24GET limits; no writes or deployment. Not executed live.
+- Batch comparator delegates to existing per-week planner; exact scope/same target, always non-applicable. Fresh publicNVSU11/9/9/0 by week, not Calendar-import proof or deletion authority.
+-1Python+4Node tests first red→green;591Python172Node fullPASS,6offline demos. JS→Python batch transfer verified locally. docs/NVSU_PRIVATE_COMPARISON.md.
+
 # 29.10.2026 — owner-run protection diagnosis recorded
 
 - User reported complete read-only diagnosis:11events/protected11, attendees field11, description5, other reasons0, writes/messages0. Field presence does not establish non-empty guest lists or ownership.

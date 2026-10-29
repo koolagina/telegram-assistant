@@ -1,10 +1,19 @@
-/** Read-only manual comparison snapshot, fixed week 2–8 November 2026.
+/** Read-only manual comparison snapshots, fixed November 2026 windows.
  * No writes/messages/polling/properties updates/deployment. No raw event text/IDs.
  * Hashes are not encryption/authentication. Times and equality remain visible.
  */
 function exportKulaginaNvsuWeekReadOnly() {
-  const zone='Asia/Yekaterinburg',lower='2026-11-02T00:00:00+05:00',upper='2026-11-09T00:00:00+05:00';
-  const fail=()=>{const r={status:'snapshot_unavailable',snapshot_available:false,calendar_writes:0,messages_sent:0};console.log(JSON.stringify(r));return r;};
+  return kulaginaNvsuWeekSnapshot_('2026-11-02',true);
+}
+function kulaginaNvsuWeekSnapshot_(weekStart,emitLines) {
+  const zone='Asia/Yekaterinburg';
+  // Internal collector only accepts the four explicit, reviewed November weeks.
+  if(!['2026-11-02','2026-11-09','2026-11-16','2026-11-23'].includes(weekStart))throw Error('Unsupported week');
+  const origin=Date.parse(weekStart+'T00:00:00Z');
+  const weekEnd=new Date(origin+6*86400000).toISOString().slice(0,10);
+  const upperDay=new Date(origin+7*86400000).toISOString().slice(0,10);
+  const lower=weekStart+'T00:00:00+05:00',upper=upperDay+'T00:00:00+05:00';
+  const fail=()=>{const r={status:'snapshot_unavailable',snapshot_available:false,calendar_writes:0,messages_sent:0};if(emitLines)console.log(JSON.stringify(r));return r;};
   try {
     const id=String(PropertiesService.getScriptProperties().getProperty('ASSISTANT_CALENDAR_ID')||'').trim();
     if(!id||id.toLowerCase()==='primary'||id.length>1000||/\s|[\x00-\x1f\x7f]/.test(id))return fail();
@@ -47,11 +56,34 @@ function exportKulaginaNvsuWeekReadOnly() {
       pageToken=body.nextPageToken;tokens.add(pageToken);
     }
     if(!complete)throw Error('Incomplete snapshot');
-    const data=JSON.stringify({format_version:1,purpose:'nvsu_read_only_comparison',complete:true,timezone:zone,week_start:'2026-11-02',week_end:'2026-11-08',observed_at:observed,calendar_hash:hash(id),events:events});
-    const digest=hash(data),total=Math.ceil(data.length/3000),lines=[];
-    for(let i=0;i<total;i++)lines.push(JSON.stringify({kind:'kulagina_calendar_chunk',index:i,total:total,sha256:digest,data:data.slice(i*3000,(i+1)*3000)}));
-    // Buffer all pages and chunks first: an API failure emits no partial snapshot.
-    for(const line of lines)console.log(line);
-    return {status:'snapshot_ready',snapshot_available:true,events:events.length,chunks:total,calendar_writes:0,messages_sent:0,teaching_schedule_verified:false};
+    const snapshot={format_version:1,purpose:'nvsu_read_only_comparison',complete:true,timezone:zone,week_start:weekStart,week_end:weekEnd,observed_at:observed,calendar_hash:hash(id),events:events};
+    if(!emitLines)return {status:'snapshot_ready',snapshot:snapshot};
+    return kulaginaNvsuEmitSnapshot_(snapshot,events.length);
+
   } catch(error) {return fail();}
+}
+
+/** One bounded GET-only run for four weeks, all buffered before any output. */
+function exportKulaginaNvsuNovemberReadOnly() {
+  try {
+    const snapshots=[];let totalEvents=0;
+    for(const day of ['2026-11-02','2026-11-09','2026-11-16','2026-11-23']) {
+      const result=kulaginaNvsuWeekSnapshot_(day,false);
+      if(result.status!=='snapshot_ready')throw Error('Incomplete batch');
+      const snapshot=result.snapshot;
+      if(snapshots.length&&snapshot.calendar_hash!==snapshots[0].calendar_hash)throw Error('Target changed');
+      totalEvents+=snapshot.events.length;if(totalEvents>200)throw Error('Batch limit');
+      snapshots.push(snapshot);
+    }
+    return kulaginaNvsuEmitSnapshot_({format_version:1,purpose:'nvsu_read_only_november_comparison',snapshots:snapshots},totalEvents);
+  }catch(error){const r={status:'snapshot_unavailable',snapshot_available:false,calendar_writes:0,messages_sent:0};console.log(JSON.stringify(r));return r;}
+}
+function kulaginaNvsuEmitSnapshot_(snapshot,count) {
+  const data=JSON.stringify(snapshot);
+  if(data.length>200000)throw Error('Payload limit');
+  const digest=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,data,Utilities.Charset.UTF_8).map(b=>('0'+((b+256)%256).toString(16)).slice(-2)).join('');
+  const total=Math.ceil(data.length/3000),lines=[];
+  for(let i=0;i<total;i++)lines.push(JSON.stringify({kind:'kulagina_calendar_chunk',index:i,total:total,sha256:digest,data:data.slice(i*3000,(i+1)*3000)}));
+  for(const line of lines)console.log(line);
+  return {status:'snapshot_ready',snapshot_available:true,events:count,chunks:total,calendar_writes:0,messages_sent:0,teaching_schedule_verified:false};
 }

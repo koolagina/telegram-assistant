@@ -414,3 +414,8 @@ Standalone GET-only aggregate helper prepared, not executed live: inspectKulagin
 ## 51. Причины защиты подтверждены вручную — 29.10.2026
 
 User report complete: events11/protected11, attendees11/description5, otherreasons0,writes0/messages0. Field presence includes empty arrays, not guest count or ownership. Existing exact11week snapshot remains separate evidence; no mutation/metadata stripping/adoption. Repeatdiagnosisnotneeded. Next remaining boundaries: otherweeks/full source coverage/trusted existing ledger/fresh plan before separately authorized changes. Docs only; last590Python168Node PASS6demos not rerun.
+
+
+## 52. Четыре недели одним read-only запуском — 29.10.2026
+
+Existingweeklycollector reused for exportKulaginaNvsuNovemberReadOnly,02–29Nov fixed4weeks; no Calendar writes/mainbot changes/deployment. Existingplanner reused perweek, sharedtarget/bufferall/failclosed/200total events. FreshNVSU11/9/9/0; realCalendar comparisonawaits manualbatch.591Python172Node PASS6demos, noownership/fullcoverage. docs/NVSU_PRIVATE_COMPARISON.md.
