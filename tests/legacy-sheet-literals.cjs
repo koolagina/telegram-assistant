@@ -67,3 +67,24 @@ for(const text of ['=1+1',"'=literal","''two",'обычный ответ']) {
   assert.equal(x.stores,1);assert.equal(x.writes.length,1);
  });
 }
+for(const target of ['registration','approval','personal','log'])test('literal protection at additional sink: '+target,()=>{
+ const f=fixture('src/telegram_assistant_v2_0_5_candidate.gs');vm.runInContext(patch(parent).slice(parent.indexOf('function prop_(')),f.ctx);
+ f.ctx.send_=()=>({message_id:1});let captured;
+ f.setHook((e,n,v)=>{
+  if(target==='registration'&&e==='append-before'&&n==='Студенты')captured=v[0];
+  if(target==='approval'&&e==='set-before'&&n==='Студенты'&&v[1]===1)captured=v[2];
+  if(target==='personal'&&e==='append-before'&&n==='Личные задачи')captured=v[2];
+  if(target==='log'&&e==='append-before'&&n==='Журнал бота')captured=v[3];
+ });
+ if(target==='registration')f.ctx.register_({chat:{id:2001},from:{first_name:'=1+1'}});
+ if(target==='approval')f.ctx.ownerApprove_('9001','/approve 1001 =1+1');
+ if(target==='personal')f.ctx.ownerAdd_('9001','/add =1+1');
+ if(target==='log')f.ctx.log_('test','synthetic','=1+1');
+ assert.equal(captured,"'=1+1");
+});
+test('profile name copied into a reply is also encoded',()=>{
+ const f=fixture('src/telegram_assistant_v2_0_5_candidate.gs');vm.runInContext(patch(parent).slice(parent.indexOf('function prop_(')),f.ctx);
+ f.sheet('Студенты').rows[1][0]='=1+1';f.ctx.send_=()=>({message_id:1});f.ctx.storeFile_=()=>({type:'Текст',description:'Обычный ответ',link:''});
+ let name;f.setHook((e,n,v)=>{if(e==='append-before'&&n==='Ответы')name=v[1];});
+ f.ctx.processMessage_(f.message('Обычный ответ'));assert.equal(name,"'=1+1");
+});
