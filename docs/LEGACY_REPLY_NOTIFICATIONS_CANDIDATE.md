@@ -1,3 +1,9 @@
+# 30.10.2026 — свежая сверка уведомлений с Google прошла
+
+Read-only run40961280017, commit402a455b9b439bed8552e818f3031da3c971f7d1: success/review_ready, один GET/ноль записей. Provenance, target, runID и целостность проверены. Источник совпал с установленной защитой текстовых полей; digest локального кандидата совпал с отчётом: 98244de564c6951b388da0c120047c09dc56cc09dd2def9b55e48ad340a52d56. Один изменённый main, семь источников сохранены, 71 функция без коллизий, общий синтаксис PASS.
+
+Установка патча и лист «Уведомления ответов» разрешены ранее владельцем. Следующий шаг — protected apply_legacy_reply_notifications; до результата не объявлять установленным. Последний full check 596 Python +346 Node успешен. После установки потребуется только разрешённый setup-helper prepareKulaginaReplyNotifications, без poll/сообщений/initialize. Новых реальных записей или сообщений на этапе preflight нет.
+
 # 30.10.2026 — установка уведомлений и технический лист разрешены
 
 Владелец ответил «да» на конкретное предложение установить патч и добавить лист «Уведомления ответов». Повторное разрешение на этот объём не требуется. Добавлены фиксированные review_legacy_reply_notifications/apply_legacy_reply_notifications и worker prepare_reply_notifications/apply_reply_notifications; семейство резервной копии legacy_reply_notifications_v1. Строго требуется установленная защита текстовых полей; семь остальных файлов закреплены. Сохраняются reviewer/main, полный encrypted backup до PUT, свежая сверка, 5 минут и отсутствие автоматического повтора неизвестного PUT. Exact already-applied определяется через restoreReplyNotifications и повторное построение, без отката.
