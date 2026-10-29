@@ -404,3 +404,8 @@ User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id
 ## 49. Недельный снимок сопоставлен — 29.10.2026
 
 Получен полный checksum-valid пользовательский снимок02–08.11; свежее НВГУ11 и Calendar11 совпадают по всем трём разрешённым полям, missing/duplicate/unknown0. Protected11 остаются без изменений/ownership adoption. Не требуется повторный helper или запись по этому снимку. Added3regressions/exact counters;590Python/160Node PASS,6demos. Full-calendar coverage/otherweeks/ledger/durable live sync всё ещё отдельно, teachingverifiedfalse. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## 50. Причины защиты без изменения событий — 29.10.2026
+
+Standalone GET-only aggregate helper prepared, not executed live: inspectKulaginaNvsuProtectionReadOnly. Fixed previousweek02–08.11, no raw private fields/IDs/extension contents, no writes/ownership adoption.8Node regressions,590Python168Node fullPASS,6demos. Need manual aggregate to distinguish protection reasons; even plain events still require trusted ownership ledger. docs/NVSU_PRIVATE_COMPARISON.md.

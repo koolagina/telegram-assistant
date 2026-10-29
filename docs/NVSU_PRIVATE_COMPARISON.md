@@ -49,3 +49,21 @@ Source proof — результат существующего `nvsu_source.fetc
 10 Python tests +9 Node tests: повреждённые/отсутствующие/смешанные части, exact/moved/unknown события, отсутствие расписания без удаления ручных событий, неверная неделя/IDs/время, protected all-day/recurrence, лимиты/пагинация/ошибки, отсутствие private text/credentials, CLI и настоящий JS→Python transfer. Сначала тесты не проходили без реализации; отдельная регрессия отвергает JS-нормализацию `24:00` вместо принятия следующего дня.
 
 Добавлены ещё 3 регрессионных Python tests для exact/protected/duplicate/wrong-room агрегатов (13 tests этого модуля). Полный `bash tools/check-local.sh`: **590 Python +160 Node PASS**, 6 offline demos. Локальный suite остаётся проверкой с моками; реальное read-only свидетельство — отдельный пользовательский снимок и свежий публичный источник, без прямого Google-доступа из Codex.
+
+
+## Причины защиты: следующий ручной шаг
+
+Предыдущая сверка подтвердила11точных совпадений, но protected=true не раскрывает причину и не доказывает принадлежность событий синхронизатору. Подготовлен отдельный **read-only** диагностический helper, ещё не запущенный live:
+
+1. В существующем Apps Script добавить отдельный файл **ПроверкаЗащитыРасписания**.
+2. Вставить только [nvsu_calendar_protection.gs](../src/tools/nvsu_calendar_protection.gs), заменив шаблонную myFunction нового файла. Не заменять основной код/предыдущие helpers.
+3. Сохранить и выполнить **`inspectKulaginaNvsuProtectionReadOnly`**.
+4. Передать один JSON из журнала. Не запускать CRUD TEST, initialize/poller/setupAutomation или deployment.
+
+Функция читает только неделю02–08.11 в существующем Calendar. Не более6REST GET (metadata+до5страниц), до200событий. При API error/лимитах/дубликатах/некорректных датах/неполной пагинации возвращает unavailable с null вместо частичных counts. Никаких Calendar/Sheets/Properties writes или сообщений.
+
+Счётчики: all_day — событие на весь день; tentative — предварительный статус; description — наличие описания; attendees — наличие поля участников; recurrence — признаки повтора; extended_properties — дополнительные свойства; attachments — вложения; conference — конференция; transparent — прозрачность события; special_event — специальный тип события. Это критерии защиты прежнего snapshot helper. Пустые массивы/объекты тоже могут приводить к защите; сам счётчик не доказывает наличие фактического участника/вложения. Причины пересекаются: сумма не равна числу защищённых событий.
+
+В JSON нет самих текстов/ID/имён участников/содержимого дополнительных полей. По aggregate нельзя привязать конкретную причину к конкретному событию, признать ownership или разрешить cleanup. Даже plain event требует подтверждённого ledger; чужие/ручные события не присваиваются. Это новый момент чтения: изменение числа событий по сравнению со снимком требует свежей сверки, а не автоматической правки.
+
+8новыхNode tests: secret/private-field exclusion, отсутствие выдуманных причин, все признаки защиты, bounded pagination/GET guards, ошибки/duplicate/repeated token/no partial counts, target/timezone, invaliddates/24:00, event/page limits. Полный suite: **590Python +168Node PASS**,6offline demos. Реальная причина защиты11событий до запуска не установлена.

@@ -1,3 +1,9 @@
+# 29.10.2026 — read-only protection diagnostics prepared
+
+- Added standalone inspectKulaginaNvsuProtectionReadOnly for the already-compared week: aggregate reason counts only, GET-only/explicit target/bounded complete pagination, no private values or writes. Not executed live.
+- Protection reasons do not grant ownership or authorize adoption/update/deletion; existing ledger requirements remain.
+-8newNode tests first red→green; full590Python/168Node PASS,6offline demos. Instructions: docs/NVSU_PRIVATE_COMPARISON.md.
+
 # 29.10.2026 — weekly source/Calendar snapshot comparison accepted
 
 - Обе части пользовательского снимка проверены по checksum. Свежий НВГУ 02–08.11: 11 уроков /11 Calendar events, exact time/title/room matches11, missing0/duplicates0/unknown0. No event changes needed from this snapshot; no Calendar writes.

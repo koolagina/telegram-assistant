@@ -1,0 +1,22 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+function fixture(o={}) {
+ const logs=[],calls=[];let page=0;
+ const c=vm.createContext({console:{log:s=>logs.push(s)},PropertiesService:{getScriptProperties:()=>({getProperty:()=>o.target===undefined?'private-calendar':o.target})},CalendarApp:{getCalendarById:id=>({getId:()=>id,getTimeZone:()=>o.zone||'Asia/Yekaterinburg'})},ScriptApp:{getOAuthToken:()=> 'private-token'},UrlFetchApp:{fetch:(url,args)=>{
+ calls.push({url,args});const b=url.includes('/events?')?(o.pages?o.pages[page++]:{kind:'calendar#events',items:o.items||[]}):{kind:'calendar#calendar',id:'private-calendar',timeZone:'Asia/Yekaterinburg'};
+ return {getResponseCode:()=>o.code||200,getContentText:()=>JSON.stringify(b)};
+ }}});
+ vm.runInContext(fs.readFileSync('src/tools/nvsu_calendar_protection.gs','utf8'),c);return {logs,calls,run:()=>c.inspectKulaginaNvsuProtectionReadOnly()};
+}
+function e(extra={}){return {id:'private-event',status:'confirmed',start:{dateTime:'2026-11-02T10:00:00+05:00'},end:{dateTime:'2026-11-02T11:00:00+05:00'},...extra};}
+test('reason counts reveal no private event text, IDs, extension keys or ownership',()=>{
+ const f=fixture({items:[e({summary:'PRIVATE TITLE',description:'PRIVATE NOTES',extendedProperties:{private:{PRIVATE_KEY:'PRIVATE_VALUE'}},recurringEventId:'private-series'})]});const r=f.run();assert.equal(r.status,'complete');assert.equal(r.events,1);assert.equal(r.protected_events,1);assert.equal(r.reasons.description,1);assert.equal(r.reasons.extended_properties,1);assert.equal(r.reasons.recurrence,1);assert.equal(r.ownership_verified,false);assert.equal(r.calendar_writes,0);
+ for(const s of ['PRIVATE','private-event','private-calendar','private-token','private-series'])assert.equal(f.logs.join('').includes(s),false);
+});
+test('plain events have no invented protection reason',()=>{const r=fixture({items:[e()]}).run();assert.equal(r.events,1);assert.equal(r.protected_events,0);assert.ok(Object.values(r.reasons).every(x=>x===0));});
+test('each known protection field contributes once per event',()=>{const r=fixture({items:[e({start:{date:'2026-11-02'},end:{date:'2026-11-03'},status:'tentative',attendees:[],attachments:[],conferenceData:{},transparency:'transparent',eventType:'focusTime',originalStartTime:{date:'2026-11-02'}})]}).run();for(const k of ['all_day','tentative','attendees','attachments','conference','transparent','special_event','recurrence'])assert.equal(r.reasons[k],1);assert.equal(r.protected_events,1);});
+test('full pagination before success; only fixed-origin GET, TLS and no redirects',()=>{const f=fixture({pages:[{kind:'calendar#events',items:[e()],nextPageToken:'x'},{kind:'calendar#events',items:[e({id:'second-private'})]}]});assert.equal(f.run().events,2);assert.equal(f.calls.length,3);for(const c of f.calls){assert.equal(c.args.method,'get');assert.equal(c.args.followRedirects,false);assert.equal(c.args.validateHttpsCertificates,true);assert.ok(c.url.startsWith('https://www.googleapis.com/calendar/v3/calendars/'));}assert.equal(f.logs.length,1);});
+test('errors, duplicates, repeated tokens and incomplete pages expose no partial counts',()=>{for(const o of [{code:403},{pages:[{kind:'calendar#events',items:[e(),e()]}]},{pages:[{kind:'calendar#events',items:[],nextPageToken:'x'},{kind:'calendar#events',items:[],nextPageToken:'x'}]},{pages:[{kind:'calendar#events',items:'wrong'}]}]){const f=fixture(o),r=f.run();assert.equal(r.status,'unavailable');assert.equal(r.events,null);assert.equal(r.reasons,null);assert.equal(f.logs.length,1);}});
+test('invalid target/timezone has no API traffic or fallback',()=>{for(const o of [{target:'primary'},{target:''},{zone:'UTC'}]){const f=fixture(o);assert.equal(f.run().status,'unavailable');assert.equal(f.calls.length,0);}});
+test('invalid/out-of-range time fails rather than masking unsafe event',()=>{for(const extra of [{end:null},{start:{dateTime:'2026-11-02T24:00:00+05:00'},end:{dateTime:'2026-11-03T11:00:00+05:00'}},{start:{date:'2026-11-10'},end:{date:'2026-11-11'}}])assert.equal(fixture({items:[e(extra)]}).run().status,'unavailable');});
+test('page/event limits reject with no partial output',()=>{for(const pages of [Array.from({length:5},(_,i)=>({kind:'calendar#events',items:[],nextPageToken:String(i)})),[{kind:'calendar#events',items:Array.from({length:201},(_,i)=>e({id:String(i)}))}]])assert.equal(fixture({pages}).run().status,'unavailable');});

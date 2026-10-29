@@ -308,3 +308,8 @@ User-run CRUD complete/cleanup confirmed: не повторять smoke и не 
 ## Реальная недельная сверка — 29.10.2026
 
 User snapshot02–08.11 accepted:2chunks checksum valid; freshNVSU11/source vs11/events exact time/title/room,missing0,duplicate exact0,unknown0. Все protected: review_overlap не считать отсутствующим занятием/ошибкой и не снимать защиту. nvsu_private_snapshot теперь имеет separate exact/protected/missing/duplicate aggregate counts,3regressions/590Python+160Node PASS. No Calendar writes/ownership/full teaching verification; screenshot/manual snapshot не direct Google connection. Не повторять выполненный экспорт без свежей необходимости, не Git private artifacts. Remaining: other relevant weeks/ownership ledger/coordinated live updates. docs/NVSU_PRIVATE_COMPARISON.md.
+
+
+## Protection diagnosis candidate — 29.10.2026
+
+nvsu_calendar_protection.gs / inspectKulaginaNvsuProtectionReadOnly — standalone GET-only fixed02–08.11 aggregate reasons,not executed live. No event text/IDs/extension contents/sends/writes/settings. Reasons mirror previous snapshot flag, not ownership, counts overlap and empty arrays/objects may protect. Do not auto-adopt plain events or strip metadata to bypass protection.8newNode tests/full590Python168Node PASS,6demos. Existing verified11exact snapshot unchanged; next manual aggregate only, no repeatCRUD/chunks. docs/NVSU_PRIVATE_COMPARISON.md.
