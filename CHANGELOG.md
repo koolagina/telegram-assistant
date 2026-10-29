@@ -362,3 +362,6 @@
 
 
 29.10.2026 — Google relay: после неподтверждённого PUT выполнена отдельная read-only сверка; все8файлов исходные, исправления не установлены. В transport добавлены только ограниченные http_failure_status (100–599) и http_failure_stage из фиксированных внутренних статусов; тела ответа, URLs, credentials не выводятся. Новый regression сначала воспроизвёл отсутствие диагностики, затем14relay+9legacy tests PASS. Неизвестный исход по-прежнему запрещает автоматический retry; текущая причина прошлой ошибки не восстановлена. Google mutation повторно не запускалась; workflow не запускается от этих code/docs изменений.
+
+
+29.10.2026 — safe Google reason diagnostics: только для Apps Script API errors извлекается google_error_reason из фиксированного allowlist стандартных ErrorInfo/legacy reasons, иначе unclassified. Не выводятся message/details/metadata/URLs или credentials; unknown write остаётся без retry. Regression red→green:15relay+9legacy PASS. Причина прошлых403 не восстанавливается этим изменением, для получения reason нужен новый отдельно подтверждённый запрос; live запись в рамках этой доработки не выполнялась.
