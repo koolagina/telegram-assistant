@@ -1,3 +1,9 @@
+# Дополнение29.10.2026: original owner consent
+
+Registry и bound worker готовы,572Python/110Node PASS. Original source/event evidence до confirm, stable timestamp/replay, atomic local publication+claim, no locked Calendar reads. Все API mocks/default off, no production. CONSULTATION_CONSENT.md.
+
+---
+
 # Дополнение29.10.2026: local status + notices
 
 Fixture SQLite CAS/finalization/outbox готовы;548Python/110Node PASS. Real Google Sheets claim/CAS/Telegram notifications не подключены,6demos только mocks. Original consent registry и live evidence/writer coordination/verifier/rollout остаются. CONSULTATION_WORKFLOW.md.

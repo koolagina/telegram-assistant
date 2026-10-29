@@ -10,6 +10,7 @@ from dataclasses import asdict
 import datetime as dt
 import json
 import os
+import secrets
 from pathlib import Path
 import sqlite3
 from assistant_access import AccessPolicy,aware,identifier
@@ -48,7 +49,8 @@ class ConsultationState:
         self.db=sqlite3.connect(path,timeout=5,isolation_level=None)
         try:
             tables={r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-            if tables and tables!={'workflow_meta','workflow_rows','workflow_claims','workflow_notices'}:raise WorkflowError('Foreign state')
+            base={'workflow_meta','workflow_rows','workflow_claims','workflow_notices'}
+            if tables and tables not in (base,base|{'workflow_reviews'}):raise WorkflowError('Foreign state')
             self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
             with self.transaction():
                 self.db.execute('CREATE TABLE IF NOT EXISTS workflow_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL)')
@@ -65,11 +67,16 @@ class ConsultationState:
     def close(self):self.db.close()
     @contextlib.contextmanager
     def transaction(self):
-        self.db.execute('BEGIN IMMEDIATE')
+        nested=self.db.in_transaction;name='workflow_'+secrets.token_hex(8)
+        self.db.execute('SAVEPOINT '+name if nested else 'BEGIN IMMEDIATE')
         try:
             yield
-            self.db.execute('COMMIT')
-        except BaseException:self.db.execute('ROLLBACK');raise
+            self.db.execute('RELEASE SAVEPOINT '+name if nested else 'COMMIT')
+        except BaseException:
+            if nested:
+                self.db.execute('ROLLBACK TO SAVEPOINT '+name);self.db.execute('RELEASE SAVEPOINT '+name)
+            else:self.db.execute('ROLLBACK')
+            raise
     def _auth(self,context):
         policy=self.policy();now=self.clock()
         if type(policy) is not AccessPolicy or not aware(now) or not policy.authorize(context,'personal.read',self.owner,now=now).allowed:raise WorkflowError('Workflow unavailable')

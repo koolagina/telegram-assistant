@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Исходные данные подтверждения — текущая локальная проверка
+
+Реестр original-evidence review и bound worker связывают отдельное owner confirm со строкой/событием, не заменяют исходные данные после решения. Calendar reads вне DB locks, legacy proposals сохранены; всё opt-in/mock-only. **572Python +110Node PASS** (`bash tools/check-local.sh`). [Контракт](docs/CONSULTATION_CONSENT.md). Рабочие ресурсы не подключены.
+
 ## Финализация и уведомления — локальная проверка
 
 Local fixture CAS/claim связывает Calendar receipt со статусом заявки и двумя независимыми business-key notice jobs. Сбой уведомления не повторяет Calendar. **548Python +110Node PASS**,6offline demos (`bash tools/check-local.sh`). [Контракт](docs/CONSULTATION_WORKFLOW.md), [пример](docs/CONSULTATION_WORKFLOW_DEMO.md). Это SQLite модель, не подключённая Google Таблица; реальные отправки/записи отсутствуют.

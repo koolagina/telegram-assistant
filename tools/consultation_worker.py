@@ -27,7 +27,7 @@ class LocalCommand:
     callback_id: str | None = field(default=None,repr=False)
 
 
-def _route(update,bot_id):
+def _route(update,bot_id,*,extra_prefixes=()):
     if (type(update) is not dict or not _id(update.get('update_id'),zero=True)
             or len(set(update)-{'update_id'})!=1):return None
     message=update.get('message');query=update.get('callback_query')
@@ -47,7 +47,7 @@ def _route(update,bot_id):
         if type(query) is not dict or not _user(query.get('from')):return None
         sender=query['from']['id'];message=query.get('message');data=query.get('data');query_id=query.get('id')
         if (sender==bot_id or not _private_message(message,sender) or not _user(message.get('from'),bot=True)
-                or message['from']['id']!=bot_id or type(data) is not str or not data.startswith('con:')
+                or message['from']['id']!=bot_id or type(data) is not str or not data.startswith(('con:',)+extra_prefixes)
                 or not data.isascii() or len(data)>64 or type(query_id) is not str or not 1<=len(query_id)<=256):return None
         context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
         return LocalCommand(context,sender,'callback',data,query_id)

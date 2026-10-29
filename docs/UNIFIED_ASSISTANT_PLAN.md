@@ -359,3 +359,8 @@ Executor+existing Google port с original owner/source/event-bound plan, ETag, d
 ## 40. Local source CAS/finalization/notices — 29.10.2026
 
 Fixture SQLite claim/CAS, atomic status+jobs и independent business-key notices готовы,27tests/548Python+110Node PASS,6offline demos. Calendar receipt recovery не повторяет mutation, notices current identity-bound и independent. Не actual Google backend и не completed integration; следующее highest priority — original-evidence owner consent registry, затем live adapters/verified source CAS/writer coordination/приёмка. CONSULTATION_WORKFLOW.md.
+
+
+## 41. Original owner consent bridge — 29.10.2026
+
+Original review/confirm registry и bound worker готовы,24новыхtests,572Python/110Node PASS. Immutable original source/event/actor evidence, atomic publication+local source claim, durable first-click timestamp; no Calendar reads under DB locks, default off. Legacy proposal доступен, no automatic move. Следующее: безопасный legacy description template и concrete sandbox acceptance; Google CAS/writer coordination/import proof/operator recovery всё ещё отсутствуют. CONSULTATION_CONSENT.md.

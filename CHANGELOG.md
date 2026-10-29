@@ -1,3 +1,9 @@
+# 29.10.2026 — original-evidence consultation consent registry/worker
+
+- OwnerReview captures source/event/actor before final confirm; immutable BoundPlan+source claim publication atomic, original confirmation timestamp survives retry.
+- Bound worker uses verified update idempotency; Calendar reads outside SQLite locks, fresh UI dispatch read-only, legacy proposals retained, all flags default off.
+- 24новыхtests,572Python/110Node PASS; private read-before-owner gate fixed red→green. No live resources/deploy. docs/CONSULTATION_CONSENT.md.
+
 # 29.10.2026 — local source finalization + independent consultation notices
 
 - Fixture SQLite CAS/claim + orchestration Calendar evidence→atomic status/reason and2notice jobs; eleven fields/status names preserved, custom note/event ID retained.

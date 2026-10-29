@@ -1,3 +1,13 @@
+# Original-evidence owner consent и bound worker — 29.10.2026
+
+Добавлены consultation_consent.py и consultation_bound_worker.py. Owner видит student/topic/date/calendar title, original row/event evidence сохраняется до отдельного confirm. Current identity/ownership/availability и те же fingerprints проверяются перед публикацией; первый click timestamp не renew на retry. Confirmed BoundPlan + source claim атомарны в fixture source DB. Core/source partial publication восстанавливается по старой evidence, не исполняет orphan core plan. Owner gate до private lookup исправлен red→green.
+
+New bcon routes используют verified-update idempotency key, calendar reads вне SQLite locks, UI fresh callback read-only. Legacy proposals сохраняются; перенос не включён. Defaults actions/dispatch/workflow off, notifications отдельно. Общий live dispatcher/auth/resources не подключены. Старый local source store сохраняет history при добавлении workflow_reviews, registry loader trusted private.
+
+24новыхtests (14registry+10worker), полный **572Python PASS +110Node PASS**. Пройден bound inbox→consent→workflow mock flow, publication failure/time/restart/corruption/stale evidence/actor/privacy/no locked HTTP/replay/unknown UI/mark recovery/legacy proposal. Реальных API, рабочего бота/таблиц/календарей/триггеров/deploy не было. Контракт [CONSULTATION_CONSENT.md](CONSULTATION_CONSENT.md). Google source CAS/writer coordination/full-import verifier/sandbox/operator recovery/legacy description ещё отдельные границы.
+
+---
+
 # Локальная финализация заявки и business outbox — 29.10.2026
 
 Добавлен tools/consultation_workflow.py: private SQLite fixture source, row CAS/claim, Calendar-stage orchestration, atomic11-column status/reason+2notice jobs. Executor.prepare/evidence дают trusted read-only preflight/journal proof. Source backend **не Google Sheets adapter**, данные только synthetic; local claims не блокируют real/manual writers. Полнота/consent/bindings в demo fake, real запуск не разрешён.
