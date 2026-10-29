@@ -1,3 +1,8 @@
+# 29.10.2026 — real request-to-runner bridge smoke verified
+
+- Push04c75c5 automatically started run40894062838. Request validated, reader safely failed connection_not_configured, writer skipped;0GoogleGET/write/messages/source exposure.
+- This confirms transport, not Google authentication. User must set the named reader encrypted secret once; no credential values requested in chat. Docs-only status update, tests not rerun.
+
 # 29.10.2026 — controlled Google Actions channel prepared
 
 - Added main-only fixed-operation request queue + short manual Actions jobs. Read scopes enforced; encrypted source return, no source/credential logs. Local private packet exporter uses existing authorized clasp account only.

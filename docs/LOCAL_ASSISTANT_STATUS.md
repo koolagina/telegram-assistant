@@ -1,3 +1,11 @@
+# 29.10.2026 — Git→Actions запуск подтверждён, Google credential отсутствует
+
+Workflow автоматически запущен push-коммитом04c75c5, run40894062838: request validation success, read остановлен status=connection_not_configured, write job skipped. В sanitized runner JSON google_gets0/google_writes0/messages0/source_exposedfalse. Это реальная проверка транспорта до worker, **не Google connection success**. GoogleSecret пользователь ещё не добавил; нужно однократное сохранение local offline packet через штатную GitHub Secret UI, не в чат. ПовторныйGooglelogin для чтения не требуется при valid refresh token.
+
+13новыхNode/full596Python214Node PASS6offline demos ранее прошли; docs-only обновление, повторно не запускались. Protected source mutation и Calendar операции не выполнялись; OAuth write grant/environment всё ещё отсутствуют/не настроены. [Подключение](GOOGLE_AUTOMATION_CHANNEL.md).
+
+---
+
 # 29.10.2026 — автоматический Google channel подготовлен, credential pending
 
 По новой задаче пользователя создан controlled Git→Actions→Google relay, не повтор локальногоclasp. GitHubrepo/workflowreads/Gitpush доступны; Secretsmetadata403/EnvironmentPUT401, поэтому credential storage/protection требует штатнойUI-настройкивладельцем. Секреты не читались/не передавались в чат. Reader exporter использует имеющийся Windowsclasp offlinegrant, не делаетlogin/network и не экспортируетcachedaccess/другиеаккаунты.

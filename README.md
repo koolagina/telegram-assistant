@@ -4,7 +4,7 @@
 
 ## Подготовлен автоматический Google channel
 
-[GitHub Actions relay](docs/GOOGLE_AUTOMATION_CHANNEL.md) позволит читать текущий Apps Script без ручных source uploads: fixed request queue, readonly OAuth, source encrypted до контроллера. Workflow/code/test готовы, Google credential ещё нужно однократно сохранить в GitHub Secret; **успешное подключение пока не подтверждено**. Protected write path только для reviewed2fixes подготовлен, но без writegrant/environment/usercodeapproval не исполняется. Calendar-операции этим relay пока не поддержаны. **596 Python +214 Node PASS**,6offline demos.
+[GitHub Actions relay](docs/GOOGLE_AUTOMATION_CHANNEL.md) позволит читать текущий Apps Script без ручных source uploads: fixed request queue, readonly OAuth, source encrypted до контроллера. Git→Actions запуск проверен (run40894062838), worker остановился connection_not_configured с0Googlecalls. Google credential нужно однократно сохранить в GitHub Secret; **успешное подключение пока не подтверждено**. Protected write path только для reviewed2fixes подготовлен, но без writegrant/environment/usercodeapproval не исполняется. Calendar-операции этим relay пока не поддержаны. **596 Python +214 Node PASS**,6offline demos.
 
 ## Импорт18занятий согласован, runner готов
 
