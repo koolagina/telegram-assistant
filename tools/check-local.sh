@@ -7,6 +7,7 @@ node tests/run-current.cjs
 node --test tests/consultation-export.cjs
 node --test tests/consultation-connection-probe.cjs
 node --test tests/consultation-owner-message.cjs
+node --test tests/consultation-calendar-preview.cjs
 "${KULAGINA_PYTHON:-python3}" tools/review_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/assistant_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/decision_demo.py

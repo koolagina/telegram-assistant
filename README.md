@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Текущий шаг: Calendar preview после получения owner test
+
+Пользователь подтвердил получение одного реального test сообщения; API ack и metadata Calendar ранее проверены manual runners. Read-only Calendar REST preview подготовлен, ещё не запускался: [инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). Новые события не создавались, расписание не объявлено полным. **577Python +140Node PASS**,6offline demos (`bash tools/check-local.sh`).
+
 ## Проверка реального подключения — текущий шаг
 
 Пользовательский manual metadata probe подтвердил Telegram getMe и доступ к выбранному Calendar с нужным часовым поясом; send/write ещё не проверялись. Подготовлен idempotent owner-only test message runner, не запущенный на реальном проекте. [Инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). Полная локальная проверка: **577Python +130Node PASS**,6demos. Не является deployment или проверкой полноты расписания.

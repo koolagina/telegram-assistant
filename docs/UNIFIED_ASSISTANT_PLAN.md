@@ -379,3 +379,8 @@ User «можно тестить в моих» supersedes isolated-only requirem
 ## 44. User-run live metadata → owner message probe — 29.10.2026
 
 Manual sanitized report12:30:08: Telegram/Calendar read verified,time zone true,owner routing set,no sends/writes/poll. Owner-message once runner готов,10newNode/577Python+130Node PASS, ещё не executed live. Это scoped owner-resource test, не installation нового бота/worker. Next evidence — API receipt и user-observed receipt test message; cloud auth/full Google CAS/import verification всё ещё отдельно.
+
+
+## 45. Owner receipt → Calendar REST preview — 29.10.2026
+
+User подтвердил actual one-message receipt после API ack; delivered вAPI не переписывать. GET-only preview helper готов,10newNode/577Python+140Node PASS; ищет temporary TEST slot без create/props/send/новых grants. Следующий необходимый вход — manual preview JSON; не считать metadata read подтверждением REST/write/НВГУ completeness. CONSULTATION_PERSONAL_RESOURCES.md.

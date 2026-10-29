@@ -1,3 +1,13 @@
+# Owner test receipt подтверждён; read-only Calendar REST preview подготовлен — 29.10.2026
+
+User-run JSON12:57:58: owner probe api_confirmed,attempts1,api_acceptedtrue,deliverednull. Пользователь отдельно подтвердил получение («да»). Это proof API acceptance + human receipt одного test message по сообщению пользователя, не автоматическое изменение delivered и не receipt всех будущих отправок/студентов. Повторный send не нужен; нет student messages/полного bot deployment.
+
+Следующий standalone helper src/tools/consultation_calendar_preview.gs подготовлен, ещё не executed live. Existing Apps Script OAuth/explicit Calendar ID, fixed-origin GET Calendar v3 metadata/events only; находит20min temporary TEST window по weekdays/30min lead в Asia/Yekaterinburg. Не более13REST GETs, без private event data в логах, no writes/props/sends/poll/Sheets/triggers/deploy. API error/malformed/unread page не выдаёт free slot. Native Calendar metadata уже verified; REST API/write/full timetable ещё нет.
+
+10new Node tests, полный **577Python PASS +140Node PASS**,6offline demos. Red→green: slow event read больше не предлагает слот внутри30мин lead. Next external evidence — user-run previewKulaginaCalendarTest JSON, без token/IDs. Инструкция/актуальные реальные наблюдения: [CONSULTATION_PERSONAL_RESOURCES.md](CONSULTATION_PERSONAL_RESOURCES.md).
+
+---
+
 # Реальная metadata-проверка пользователя; owner-only send probe подготовлен — 29.10.2026
 
 Пользователь предоставил sanitized JSON12:30:08 ручного showKulaginaConnectionProbe в своём Apps Script: Telegram verified,explicit Calendar accessible/timezone_matches,owner routing configured,ready_for_private_preview=true,writes0/messages0/pollingfalse. Это реальное manual metadata evidence по сообщению пользователя, не прямой API access из Codex и не proof send/write/delivery/полноты расписания. Идентификаторы/credentials не сохранены. Working deployment version не установлен по одному code header.

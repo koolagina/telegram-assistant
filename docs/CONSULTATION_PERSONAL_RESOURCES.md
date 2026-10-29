@@ -6,7 +6,7 @@
 
 По присланному пользователем JSON ручного запуска29.10.2026 в12:30:08: telegram credential_present/verified=true,status=verified; calendar configured/read_access_verified/timezone_matches=true,status=accessible; owner_target.configured=true,identity_verified=false; ready_for_private_preview=true. Writes/messages0,polling_started=false. Это свидетельство ручного getMe/Calendar metadata в пользовательском Apps Script, не запуска из Codex и не подтверждение send/write/полноты НВГУ/deployment. Реальные IDs/token/названия в репозиторий не включены. Предыдущий report12:25 показывал отсутствие Calendar setting; пользователь затем настроил ASSISTANT_CALENDAR_ID в своём редакторе.
 
-## Следующая проверка — одно сообщение владельцу
+## Одно сообщение владельцу — проверка уже выполнена
 
 Подготовлен `src/tools/consultation_owner_message_probe.gs`. Добавить только его в отдельный `.gs` файл существующего проекта и выбрать `testKulaginaOwnerMessageOnce`; он сам выводит sanitized JSON. Это первый **реальный send** при ручном запуске: один фиксированный неперсональный test text в существующий OWNER_CHAT_ID. Ни сообщений студентам, ни Calendar/Sheets/polling/webhook/triggers/deploy.
 
@@ -14,7 +14,23 @@ Receipt `KULAGINA_OWNER_MESSAGE_PROBE_V1` фиксируется в новом �
 
 Ожидаемый первый JSON: status=api_confirmed,messages_attempted_this_run=1,api_accepted=true,delivered=null. Это API acknowledgement, а не доказательство доставки: пользователь отдельно сообщает, появилось ли test сообщение в Telegram. На повторе status=already_api_confirmed и attempts0. При ошибке прислать только JSON, без Script Properties/токена/HTTP traces; не сбрасывать receipt для повторной попытки.
 
-10новыхNode VM tests до реализации; полный577Python/130Node PASS,6offline demos. **Реальный send пока не выполнен/не подтверждён**; текущая доступность metadata проверена пользователем, остальное локально. Доступ из Codex остаётся отдельным вопросом, этот runner credentials в чат не передаёт.
+10новыхNode VM tests до реализации; полный577Python/140Node PASS,6offline demos. Первый send на момент подготовки ещё не выполнялся; последующий API ack и user receipt зафиксированы ниже. Повторять его не требуется. Доступ из Codex остаётся отдельным вопросом, этот runner credentials в чат не передаёт.
+
+## Подтверждённый владельцем test message
+
+Пользователь предоставил JSON ручного запуска12:57:58: status=api_confirmed,messages_attempted_this_run=1,api_accepted=true,delivered=null. На отдельный вопрос о получении ответил «да». Поэтому API acceptance и human-observed receipt **этого конкретного** owner test сообщения подтверждены по пользовательским данным. Telegram API delivered остаётся null; не распространять этот результат на студентов/другие сообщения или общий end-to-end bot deployment. Повторять owner-message runner не требуется.
+
+## Следующий шаг — read-only Calendar REST preview
+
+`src/tools/consultation_calendar_preview.gs` подготовлен, **ещё не запускался на настоящем ресурсе**. Создать отдельный файл `ПроверкаКалендаря`, вставить только этот код, выбрать `previewKulaginaCalendarTest` и выполнить. Прислать только JSON. Existing code/settings не менять, «Развернуть»/initialize/setupAutomation/poller не запускать.
+
+Helper использует тот же explicit ASSISTANT_CALENDAR_ID и собственный OAuth текущего Apps Script (ScriptApp.getOAuthToken); token/ID/сведения о встречах не печатает и в чат не передаёт. Только fixed-origin HTTPS GET Calendar v3 metadata и узких20min windows, no redirects/TLS verify. CalendarApp read gate сохраняет существующую авторизацию. Нет create/PATCH/DELETE, sendMessage/getUpdates, Sheet access или property updates.
+
+Ищется **только один временный TEST slot**, не консультация студенту: будни,10:00 или10:40,20мин, ближайшие8календарных дней, минимум30мин на момент возврата после API read. Уже занятое окно пропускается, не распечатываются названия/участники/описания событий. Не более13REST GET requests; unread next page не равна пустому календарю. Original working bot/poller не меняются.
+
+При status=preview_ready пользователь видит exact RFC3339 start/end в Asia/Yekaterinburg; Calendar writes0/messages0/write_access_verified=false/teaching_schedule_verified=false. Пустое окно выбранного Calendar не доказывает отсутствие неимпортированных занятий. Test event по этому preview ещё не создаётся: сначала нужны реальные date/API результаты. При403/accessNotConfigured или иной ошибке код не включает API/права сам; прислать sanitized JSON для диагностики.
+
+10новыхNode VM tests first red→green, включая slow read/30min regression и unread page. Полный577Python/140Node PASS,6offline demos. Actual Calendar REST preview/create/update/delete ещё не подтверждены; metadata native CalendarApp уже подтверждена пользователем.
 
 ## Текущий доступ из чата
 
@@ -29,7 +45,7 @@ Receipt `KULAGINA_OWNER_MESSAGE_PROBE_V1` фиксируется в новом �
 
 ## Первый шаг без передачи секретов
 
-Подготовлен самостоятельный helper `src/tools/consultation_connection_probe.gs`, не установленный/не запущенный в реальном проекте.
+Самостоятельный helper `src/tools/consultation_connection_probe.gs` был добавлен и запущен пользователем в его реальном проекте; результат metadata зафиксирован выше. Инструкция ниже оставлена как справка, повторять её сейчас не требуется.
 
 1. Открыть **существующий Apps Script проект своего бота**.
 2. Добавить отдельный `.gs` файл и вставить **только** содержимое `src/tools/consultation_connection_probe.gs`. Не копировать архивные версии бота и не заменять рабочие функции.
@@ -58,6 +74,6 @@ Helper читает существующие `TELEGRAM_BOT_TOKEN`, `OWNER_CHAT_I
 
 10новых Node VM tests: metadata-only allowlist, no getUpdates/sends, no secret/ID logs, sanitized network/API/config failures, token/bot mismatch/bool IDs/malformed/oversize JSON, explicit Calendar identity, owner routing guard, runner console output. Tests сначала красные до helper, затем зелёные.
 
-Полный `bash tools/check-local.sh`: **577Python PASS +120Node PASS** (101base+9export+10probe),6offline demos. Helper не запускался на настоящем Apps Script. Рабочие ресурсы не менялись.
+Полный `bash tools/check-local.sh`: **577Python PASS +140Node PASS** (101base+9export+10metadata+10owner+10Calendar preview),6offline demos. Metadata helper и owner-message helper запущены пользователем; Calendar REST preview пока только локально проверен. Calendar events/working bot code/triggers не менялись.
 
 Google source claim/CAS/coordinated writers/full-import verification остаются не реализованными в live backend. Разрешение тестировать собственный Calendar не делает SQLite fixture настоящей Google Таблицей и не разрешает deployment.

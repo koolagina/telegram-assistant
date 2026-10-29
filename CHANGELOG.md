@@ -1,3 +1,9 @@
+# 29.10.2026 — reported owner receipt + read-only Calendar REST preview
+
+- User provided api_confirmed test send log and separately confirmed receipt; API delivered remains unknown, no blanket student/delivery/deployment claim.
+- New standalone preview helper: existing Apps Script OAuth, explicit target, bounded metadata/events GETs, future TEST-only weekday20min/30min lead; no private data output or writes.
+-10newNode tests,577Python/140Node PASS,6demos. Slow-read lead regression fixed red→green, unread API page not empty. Calendar REST preview still pending live result. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
 # 29.10.2026 — reported live metadata success + one-shot owner message candidate
 
 - Получен user-run sanitized report: bot verified, Calendar accessible/timezone matches, owner routing configured; actual send/write/delivery не доказаны.

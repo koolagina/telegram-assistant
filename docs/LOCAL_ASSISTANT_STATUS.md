@@ -1,3 +1,9 @@
+# Актуально29.10.2026: owner message received, Calendar REST preview pending
+
+Owner manual test API ack + human receipt подтверждены по пользовательским данным. Calendar native metadata/timezone доступны; REST/write/full timetable ещё не проверены. Standalone GET-only preview готов,577Python/140Node PASS, ещё не executed live. CONSULTATION_PERSONAL_RESOURCES.md.
+
+---
+
 # Актуально29.10.2026: manual metadata successful, send probe pending
 
 Пользовательский JSON подтвердил реальный getMe/Calendar read metadata/timezone; owner identity/delivery/send/write/full timetable ещё не проверены. Direct runtime credentials в Codex не появились. Owner-only durable once send helper подготовлен, не выполнялся на реальном ресурсе.577Python/130Node PASS. CONSULTATION_PERSONAL_RESOURCES.md.
