@@ -1,3 +1,15 @@
+# Разрешены ограниченные тесты на ресурсах владельца — 29.10.2026
+
+Пользователь явно уточнил «можно тестить в моих»; отдельный test bot/Calendar больше не обязательное условие. Тесты только на помеченных test records/сообщениях владельцу; существующие встречи/журнал/студенты, webhook/poller/triggers/deploy не затрагиваются. Это пользовательское разрешение выше прежнего isolated-only AGENTS плана; инструкции обновлены.
+
+Проверены runtime presence flags (без secret values): Telegram bot token/target IDs не настроены; Google SDK selectors есть, но identity manifest connections=[] и ready Google connection не предоставлен. Доступа Apps Script/Calendar/Telegram tools нет. Никаких actual API calls для bot/Calendar из чата не выполнялось.
+
+Подготовлен src/tools/consultation_connection_probe.gs: самостоятельный manual read-only runner существующего Apps Script, existing Script Properties, getMe+explicit Calendar identity/timezone only, no getUpdates/events/sends/Sheets/trigger/deploy. Logs только sanitized JSON, без token/IDs/names/exception text. Пользователь может запустить showKulaginaConnectionProbe в редакторе без publication/копирования секретов. Calendar timezone mismatch не выдаётся за отсутствие read access; routing не выдаётся за identity verification.
+
+10new Node tests first red→green; полный **577Python PASS +120Node PASS**,6offline demos. Helper на реальном Apps Script ещё не запускался; source code snapshots и working resources сохранены. Текущий план/инструкция: [CONSULTATION_PERSONAL_RESOURCES.md](CONSULTATION_PERSONAL_RESOURCES.md). Google live CAS/import/writer coordination остаются отдельной незакрытой границей.
+
+---
+
 # Комплексный локальный цикл и safe description — 29.10.2026
 
 Полный bound consultation path проверен через synthetic Bot API inbox: card→original review→explicit confirm→registry/source claim→Calendar journal→reconcile→local CAS/status/jobs→independent notices. Workflow demo больше не собирает BoundPlan вручную, использует consent registry и bound worker. Никаких actual APIs/реальных source/status/send/deploy.

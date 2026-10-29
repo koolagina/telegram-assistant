@@ -1,3 +1,9 @@
+# 29.10.2026 — owner-resource test permission + secret-free metadata probe
+
+- По явному разрешению пользователя допускаются ограниченные тесты на его ресурсах; separate test resources больше не требуются, active data/poller/triggers/deploy untouched.
+- Standalone existing Apps Script probe: getMe/Calendar metadata, no secret/ID output, no polling/messages/events. Safe console runner не требует cloud publication или копирования tokens.
+-10новыхNode VM tests;577Python/120Node PASS,6demos. Actual probe не запускался: runtime Telegram token отсутствует, ready Google identity не подтверждён. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
 # 29.10.2026 — safe legacy description + complete local consent workflow
 
 - Exact source-bound pending bot prefix changes to confirmed, manual suffix/marker retained; unknown pending template blocks approve, reject untouched. Reconcile includes optional reviewed description postcondition.

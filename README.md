@@ -2,6 +2,10 @@
 
 Проект разработки Telegram-бота «Ассистент Кулагиной Л. С.» на Google Apps Script с Google Sheets и Google Drive.
 
+## Проверка подключения на ресурсах владельца
+
+Владелец разрешил ограниченные тесты на своих ботe/Calendar. Подготовлена read-only проверка в существующем Apps Script без токенов в чате и без публикации среды: [инструкция](docs/CONSULTATION_PERSONAL_RESOURCES.md). Доступ из этой сессии ещё не подтверждён, реальных bot/Calendar вызовов не было. Актуально **577Python +120Node PASS** (`bash tools/check-local.sh`).
+
 ## Актуальная локальная приёмка
 
 **577Python +110Node PASS**,6offline demos: `bash tools/check-local.sh`. Комплексный цикл approve/reject проходит original-evidence consent, Calendar recovery, local fixture CAS/status и independent notices; exact legacy bot description обновляется без потери заметок. [Пример](docs/CONSULTATION_WORKFLOW_DEMO.md), [отчёт](docs/AUDIT_REPORT.md), [план отдельной sandbox-приёмки](docs/CONSULTATION_SANDBOX_ACCEPTANCE.md). Рабочие ресурсы/бот не изменены; реальная версия deployment не подтверждена. SQLite source не заменяет real Google Sheets adapter.

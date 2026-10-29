@@ -369,3 +369,8 @@ Original review/confirm registry и bound worker готовы,24новыхtests,
 ## 42. Safe legacy description и sandbox handoff — 29.10.2026
 
 5новыхtests/577Python+110Node PASS,6offline demos. Exact source-bound bot description prefix меняется с сохранением manual suffix; unknown format deny, reconcile checks description. Demo закрывает synthetic inbox→consent→workflow. Реальное подключение требует выбора отдельных bot/Calendar, private binding config и последующего конкретного approved preview; план CONSULTATION_SANDBOX_ACCEPTANCE.md. Google source CAS/import proof/coordinated writers/production rollout по-прежнему не выполнены.
+
+
+## 43. Разрешение owner-resource теста и manual connection probe — 29.10.2026
+
+User «можно тестить в моих» supersedes isolated-only requirement. Safe read-only helper in existing Apps Script готов,10новыхNode/577Python+120Node PASS; no direct bot credential/ready Google identity here, реальных calls нет. Следующий необходимый вход — sanitized showKulaginaConnectionProbe result либо отдельно настроенный approved connection, не новая публикация среды/не token в чате. CONSULTATION_PERSONAL_RESOURCES.md.

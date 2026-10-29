@@ -1,3 +1,9 @@
+# Актуально29.10.2026: разрешены owner-resource тесты
+
+577Python/120Node PASS. Standalone metadata-only Apps Script probe подготовлен, не установлен/не запущен. Реального bot token/ready Google connection из чата нет; selectors сами доступ не доказывают. Отдельные test resources больше не требуются по user override. Инструкция без secret transfer/publication: CONSULTATION_PERSONAL_RESOURCES.md. Existing data/poller/webhook/triggers/deploy не менялись.
+
+---
+
 # Актуально29.10.2026:577Python/110Node PASS
 
 Bound consultation flow проверен целиком на synthetic inbox/Calendar/notice mocks,6demos. Safe legacy prefix replacement сохраняет manual suffix. Google Sheets source CAS/real bindings/full-import verification/rollout отсутствуют. Нужен выбор отдельных test bot/Calendar для следующей разрешённой приёмки: CONSULTATION_SANDBOX_ACCEPTANCE.md. Production не менялся.

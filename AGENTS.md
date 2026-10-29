@@ -7,8 +7,8 @@
 - До изменения изучить относящийся к задаче код, README.md, docs/REQUIREMENTS.md, актуальный раздел docs/AUDIT_REPORT.md и docs/TEST_PLAN.md.
 - Сохранять существующие пользовательские изменения, исходные снимки, структуры данных и рабочие сценарии. Не выполнять reset, очистку данных или массовую замену файлов ради удобства.
 - Разрешение на локальную разработку и тесты с моками не разрешает реальные отправки, чтение или изменение пользовательских данных, настройку Apps Script, публикацию и развёртывание.
-- Реальные запросы Telegram/Google, триггеры, webhook, операции с таблицами, календарями, файлами и правами выполнять только в явно разрешённом объёме и на согласованных ресурсах. Production не использовать как тестовую среду.
-- До разрешённого изменения внешнего ресурса подготовить проверяемый результат локально. Для интеграционной приёмки использовать отдельный test bot, тестовые книги, папку и Calendar; предусмотреть резервирование и откат.
+- Реальные запросы Telegram/Google, триггеры, webhook, операции с таблицами, календарями, файлами и правами выполнять только в явно разрешённом объёме и на согласованных ресурсах. По умолчанию production не использовать как тестовую среду. Явное уточнение владельца29.10.2026 «можно тестить в моих» разрешает только ограниченные тесты на его ресурсах в объёме docs/CONSULTATION_PERSONAL_RESOURCES.md; не требовать повторно отдельные ресурсы. Рабочие записи/студенческие рассылки/poller/webhook/triggers/deploy этим не разрешены.
+- До разрешённого изменения внешнего ресурса подготовить проверяемый результат локально. Предпочитать отдельные test resources, кроме явно разрешённого владельцем ограниченного теста на его ресурсах; предусмотреть резервирование и откат.
 - Не считать наличие файла, успешный локальный тест или сохранённую конфигурацию подтверждением публикации, активных триггеров, реальной доставки или работоспособности production.
 
 ## 2. Основной проект и состояние компонентов
@@ -286,3 +286,6 @@ consultation_consent.py/bound_worker.py — LOCAL original review→owner confir
 
 
 Safe legacy description fix: exact source-bound current GAS bot prefix меняется, suffix/marker/ручные notes сохраняются; unknown pending phrase/template → deny approve/review. Optional description patched fields входят в reconcile.5новыхtests,577Python/110Node PASS,6offline demos. Bound workflow demo использует synthetic inbox/consent registry, не handwritten consent. Следующий real resource выбор/объём только по docs/CONSULTATION_SANDBOX_ACCEPTANCE.md; реальные token/IDs не в чат/Git, никакого implicit permission из общих +/«продолжай». Working resources untouched, real Sheets CAS/import/writer coordination остаются.
+
+
+29.10.2026: User разрешил «можно тестить в моих». Текущий read-only probe src/tools/consultation_connection_probe.gs — standalone, existing Script Properties only, getMe+explicit Calendar metadata, no events/poll/send.10Node VM tests,577Python/120Node полныйPASS; real probe не запущен. Из этого чата bot token отсутствует, ready Google identity не подтверждён (selectors есть, connections=[]); не брать значения из архивов/secret files. Manual showKulaginaConnectionProbe logs only safe JSON, не требовать cloud publication/передачи token. docs/CONSULTATION_PERSONAL_RESOURCES.md; реальные student/data writes/deploy по-прежнему не разрешены.

@@ -5,6 +5,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 "${KULAGINA_PYTHON:-python3}" -m unittest discover -s tests -p 'test_*.py'
 node tests/run-current.cjs
 node --test tests/consultation-export.cjs
+node --test tests/consultation-connection-probe.cjs
 "${KULAGINA_PYTHON:-python3}" tools/review_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/assistant_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/decision_demo.py
