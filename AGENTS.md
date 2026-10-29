@@ -428,3 +428,11 @@ Owner-runsetup вернулqueue_ready/createdfalse/6columns/businesswrites0/mes
 
 Run40944791680, main3e9fbb9d0a1c33172f8633ecfb7a705eebf0b1f1: review_ready/1GET/0writes/1changedmain. Encryptedsource artifact: workflow/run/headSHA/target/runID/fingerprint проверены; original совпал с установленнымfile+queue, candidate совпал с локальнымexactrecipe.57globalsбезколлизий/combinedsyntaxPASS. Установкаreply-recovery разрешена ранее«да»; сейчас готовитсяprotectedapply, sourcePUT и новые изменениябизнесданных ещё не подтверждены. Полный596Python+258Node PASS,6offline demos. Ни schemaфикс/queue setup, ни poll/init/trigger/Telegram/Drive/Calendar этимпатчем не запускаются; не требуется повторный user-run setuphelper.
 
+
+
+# 30.10.2026 — reply-recovery source установлен и независимо проверен
+
+Разрешённый owner-approved protected run40944983855, maine7be7783530c533c1f01231fa65fa0f5a68f092e: prepare/backup/applysuccess;1PUT, APIaccepted=true/GETverified=true/statusapplied. Full8encryptedoriginal/candidatebackup сохранён доPUT. Независимый read-onlyrun40945435531 (main896487fa2ef94c82285f5c1bf32a39d699758671) success: workflow/run/headSHA/target/runID/fingerprint проверены, основнойsource точно равен approvedpatchReplyRecovery поверх установленногоfile+queue;7остальныхfiles сохранены,57globalsбезколлизий/fullsyntaxPASS. Последниеfull596Python+258Node PASS,6offline demos; docs-onlyнеповторялись.
+
+Подтверждена установкаsource, не live восстановление данных. Массовый ремонтсуществующихстрок/новыеSheetsschemas/повторqueuesetup не выполнялись; runtimehandler/рабочийpoll/trigger/сообщения/Drive/Calendar/deployment не запускалисьCodex. Существующаяqueue schema подтверждена ранееuser-runqueue_ready. Новаяrecoveryветка будет работать при штатномповторе соответствующегоupdate; конфликт/нестабильныйID остаётсяreview/DEAD, completed/manualdata не стираются. Actualproductiondeploymentversion не установлен этимGET; не называть это rollout2.0.5. Следующиеотдельныериски: stablebindingновыхкнопок/ответов, Sheetsformulainjection, durableуведомления иmanualSheetsCAS; предыдущее разрешениене расширять. Сейчас пользователю ничего повторно запускать/подтверждатьдляэтойустановки не нужно.
+
