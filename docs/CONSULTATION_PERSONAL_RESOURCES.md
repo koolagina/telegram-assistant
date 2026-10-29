@@ -1,3 +1,11 @@
+# 29.10.2026 — read-only снимок для сверки НВГУ подготовлен
+
+Новый standalone `src/tools/nvsu_calendar_snapshot.gs`: fixed week 02–08.11, только GET выбранного Calendar, полная bounded pagination, без raw IDs/названий/описаний/участников в логе; chunked private snapshot с checksum. Не запущен live. `tools/nvsu_private_snapshot.py` декодирует полный набор и использует существующий `nvsu_sync.plan_sync` для агрегатной классификации; ledger/ownership не меняет, всегда non-applicable/review required/teaching completeness false. Хеши не шифрование; время/равенство строк остаются приватными данными.
+
+10 новых Python +9 Node tests, включая JS→Python transfer и red→green invalid-time regression. Полный `bash tools/check-local.sh`: **587 Python +160 Node PASS**, 6 offline demos. Рабочий код бота и реальные ресурсы не менялись; необходимый следующий вход — ручной read-only снимок пользователя. [Инструкция и ограничения](NVSU_PRIVATE_COMPARISON.md).
+
+---
+
 # 29.10.2026 — реальный Calendar TEST завершён
 
 По предоставленному пользователем журналу `testKulaginaCalendarOnce`: `status=complete`, `create_verified=true`, `update_verified=true`, `cleanup_confirmed=true`, `cleanup_required=false`. Проверялось только временное TEST-событие 30.10.2026 10:00–10:20 (Asia/Yekaterinburg). Три запроса записи: создание, обновление, удаление; сообщений не отправлено. Повторять тест или выполнять cleanup не требуется. Это результат ручного запуска в Apps Script пользователя, не прямого доступа Codex к Google и не развёртывание нового бота.

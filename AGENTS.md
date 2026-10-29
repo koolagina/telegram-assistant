@@ -298,3 +298,8 @@ Safe legacy description fix: exact source-bound current GAS bot prefix меня�
 
 
 29.10.2026 user Calendar REST preview succeeded13:21:43 after API enable:30Oct10:00–10:20+05,busy0,no writes. consultation_calendar_smoke.gs prepared NOT executed live: exact-window one TEST create/PATCH/DELETE, stable eventID/private marker/durable KULAGINA_CALENDAR_TEST_V1 applying phases, owner-role/fresh busy guard, If-Match/ack ETag. No date fallback/forced cleanup/manual notes overwrite/no retry unknown/reset receipt. inspectKulaginaCalendarTest GET-only exact ID/no mutation.11Node tests,577Python/151Node PASS. No student/Sheet/poll/triggers/deploy; actual CRUD awaits user log. docs/CONSULTATION_PERSONAL_RESOURCES.md.
+
+
+## Read-only private Calendar comparison — 29.10.2026
+
+User-run CRUD complete/cleanup confirmed: не повторять smoke и не сбрасывать receipt. Новый nvsu_calendar_snapshot.gs только GET фиксированной недели02–08.11, не executed live. Частный chunked log содержит time/hash equality, не считать анонимным/не Git. nvsu_private_snapshot.py использует текущий plan_sync только для агрегатов, не реального ledger/ownership; всегда ready_for_apply=false/teaching_schedule_verified=false. Не преобразовывать hashes в real IDs и snapshot counts в исполнимый план. Unknown/moved/protected события требуют review. Доверенные источник/дата/полнота/реальный ledger устанавливаются отдельно. Новый suite включён в tools/check-local.sh;587Python/160Node PASS,6demos. Инструкция docs/NVSU_PRIVATE_COMPARISON.md.

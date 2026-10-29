@@ -394,3 +394,8 @@ User reported Calendar API enabled/preview_ready30Oct10:00–10:20+05. Stable-id
 ## 47. Calendar TEST завершён → сверка занятий — 29.10.2026
 
 Получен пользовательский результат complete: create/update verified, cleanup confirmed, cleanup_required=false, 3 write requests, 0 сообщений. TEST завершён, повтор/очистка не нужны. Полнота расписания false; новый bot/worker не развёрнут. Свежий публичный НВГУ: 26.10–01.11 нет занятий, 02.11–08.11 — 11. Далее read-only сравнение существующих Calendar events с источником через текущий planner; перед импортом нужен конкретный план, без присвоения ручным событиям ownership. Direct Google connection у Codex не появился.
+
+
+## 48. Частный снимок для read-only сверки — 29.10.2026
+
+Подготовлен manual Apps Script GET-only экспорт выбранной недели02–08.11 без raw event text/IDs и decoder/comparator на существующем nvsu_sync planner. Нет нового механизма синхронизации/ledger/записей.587Python/160Node PASS,6demos; live запуск ещё не состоялся. Следующий необходимый вход — complete private chunk log пользователя; после него свежая проверка НВГУ и агрегатный план без apply. docs/NVSU_PRIVATE_COMPARISON.md.

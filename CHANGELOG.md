@@ -1,3 +1,9 @@
+# 29.10.2026 — private read-only NVSU comparison candidate
+
+- Standalone weekly Calendar GET snapshot: redacted fields, full bounded pagination, buffered chunks/checksum, no writes or deployment. Not run live.
+- Python decoder/comparison reuses existing nvsu_sync planner, aggregate-only/non-applicable, no ledger/ownership mutation. Manual snapshot is not authentication, freshness or completeness proof.
+-10 Python +9 Node tests; full 587 Python/160 Node PASS, 6 offline demos. Instructions: docs/NVSU_PRIVATE_COMPARISON.md.
+
 # 29.10.2026 — Calendar TEST CRUD принят по журналу пользователя
 
 - Создание, обновление и удаление одного временного TEST-события подтверждены; cleanup завершён, повторный запуск не требуется. Три write requests, ноль сообщений.
