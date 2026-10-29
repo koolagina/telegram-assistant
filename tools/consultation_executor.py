@@ -58,6 +58,15 @@ class MutationReceipt:
     operation_id: str = field(repr=False)
 
 
+@dataclass(frozen=True)
+class ExecutionEvidence:
+    plan_id: str = field(repr=False)
+    plan_hash: str = field(repr=False)
+    calendar_id: str = field(repr=False)
+    request: dict = field(repr=False)
+    status: str
+
+
 def _utc(value):return value.astimezone(dt.timezone.utc).isoformat()
 def _moment(value):
     if type(value) is not str:raise ExecutorError('Explicit time required')
@@ -131,6 +140,17 @@ class ConsultationExecutor:
         return {'status':('inflight_or_unknown' if row[2]=='applying' else row[2]) if row else 'not_attempted','source_status':'not_written','notifications':'not_sent'}
     def result(self,context,plan_id):
         self._auth(context);result=self._result(plan_id);self._auth(context);return result
+    def prepare(self,context,plan_id):
+        """Trusted preflight only; no claim/mutation, separate read authorization."""
+        try:return self._preflight(context,plan_id)[0]
+        except Exception:raise ExecutorError('Calendar preflight unavailable') from None
+    def evidence(self,context,plan_id):
+        """Private durable journal evidence, not a caller-supplied success flag."""
+        self._auth(context);row=self._row(plan_id)
+        if row is None:raise ExecutorError('No Calendar stage evidence')
+        plan_hash=self.db.execute('SELECT plan_hash FROM calendar_attempts WHERE plan_id=?',(plan_id,)).fetchone()[0]
+        result=ExecutionEvidence(plan_id,plan_hash,self.calendar.calendar_id,json.loads(row[0]),self._result(plan_id)['status'])
+        self._auth(context);return result
     def _finish(self,plan_id,phase):
         with self.transaction():
             row=self._row(plan_id)

@@ -1,3 +1,13 @@
+# Локальная финализация заявки и business outbox — 29.10.2026
+
+Добавлен tools/consultation_workflow.py: private SQLite fixture source, row CAS/claim, Calendar-stage orchestration, atomic11-column status/reason+2notice jobs. Executor.prepare/evidence дают trusted read-only preflight/journal proof. Source backend **не Google Sheets adapter**, данные только synthetic; local claims не блокируют real/manual writers. Полнота/consent/bindings в demo fake, real запуск не разрешён.
+
+27 новых tests, полный **548Python PASS +110Node PASS**,6offline demos. Partial source failure/revoke откатывает status+jobs без Calendar retry; uncoordinated edit не затирается. Notices имеют независимые business keys (не Telegram update IDs), current entity binding/revision gates, durable pre-send claim; unknown/inflight/rejected не retry, failure первого не блокирует второго. Все sender/HTTP mocks, delivery unknown. Red→green: subject rebind при claim и ложный not_attempted для pending Calendar outcome.
+
+Контракт/таблица рисков: [CONSULTATION_WORKFLOW.md](CONSULTATION_WORKFLOW.md), [пример](CONSULTATION_WORKFLOW_DEMO.md). Рабочие ресурсы/GAS/deploy не менялись. Real consent/live source/Google CAS/writer coordination/verifier/rollout, последующая cancellation/propose agreement/operator recovery/legacy description template остаются. Не считать этот local CAS выполненной Google интеграцией.
+
+---
+
 # Календарный этап консультаций — 29.10.2026
 
 Добавлены tools/consultation_executor.py и consultation_calendar.py: отдельный disabled-by-default Calendar-stage executor, existing GoogleCalendarAdapter transport, strict BoundPlan с original owner/source/event evidence. Старые unbound планы автоматически не исполняются. Current policy/student identity/row revision/ownership/busy/full teaching/range/age/ETag сверяются до и после durable claim; marker прошлого attempt требует review. PATCH того же event без изменения времени/заметок, DELETE exact own hold, If-Match, no create/no retry/sendUpdates=none. НВГУ parser/sync/GAS snapshots не менялись.

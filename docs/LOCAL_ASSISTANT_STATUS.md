@@ -1,3 +1,9 @@
+# Дополнение29.10.2026: local status + notices
+
+Fixture SQLite CAS/finalization/outbox готовы;548Python/110Node PASS. Real Google Sheets claim/CAS/Telegram notifications не подключены,6demos только mocks. Original consent registry и live evidence/writer coordination/verifier/rollout остаются. CONSULTATION_WORKFLOW.md.
+
+---
+
 # Дополнение 29.10.2026: Calendar-stage executor
 
 Disabled-by-default candidate с original-evidence preflight/ETag/claims/reconciliation готов;521Python/110Node PASS. Mock-only HTTP, реального Google вызова нет. Только Calendar stage: source_status=not_written,notifications=not_sent. Live binding/consent bridge/source CAS/координация writers/finalization/уведомления/приёмка — отдельно. Контракт CONSULTATION_EXECUTOR.md.

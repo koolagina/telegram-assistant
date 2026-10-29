@@ -354,3 +354,8 @@ ConsultationFeed/BusyFeed и отдельный read-only GAS export helper ка
 ## 39. Calendar-stage executor — 29.10.2026
 
 Executor+existing Google port с original owner/source/event-bound plan, ETag, durable claim и read-only recovery готовы:38новыхPython tests,521Python/110Node PASS,5offline demos. Ни real API, ни source status/notify. Defaults off, old unbound plans denied. Следующее: trusted consent/live evidence, source claim/CAS и writer coordination, authoritative finalization и независимые notifications; live rollout до этого запрещён. Legacy descriptions требуют безопасного template. CONSULTATION_EXECUTOR.md.
+
+
+## 40. Local source CAS/finalization/notices — 29.10.2026
+
+Fixture SQLite claim/CAS, atomic status+jobs и independent business-key notices готовы,27tests/548Python+110Node PASS,6offline demos. Calendar receipt recovery не повторяет mutation, notices current identity-bound и independent. Не actual Google backend и не completed integration; следующее highest priority — original-evidence owner consent registry, затем live adapters/verified source CAS/writer coordination/приёмка. CONSULTATION_WORKFLOW.md.

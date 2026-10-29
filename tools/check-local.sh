@@ -10,3 +10,4 @@ node --test tests/consultation-export.cjs
 "${KULAGINA_PYTHON:-python3}" tools/decision_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/consultation_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/consultation_execution_demo.py
+"${KULAGINA_PYTHON:-python3}" tools/consultation_workflow_demo.py

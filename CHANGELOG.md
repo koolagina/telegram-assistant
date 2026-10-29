@@ -1,3 +1,9 @@
+# 29.10.2026 — local source finalization + independent consultation notices
+
+- Fixture SQLite CAS/claim + orchestration Calendar evidence→atomic status/reason and2notice jobs; eleven fields/status names preserved, custom note/event ID retained.
+- Independent business-key outbox, fresh owner/recipient/revision gates, durable send claims and no retry unknown/inflight; failed student notice does not block owner.
+-27новыхPython tests;548Python/110Node PASS,6offline demos. No actual Sheets/Calendar/Telegram API or deploy. Live consent/source CAS/writer coordination/verification/rollout still separate. docs/CONSULTATION_WORKFLOW.md.
+
 # 29.10.2026 — consultation Calendar-stage executor candidate
 
 - Strict original-evidence BoundPlan, current owner/student/source/hold/busy/teaching/ETag preflight. Unbound legacy plans denied, propose/create absent.
