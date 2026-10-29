@@ -359,3 +359,6 @@
 - 58 локальных regression/static/compatibility tests прошли; 19 исторических audit probes сохранены отдельно.
 
 Ограничения: реальные Apps Script/Telegram/Sheets/Drive/Calendar не тестировались; parser НВГУ, часть авторизации callback, literal/formula handling, общий реестр, rate limiting и ряд уведомлений требуют дальнейших исправлений. UNKNOWN требует ручной сверки; exactly-once внешних действий не обещается. Подробности и схема технических листов — в `docs/AUDIT_REPORT.md`.
+
+
+29.10.2026 — Google relay: после неподтверждённого PUT выполнена отдельная read-only сверка; все8файлов исходные, исправления не установлены. В transport добавлены только ограниченные http_failure_status (100–599) и http_failure_stage из фиксированных внутренних статусов; тела ответа, URLs, credentials не выводятся. Новый regression сначала воспроизвёл отсутствие диагностики, затем14relay+9legacy tests PASS. Неизвестный исход по-прежнему запрещает автоматический retry; текущая причина прошлой ошибки не восстановлена. Google mutation повторно не запускалась; workflow не запускается от этих code/docs изменений.

@@ -54,7 +54,7 @@ async function runBridge(operation,{env=process.env,fetch=globalThis.fetch,pins=
  const r={status:'not_started',operation,google_gets:0,google_writes:0,google_write_api_accepted:false,google_write_verified:false,messages_sent:0,source_exposed:false};let writing=false;
  try{
   context(env);if(recipientKey)validRecipient(recipientKey);if(!MODES.includes(operation))stop('operation_blocked');const write=['prepare_write','apply_write'].includes(operation);
-  async function request(url,args,fail){let response,text;try{response=await fetch(url,{...args,redirect:'manual',signal:AbortSignal.timeout(20000)});text=await response.text();}catch{stop(fail);}if(response.status!==200||typeof text!=='string'||text.length>4000000)stop(fail);try{return JSON.parse(text);}catch{stop(fail);}}
+  async function request(url,args,fail){let response,text;try{response=await fetch(url,{...args,redirect:'manual',signal:AbortSignal.timeout(20000)});text=await response.text();}catch{stop(fail);}if(response.status!==200){if(Number.isInteger(response.status)&&response.status>=100&&response.status<=599){r.http_failure_status=response.status;r.http_failure_stage=fail;}stop(fail);}if(typeof text!=='string'||text.length>4000000)stop(fail);try{return JSON.parse(text);}catch{stop(fail);}}
   if(write){
    if(!env.GITHUB_TOKEN)stop('protection_unverified');
    const base='https://api.github.com/repos/'+REPO+'/environments/'+ENVIRONMENT,args={method:'GET',headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}};
