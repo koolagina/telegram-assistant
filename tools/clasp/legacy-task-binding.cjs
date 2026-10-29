@@ -100,7 +100,17 @@ function clearLegacyTaskSelection_(chatId,taskId) {
   if(selected&&selected.version===1&&selected.chat_id===String(chatId)&&selected.task_id===String(taskId)&&Object.keys(selected).sort().join('|')==='chat_id|task_id|version')
     PropertiesService.getScriptProperties().deleteProperty(key);
 }
-`+snapshot+String.raw`function legacyBindingAttemptSafe_(chatId,messageId) {
+`+snapshot+String.raw`function prepareKulaginaBindingSnapshots() {
+  return withScriptLock_(()=>{
+    const existed=!!ss_().getSheetByName('Снимки операций');
+    legacyBindingSnapshots_();
+    SpreadsheetApp.flush();
+    const result={status:'binding_snapshots_ready',created:!existed,columns:3,business_writes:0,messages_sent:0,polling_started:false};
+    console.log(JSON.stringify(result));
+    return result;
+  });
+}
+function legacyBindingAttemptSafe_(chatId,messageId) {
   const queue=ss_().getSheetByName('Очередь updates');
   if(!queue) return; // Offline/direct calls are not a supported production entry point.
   const queued=queue.getDataRange().getValues().slice(1);
@@ -160,4 +170,13 @@ function patchTaskBinding(source){
  let next=source;for(const [old,value] of pairs)next=next.replace(old,value);
  return next.replace('function processCallback_(',helper+'function processCallback_(');
 }
-module.exports={patchTaskBinding};
+function restoreTaskBinding(source){
+ if(typeof source!=='string'||source.split(helper).length!==2)throw Error('Exact stable binding patch required');
+ let next=source.replace(helper,'');
+ for(const [old,value] of pairs.slice().reverse()){
+  if(next.split(value).length!==2)throw Error('Exact stable binding patch required');
+  next=next.replace(value,old);
+ }
+ return next;
+}
+module.exports={patchTaskBinding,restoreTaskBinding};

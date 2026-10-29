@@ -64,7 +64,7 @@
 +    clearLegacyTaskSelection_(chatId,taskId);
    }
    send_(chatId,task?'Ответ сохранён по поручению '+taskId+'. Ожидайте проверки.':
-@@ -276,24 +285,120 @@
+@@ -276,24 +285,130 @@
    if(!row[8] && link) sheet.getRange(item.index,9).setValue(link);
    if(status!=='Ответ получен') sheet.getRange(item.index,6).setValue('Ответ получен');
 +  clearLegacyTaskSelection_(chatId,linkedId);
@@ -137,6 +137,16 @@
 +  }
 +  return JSON.parse(String(inboxItem_(sh,key).row[1]));
 +}
++function prepareKulaginaBindingSnapshots() {
++  return withScriptLock_(()=>{
++    const existed=!!ss_().getSheetByName('Снимки операций');
++    legacyBindingSnapshots_();
++    SpreadsheetApp.flush();
++    const result={status:'binding_snapshots_ready',created:!existed,columns:3,business_writes:0,messages_sent:0,polling_started:false};
++    console.log(JSON.stringify(result));
++    return result;
++  });
++}
 +function legacyBindingAttemptSafe_(chatId,messageId) {
 +  const queue=ss_().getSheetByName('Очередь updates');
 +  if(!queue) return; // Offline/direct calls are not a supported production entry point.
@@ -201,7 +211,7 @@
 +  send_(id,'Выбрано поручение '+String(task.row[0])+'. Теперь отправьте ответ или файл.');
  }
  function pollTelegramUpdates() {
-@@ -388,4 +493,5 @@
+@@ -388,4 +503,5 @@
      const update=JSON.parse(String(item.row[3]));
      if(String(update.update_id)!==String(updateId)) throw Error('Payload не соответствует ID');
 +    legacyReplayBindingGuard_(update);
