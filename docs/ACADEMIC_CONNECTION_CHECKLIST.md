@@ -15,7 +15,7 @@
 | Кто опрашивает Telegram | Активные production triggers/poller не инвентаризированы | Один согласованный владелец offset; не включать Python рядом с Apps Script poller |
 | Перед отправкой | Worker заново готовит ответ внутри claim; send вне SQLite transaction | Network preload отдельно, current local policy/version recheck; только согласованный test actor |
 | Неизвестный исход | unknown/sending блокируют автоматический resend | Операторская сверка; не стирать квитанции и не угадывать orphan по одному возрасту |
-| Callback | Private sender/bot checks и read-only повторное открытие готовы | Отдельное решение для answerCallbackQuery и допустимых ошибок; сейчас API ACK кнопки не реализован |
+| Callback | Private sender/bot checks и read-only повторное открытие готовы | Локальный no-text ACK с отдельным ledger реализован (CALLBACK_ACK_ACCEPTANCE.md); нужны постоянное private state/transport и ограниченная live-проверка |
 | Подключение ChatGPT | Policy scopes и общий read service локально | Отдельный аутентифицированный адаптер, account linking и per-tool scopes; этот чат не бизнес-API |
 | Подключение MAX | Не реализовано, allowlist не расширен | Проверенный официальный transport и условия bot account; затем общая policy, а не отдельная копия логики |
 | Реальная приёмка | Локальные тесты не доказывают интеграции | Конкретный ограниченный сценарий и отдельное разрешение на затрагиваемые ресурсы/отправки |

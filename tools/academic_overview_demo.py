@@ -4,6 +4,7 @@ import json
 import tempfile
 from pathlib import Path
 from academic_readiness import inspect_academic_runtime
+from callback_ack import CallbackAckLedger
 from report_worker import ReportWorker
 from report_dispatch import DispatchLedger
 from telegram_inbox import TelegramInbox
@@ -19,25 +20,33 @@ def synthetic_dispatch(*,reviews,service,menu,revoke,policy_snapshot):
     """Temporary actual SQLite stores; send is an in-memory fake only."""
     with tempfile.TemporaryDirectory() as directory:
         root=Path(directory);calls=[]
-        with TelegramInbox(root/'inbox.db',namespace='synthetic-academic',bot_id=9001) as inbox, DispatchLedger(root/'dispatch.db',namespace='synthetic-academic',bot_id=9001) as ledger:
+        with TelegramInbox(root/'inbox.db',namespace='synthetic-academic',bot_id=9001) as inbox, DispatchLedger(root/'dispatch.db',namespace='synthetic-academic',bot_id=9001) as ledger, CallbackAckLedger(root/'callback.db',namespace='synthetic-academic',bot_id=9001) as callback_ledger:
+            ack_calls=[]
+            def acknowledge(method,payload):
+                assert not callback_ledger.db.in_transaction
+                ack_calls.append(method)
+                return {'ok':True,'result':True}
             def send(method,payload):
                 assert not ledger.db.in_transaction and not inbox.db.in_transaction
                 calls.append(method)
                 return {'ok':True,'result':{'message_id':len(calls),'chat':{'id':103,'type':'private'},'from':{'id':9001,'is_bot':True}}}
-            worker=ReportWorker(inbox,ledger,reader_factory=lambda:reviews,send=send,overview_factory=lambda:service,academic_menu_factory=lambda:menu)
+            worker=ReportWorker(inbox,ledger,reader_factory=lambda:reviews,send=send,overview_factory=lambda:service,academic_menu_factory=lambda:menu,callback_ledger=callback_ledger,acknowledge=acknowledge)
             def store(number,text):
                 inbox.store_batch({'ok':True,'result':[{'update_id':number,'message':{'message_id':number,'date':1793160000,'from':{'id':103,'is_bot':False},'chat':{'id':103,'type':'private'},'text':text}}]},expected_offset=inbox.offset())
             readiness=inspect_academic_runtime(worker,policy=policy_snapshot(),journal=service._journal,overview=service,menu=menu)
             assert readiness['local_status']=='consistent' and readiness['ready_for_live'] is False
             store(1,'/overview');first=worker.step(dispatch_enabled=True)
             assert first[0]['status']=='api_confirmed' and worker.step(dispatch_enabled=True)==()
-            store(2,'/overview synthetic-enrollment');second=worker.step(dispatch_enabled=True)
+            token=menu.prepare(Context('telegram','103',authenticated=True,private=True),'/overview').buttons[0][0].callback_data
+            inbox.store_batch({'ok':True,'result':[{'update_id':2,'callback_query':{'id':'fixture-query','from':{'id':103,'is_bot':False},'message':{'message_id':2,'date':1793160000,'from':{'id':9001,'is_bot':True},'chat':{'id':103,'type':'private'}},'data':token}}]},expected_offset=inbox.offset())
+            second=worker.step(dispatch_enabled=True)
+            assert second[0]['callback_ack']=='api_confirmed' and len(ack_calls)==1
             assert second[0]['status']=='api_confirmed'
             revoke();store(3,'/overview');last=worker.step(dispatch_enabled=True)
             assert last[0]['status']=='cancelled' and len(calls)==2
             after=inspect_academic_runtime(worker,policy=policy_snapshot(),journal=service._journal,overview=service,menu=menu)
             assert after['local_status']=='blocked' and 'confirmed_bindings_missing' in after['blockers']
-            return {'mock_api_confirmed':2,'replay_sends':0,'revoked_request_cancelled':True,
+            return {'mock_api_confirmed':2,'mock_callback_ack':len(ack_calls),'replay_sends':0,'revoked_request_cancelled':True,
                     'readiness_before':'consistent','readiness_after_revocation':'blocked','ready_for_live':False,
                     'delivery_verified':False,'real_messages_sent':0}
 

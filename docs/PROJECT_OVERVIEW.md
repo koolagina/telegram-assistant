@@ -1,3 +1,5 @@
+Последний локальный блок: [подтверждение кнопок Telegram](CALLBACK_ACK_ACCEPTANCE.md) — 773 Python +448 Node PASS; не включено в рабочем боте.
+
 Последний локальный блок: [обновление материалов и история проверок](MATERIAL_UPDATE_ACCEPTANCE.md) — 747 Python +448 Node PASS, 11 offline демонстраций; не развёрнуто.
 
 Актуальная локальная проверка: [готовность runtime](ACADEMIC_READINESS_ACCEPTANCE.md) и [условия подключения](ACADEMIC_CONNECTION_CHECKLIST.md). 731 Python +448 Node PASS; live не подтверждено.

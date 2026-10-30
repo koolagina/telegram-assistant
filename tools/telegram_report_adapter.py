@@ -41,6 +41,20 @@ def _private_message(message,subject):
     chat=message.get('chat')
     return type(chat) is dict and chat.get('type')=='private' and _id(chat.get('id')) and chat['id']==subject
 
+def verified_callback_query_id(update,bot_id):
+    """Structural identity from an already verified durable polling update.
+
+    Not authentication for arbitrary JSON; no policy reads or private payload.
+    Used only after a worker has a terminal business receipt for this update.
+    """
+    if type(update) is not dict:return None
+    query=update.get('callback_query')
+    if type(query) is not dict or not _user(query.get('from')) or not identifier(query.get('id')):return None
+    sender=query['from']['id'];message=query.get('message')
+    if sender==bot_id or not _private_message(message,sender):return None
+    if not _user(message.get('from'),bot=True) or message['from']['id']!=bot_id:return None
+    return query['id']
+
 class TelegramReportAdapter:
     def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None,overview_factory=None,academic_menu_factory=None):
         if not _id(bot_id) or not callable(reader_factory) or not callable(fetch_verified_updates):

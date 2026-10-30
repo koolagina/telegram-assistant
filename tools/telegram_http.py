@@ -8,6 +8,7 @@ HTTP traces, exception internals, this instance's attributes or response bodies.
 """
 import json
 import re
+from assistant_access import identifier
 from urllib.error import HTTPError
 from urllib.request import Request,build_opener,HTTPRedirectHandler
 
@@ -35,7 +36,7 @@ class TelegramHTTP:
 
     def _call(self,method,payload):
         if not self._network:raise TelegramHTTPError('Network disabled')
-        if method not in ('getMe','getUpdates','sendMessage'):raise TelegramHTTPError('Method refused')
+        if method not in ('getMe','getUpdates','sendMessage','answerCallbackQuery'):raise TelegramHTTPError('Method refused')
         try:
             body=json.dumps(payload,ensure_ascii=False,allow_nan=False).encode('utf-8')
             if len(body)>MAX_RESPONSE:raise TelegramHTTPError('Request limit exceeded')
@@ -97,3 +98,11 @@ class TelegramHTTP:
         except TelegramHTTPError:raise
         except Exception:
             raise TelegramHTTPError('Invalid reply request') from None
+
+    def acknowledge(self,method,payload):
+        """Explicit technical no-text ACK only; not permission to send reports."""
+        if not self._verified or not self._writes:raise TelegramHTTPError('Verified bot and explicit callback configuration required')
+        if (method!='answerCallbackQuery' or type(payload) is not dict
+                or set(payload)!={'callback_query_id'} or not identifier(payload.get('callback_query_id'))):
+            raise TelegramHTTPError('Callback acknowledgement refused')
+        return self._call(method,{'callback_query_id':payload['callback_query_id']})

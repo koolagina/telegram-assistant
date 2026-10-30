@@ -49,7 +49,13 @@ def inspect_academic_runtime(worker,*,policy,journal,overview,menu):
         inbox.offset()  # Validates cursor without outputting it.
         queue=_counts(inbox.db,'inbox_updates','status',INBOX_STATES)
         dispatch=_counts(ledger.db,'dispatch_attempts','phase',DISPATCH_STATES)
+        callback={'configured':worker._callback_ledger is not None}
+        if worker._callback_ledger is not None:
+            ack=worker._callback_ledger
+            if dict(ack.db.execute('SELECT key,value FROM callback_meta'))!=expected:raise ValueError()
+            callback.update(_counts(ack.db,'callback_attempts','phase',('sending','api_confirmed','api_rejected','unknown')))
         blockers=[];review=[]
+        if callback['configured'] and (callback['sending'] or callback['unknown'] or callback['api_rejected']):review.append('callback_outcomes_need_review')
         if worker._overview is None or worker._academic_menu is None:blockers.append('academic_factories_not_configured')
         # Object identity is local wiring evidence; factories are deliberately NOT
         # invoked, so their eventual result still needs integration verification.
@@ -88,7 +94,7 @@ def inspect_academic_runtime(worker,*,policy,journal,overview,menu):
         return {
             'format_version':1,'mode':'local_metadata_only',
             'local_status':'blocked' if blockers else ('needs_review' if review else 'consistent'),
-            'blockers':sorted(blockers+review),'queue':queue,'dispatch':dispatch,
+            'blockers':sorted(blockers+review),'queue':queue,'dispatch':dispatch,'callback_ack':callback,
             'structure':{'confirmed_active_binding_records':bindings,'journal_mappings':len(journal._maps),
                          'mapping_conflicts':mapping_conflicts,'catalog_entries':len(menu._entries),
                          'catalog_missing_mappings':catalog_missing,'report_links':len(overview._reviews._links),
