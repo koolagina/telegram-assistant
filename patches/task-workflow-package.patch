@@ -1,0 +1,329 @@
+--- legacy-installed.gs
++++ task-workflow-candidate.gs
+@@ -209,9 +209,9 @@
+     return;
+   }
+   if(isOwner_(chatId)) {
+-    if(/^\/approve(?:\s|$)/.test(raw)) return ownerApprove_(chatId,raw);
+-    if(/^\/revoke(?:\s|$)/.test(raw)) return ownerRevoke_(chatId,raw);
+-    if(/^\/add(?:\s|$)/.test(raw)) return ownerAdd_(chatId,raw);
++    if(/^\/approve(?:\s|$)/.test(raw)) return ownerApprove_(chatId,raw,m.message_id);
++    if(/^\/revoke(?:\s|$)/.test(raw)) return ownerRevoke_(chatId,raw,m.message_id);
++    if(/^\/add(?:\s|$)/.test(raw)) return ownerAdd_(chatId,raw,m.message_id);
+     if(/^\/done(?:\s|$)/.test(raw)) return ownerDone_(chatId,raw);
+     if(/^\/calendar/.test(raw)) return ownerCalendar_(chatId);
+     if(/^\/plan/.test(raw)) return ownerPlan_(chatId);
+@@ -385,6 +385,11 @@
+   if(latest&&latest.status!=='DONE') throw Error('Последний выбор поручения не подтверждён; требуется сверка');
+ }
+ function legacyReplayBindingGuard_(update) {
++  const accessMessage=update&&update.message;
++  if(accessMessage&&accessMessage.chat&&accessMessage.chat.type==='private'&&isOwner_(accessMessage.chat.id)&&/^\/(?:approve|revoke)(?:\s|$)/.test(accessMessage.text||'')){
++    const sheet=ss_().getSheetByName('Снимки операций'),key='LEGACY-ACCESS:'+accessMessage.chat.id+':'+accessMessage.message_id;
++    if(!sheet||!sheet.getDataRange().getValues().slice(1).some(row=>String(row[0])===key))throw Error('Нет исходного плана команды доступа; требуется сверка');
++  }
+   const message=update&&update.message;
+   if(!message||!message.chat||message.chat.type!=='private'||/^\/\w+/.test(message.text||message.caption||'')) return;
+   const chatId=String(message.chat.id),messageId=String(message.message_id);
+@@ -520,48 +525,91 @@
+   });
+ }
+ function sendPendingTasks() {
+-  const lock=LockService.getScriptLock(); if(!lock.tryLock(1000)) return;
+-  try {
++  const lock=LockService.getScriptLock();if(!lock.tryLock(1000))return;
++  try{
++    const sheet=tab_('Поручения',CFG.taskHeaders),rows=sheet.getDataRange().getValues();
++    for(let i=1;i<rows.length;i++){
++      const row=rows[i];
++      if(!['Не отправлено','Отправляется','Ошибка отправки','Отправлено'].includes(String(row[5])))continue;
++      if(!row[1]||!row[2])continue;
++      if(row[5]==='Отправлено'&&row[3]&&row[9])continue; // No per-task receipt reads for completed sends.
++      let id=String(row[0]||'').trim();
++      try{
++        if(!id){
++          if(row[5]!=='Не отправлено')continue;
++          const current=sheet.getRange(i+1,1,1,CFG.taskHeaders.length).getValues()[0];
++          if(JSON.stringify(current)!==JSON.stringify(row))throw Error('Task changed before ID assignment');
++          id='T-'+Utilities.getUuid();sheet.getRange(i+1,1).setValue(id);SpreadsheetApp.flush();
++        }
++        dispatchLegacyTask_(id);
++      }catch(error){log_('Требуется сверка отправки',id,'Не удалось безопасно завершить отправку; автоматический повтор неизвестного API запрещён');}
++    }
++  }finally{lock.releaseLock();}
++}
++function legacyTaskDispatchSnapshot_(key,value) {
++  const sheet=legacyBindingSnapshots_();
++  if(value!==undefined)return operationSnapshot_(key,value);
++  const rows=sheet.getDataRange().getValues().slice(1).filter(row=>String(row[0])===key);
++  if(!rows.length)return null;
++  if(rows.length!==1)throw Error('Ambiguous task dispatch receipt');
++  return operationSnapshot_(key);
++}
++function dispatchLegacyTask_(id) {
++  return withScriptLock_(()=>{
++    if(!validLegacyTaskId_(id))throw Error('Invalid task ID');
+     const sheet=tab_('Поручения',CFG.taskHeaders);
+-    const tasks=sheet.getDataRange().getValues();
+-    const students=rows_('Студенты',CFG.studentHeaders);
+-    for(let i=1;i<tasks.length;i++) {
+-      const r=tasks[i],status=String(r[5]||'');
+-      if(status==='Отправляется') {
+-        // Previous run may have stopped after Telegram accepted the message.
+-        // Avoid duplicate delivery; require a human check before retry.
+-        log_('Требуется сверка отправки',r[0]||i+1,'Статус «Отправляется» остался после прерывания; проверьте Telegram вручную.');
+-        continue;
+-      }
+-      if(status!=='Не отправлено'||!r[1]||!r[2]) continue;
+-      const matches=students.slice(1).filter(s=>String(s[0]||'').trim().toLowerCase()===String(r[1]).trim().toLowerCase());
+-      if(matches.length!==1||!matches[0][3]) { log_('Не найден адресат',i+1,r[1]); continue; }
+-      let id=String(r[0]||'').trim();
+-      if(!id) {
+-        id='T-'+Utilities.formatDate(new Date(),CFG.timezone,'yyyyMMdd')+'-'+(i+1);
+-        sheet.getRange(i+1,1).setValue(id);
+-      }
+-      const chatId=String(matches[0][3]);
+-      if(!isOwner_(chatId) && accessStatus_(chatId)!=='approved') {
+-        log_('Отправка отложена: нет доступа',id,chatId); continue;
+-      }
+-      const deadline=r[4]?(r[4] instanceof Date?Utilities.formatDate(r[4],CFG.timezone,'dd.MM.yyyy'):String(r[4])):'не указан';
+-      const msg='Новое поручение № '+id+'\n\n'+r[2]+'\n\nСрок: '+deadline+'\n\nДля ответа нажмите /tasks.';
+-      try {
+-        // Состояние «Отправляется» предотвращает повторную отправку при
+-        // повторном запуске; при сбое требуется ручная сверка с Telegram.
+-        sheet.getRange(i+1,6).setValue('Отправляется');
+-        const sent=send_(chatId,msg);
+-        sheet.getRange(i+1,4).setValue(new Date());
+-        sheet.getRange(i+1,6).setValue('Отправлено');
+-        sheet.getRange(i+1,10).setValue(chatId);
+-        log_('Отправлено',id,'message_id='+sent.message_id);
+-      } catch(e) {
+-        sheet.getRange(i+1,6).setValue('Ошибка отправки');
+-        log_('Ошибка отправки',id,e.message);
+-      }
+-    }
+-  } finally { lock.releaseLock(); }
++    const resolve=()=>{
++      const matches=sheet.getDataRange().getValues().slice(1).map((row,i)=>({row,index:i+2})).filter(x=>String(x.row[0])===id);
++      if(matches.length!==1)throw Error('Ambiguous task ID');return matches[0];
++    };
++    let item=resolve(),row=item.row;
++    if(!['Не отправлено','Отправляется','Ошибка отправки','Отправлено'].includes(String(row[5])))return;
++    const students=rows_('Студенты',CFG.studentHeaders).slice(1).filter(s=>String(s[0]||'').trim().toLowerCase()===String(row[1]).trim().toLowerCase());
++    if(students.length!==1)throw Error('Ambiguous student');
++    const target=String(students[0][3]||'');
++    if(!/^[1-9][0-9]{0,23}$/.test(target)||(!isOwner_(target)&&accessStatus_(target)!=='approved'))throw Error('Access not approved');
++    if(row[9]&&String(row[9])!==target)throw Error('Task recipient changed');
++    const due=r=>r[4]?(r[4] instanceof Date?Utilities.formatDate(r[4],CFG.timezone,'dd.MM.yyyy'):String(r[4])):'не указан';
++    const proof=r=>[String(r[1]),String(r[2]),due(r)];
++    const expected={version:1,task_id:id,target,proof:proof(row),text:('Новое поручение № '+id+'\n\n'+row[2]+'\n\nСрок: '+due(row)+'\n\nДля ответа нажмите /tasks.').slice(0,4000)};
++    const key='LEGACY-TASK-DISPATCH:'+id;
++    let plan=legacyTaskDispatchSnapshot_(key),ack=legacyTaskDispatchSnapshot_(key+':ACK'),claim=legacyTaskDispatchSnapshot_(key+':CLAIM');
++    if(!plan){
++      if(ack||claim)throw Error('Orphan dispatch receipt');
++      if(row[5]!=='Не отправлено')return; // No blind migration/retry of old uncertain sends.
++      plan=legacyTaskDispatchSnapshot_(key,expected);
++    }
++    if(JSON.stringify(plan)!==JSON.stringify(expected))throw Error('Task dispatch plan changed');
++    const planJson=JSON.stringify(plan);
++    if(claim&&(!claim||claim.version!==1||claim.plan_json!==planJson))throw Error('Dispatch claim changed');
++    const current=()=>{
++      const next=resolve();
++      if(JSON.stringify(proof(next.row))!==JSON.stringify(plan.proof)||(next.row[9]&&String(next.row[9])!==target))throw Error('Task changed during dispatch');
++      if(!['Не отправлено','Отправляется','Ошибка отправки','Отправлено'].includes(String(next.row[5])))throw Error('Task status changed');
++      return next;
++    };
++    if(!ack){
++      if(claim)throw Error('Unknown Telegram outcome; do not resend');
++      if(!['Не отправлено','Отправляется'].includes(String(row[5])))throw Error('Unverified previous send');
++      item=current();sheet.getRange(item.index,10).setValue(target);
++      item=current();sheet.getRange(item.index,6).setValue('Отправляется');SpreadsheetApp.flush();
++      const intent={version:1,plan_json:planJson};
++      const savedClaim=legacyTaskDispatchSnapshot_(key+':CLAIM',intent);
++      if(JSON.stringify(savedClaim)!==JSON.stringify(intent))throw Error('Dispatch claim changed');
++      const result=send_(target,plan.text);
++      if(!result||!Number.isSafeInteger(result.message_id)||result.message_id<=0||(result.chat&&String(result.chat.id)!==target))throw Error('Unverified API result');
++      ack=legacyTaskDispatchSnapshot_(key+':ACK',{version:1,plan_json:planJson,api_message_id:result.message_id,sent_at:new Date().toISOString()});
++    }
++    if(!claim)claim=legacyTaskDispatchSnapshot_(key+':CLAIM');
++    if(!claim||claim.version!==1||claim.plan_json!==planJson||!ack||ack.version!==1||ack.plan_json!==planJson||!Number.isSafeInteger(ack.api_message_id)||ack.api_message_id<=0||typeof ack.sent_at!=='string'||isNaN(new Date(ack.sent_at).getTime()))throw Error('Invalid API receipt');
++    item=current();row=item.row;
++    const sentAt=new Date(ack.sent_at);
++    if(row[3]&&(!(row[3] instanceof Date)||row[3].getTime()!==sentAt.getTime()))throw Error('Dispatch date changed manually');
++    if(!row[9]){item=current();sheet.getRange(item.index,10).setValue(target);}
++    if(!row[3]){item=current();sheet.getRange(item.index,4).setValue(sentAt);}
++    item=current();if(item.row[5]!=='Отправлено')sheet.getRange(item.index,6).setValue('Отправлено');
++    SpreadsheetApp.flush();
++  });
+ }
+ function dateKey_(d) { return Utilities.formatDate(d,CFG.timezone,'yyyy-MM-dd'); }
+ function remindDeadlines() {
+@@ -588,43 +636,94 @@
+     catch(e) { log_('Ошибка напоминания',id,e.message); }
+   }
+ }
+-function ownerApprove_(id,raw) {
+-  const args=raw.replace(/^\/approve(?:\s+|$)/,'').trim();
+-  const match=args.match(/^(\S+)\s+(.+)$/);
+-  if(!match) return send_(id,'Формат: /approve CHAT_ID Имя Фамилия');
+-  const chatId=match[1], name=match[2].trim();
+-  if(isOwner_(chatId)) return send_(id,'Владелец уже имеет доступ.');
+-  const sheet=tab_('Студенты',CFG.studentHeaders), rows=sheet.getDataRange().getValues();
+-  for(let i=1;i<rows.length;i++) if(String(rows[i][3])===chatId) {
+-    sheet.getRange(i+1,1).setValue(legacySheetLiteral_(name));
+-    sheet.getRange(i+1,6).setValue('Одобрен');
+-    send_(id,'Доступ разрешён: '+name+' ('+chatId+').');
+-    try { send_(chatId,'Доступ к помощнику подтверждён. Для списка поручений отправьте /tasks.'); } catch(e) { log_('Ошибка уведомления об одобрении',chatId,e.message); }
+-    return;
+-  }
+-  send_(id,'Пользователь с таким chat ID не найден. Пусть он сначала напишет боту /start.');
+-}
+-function ownerRevoke_(id,raw) {
+-  const chatId=raw.replace(/^\/revoke(?:\s+|$)/,'').trim();
+-  if(!chatId) return send_(id,'Формат: /revoke CHAT_ID');
+-  if(isOwner_(chatId)) return send_(id,'Нельзя отключить доступ владельцу.');
+-  const sheet=tab_('Студенты',CFG.studentHeaders), rows=sheet.getDataRange().getValues();
+-  for(let i=1;i<rows.length;i++) if(String(rows[i][3])===chatId) {
+-    sheet.getRange(i+1,6).setValue('Доступ отключён');
+-    send_(id,'Доступ отключён для '+String(rows[i][0])+' ('+chatId+').');
+-    try { send_(chatId,'Доступ к помощнику отключён.'); } catch(e) { log_('Ошибка уведомления об отключении',chatId,e.message); }
+-    return;
+-  }
+-  send_(id,'Пользователь с таким chat ID не найден.');
+-}
+-function ownerAdd_(id,raw) {
++function ownerApprove_(id,raw,messageId) {
++  if(!isOwner_(id))throw Error('Требуются права владельца');
++  const match=raw.replace(/^\/approve(?:\s+|$)/,'').trim().match(/^(\S+)\s+(.+)$/);
++  if(!match)return send_(id,'Формат: /approve CHAT_ID Имя Фамилия');
++  return legacyAccessCommand_(id,messageId,'approve',match[1],match[2].trim());
++}
++function ownerRevoke_(id,raw,messageId) {
++  if(!isOwner_(id))throw Error('Требуются права владельца');
++  const target=raw.replace(/^\/revoke(?:\s+|$)/,'').trim();
++  if(!target)return send_(id,'Формат: /revoke CHAT_ID');
++  return legacyAccessCommand_(id,messageId,'revoke',target,'');
++}
++function legacyAccessCommand_(owner,messageId,action,target,name) {
++  if(!isOwner_(owner)||!['approve','revoke'].includes(action))throw Error('Требуются права владельца');
++  const source=String(owner),message=String(messageId);
++  if(![source,message,target].every(v=>/^[1-9][0-9]{0,23}$/.test(v)&&Number.isSafeInteger(Number(v))))throw Error('Некорректный ключ команды доступа');
++  if(isOwner_(target))return send_(owner,action==='approve'?'Владелец уже имеет доступ.':'Нельзя отключить доступ владельцу.');
++  return withScriptLock_(()=>{
++    const sheet=tab_('Студенты',CFG.studentHeaders),snapshots=legacyBindingSnapshots_();
++    const find=()=>sheet.getDataRange().getValues().slice(1).map((row,i)=>({row,index:i+2})).filter(x=>String(x.row[3])===target);
++    let matches=find();
++    if(matches.length>1)throw Error('Неоднозначный студент; требуется сверка');
++    if(!matches.length)return send_(owner,'Пользователь с таким chat ID не найден. Пусть он сначала напишет боту /start.');
++    const key='LEGACY-ACCESS:'+source+':'+message,request={action,target,name};
++    const exists=k=>snapshots.getDataRange().getValues().slice(1).some(r=>String(r[0])===k);
++    if(exists(key)){
++      const plan=operationSnapshot_(key);
++      if(!plan||plan.version!==1||JSON.stringify(plan.request)!==JSON.stringify(request))throw Error('Команда доступа изменилась; требуется сверка');
++      if(!exists(key+':APPLIED'))throw Error('Незавершённая команда доступа; требуется сверка');
++      const applied=operationSnapshot_(key+':APPLIED');
++      if(!applied||applied.version!==1||JSON.stringify(applied.request)!==JSON.stringify(request))throw Error('Квитанция доступа требует сверки');
++      return send_(owner,'Эта команда уже обработана. Текущее состояние: '+String(matches[0].row[5]));
++    }
++    if([':APPLIED',':NOTIFY_CLAIM',':NOTIFY_ACK'].some(suffix=>exists(key+suffix)))throw Error('Неполная история команды; требуется сверка');
++    const queue=ss_().getSheetByName('Очередь updates');
++    if(queue){
++      const items=queue.getDataRange().getValues().slice(1).filter(row=>{
++        try{const u=JSON.parse(String(row[3]));return u.message&&String(u.message.chat.id)===source&&String(u.message.message_id)===message;}catch(error){return false;}
++      });
++      if(items.length!==1||items[0][1]!=='PROCESSING'||Number(items[0][2])!==1||String(items[0][5]||'')!=='')throw Error('Первичная команда не подтверждена; требуется сверка');
++    }
++    for(const row of snapshots.getDataRange().getValues().slice(1)){
++      const match=String(row[0]).match(/^LEGACY-ACCESS:([0-9]+):([0-9]+)$/);
++      if(!match||match[1]!==source)continue;
++      let prior;try{prior=JSON.parse(String(row[1]));}catch(error){throw Error('История доступа требует сверки');}
++      if(!prior||prior.version!==1||!prior.request)throw Error('История доступа требует сверки');
++      if(prior.request.target===target&&Number(match[2])>Number(message))throw Error('Есть более новая команда доступа; требуется сверка');
++    }
++    const before={name:String(matches[0].row[0]||''),status:String(matches[0].row[5]||'')};
++    operationSnapshot_(key,{version:1,request,before});
++    // Re-resolve after persistence; do not mutate a different student after a sort.
++    matches=find();
++    if(matches.length!==1||String(matches[0].row[0]||'')!==before.name||String(matches[0].row[5]||'')!==before.status)throw Error('Строка студента изменилась; требуется сверка');
++    const index=matches[0].index;
++    if(action==='approve')sheet.getRange(index,1).setValue(legacySheetLiteral_(name));
++    sheet.getRange(index,6).setValue(action==='approve'?'Одобрен':'Доступ отключён');
++    SpreadsheetApp.flush();
++    operationSnapshot_(key+':APPLIED',{version:1,request});
++    let apiConfirmed=false;
++    try{
++      operationSnapshot_(key+':NOTIFY_CLAIM',{version:1,target,status:'SENDING'});
++      const result=send_(target,action==='approve'?'Доступ к помощнику подтверждён. Для списка поручений отправьте /tasks.':'Доступ к помощнику отключён.');
++      if(!result||!Number.isSafeInteger(result.message_id)||result.message_id<=0||(result.chat&&String(result.chat.id)!==target))throw Error('Unverified API result');
++      operationSnapshot_(key+':NOTIFY_ACK',{version:1,target,status:'API_CONFIRMED',message_id:result.message_id});
++      apiConfirmed=true;
++    }catch(error){} // Unknown student notification is never retried by this command.
++    return send_(owner,(action==='approve'?'Доступ разрешён: '+name:'Доступ отключён')+' ('+target+'). '+
++      (apiConfirmed?'Telegram API подтвердил уведомление; доставка неизвестна.':'Исход уведомления не подтверждён; автоматический повтор запрещён.'));
++  });
++}
++function ownerAdd_(id,raw,messageId) {
++  if(!isOwner_(id))throw Error('Требуются права владельца');
+   const text=raw.replace(/^\/add(?:\s+|$)/,'').trim();
+-  if(!text) return send_(id,'Напишите: /add Купить корм Уле');
+-  const sheet=tab_('Личные задачи',CFG.personalHeaders);
+-  const key='L-'+Utilities.formatDate(new Date(),CFG.timezone,'yyyyMMdd-HHmmss')+
+-    '-'+Math.floor(Math.random()*1000);
+-  sheet.appendRow([key,'Личное',legacySheetLiteral_(text),'','Открыто','Обычный','',new Date()]);
+-  send_(id,'Добавила задачу '+key+': '+text);
++  if(!text)return send_(id,'Напишите: /add Купить корм Уле');
++  const chat=String(id),message=String(messageId);
++  if(!/^[1-9][0-9]{0,23}$/.test(chat)||!Number.isSafeInteger(Number(chat))||!Number.isSafeInteger(Number(message))||!/^[1-9][0-9]{0,23}$/.test(message))
++    throw Error('Для добавления задачи требуется исходное Telegram сообщение');
++  return withScriptLock_(()=>{
++    const sheet=tab_('Личные задачи',CFG.personalHeaders),key='L-TG-'+chat+'-'+message;
++    const matches=sheet.getDataRange().getValues().slice(1).filter(row=>String(row[0])===key);
++    if(matches.length>1)throw Error('Дубликат ID личной задачи; требуется сверка');
++    if(matches.length){
++      if(String(matches[0][2])!==text)throw Error('Текст личной задачи отличается; требуется сверка');
++      return send_(id,'Эта задача уже записана: '+key+' — '+text);
++    }
++    appendOnce_(sheet,[key,'Личное',legacySheetLiteral_(text),'','Открыто','Обычный','',new Date()]);
++    return send_(id,'Добавила задачу '+key+': '+text);
++  });
+ }
+ function ownerDone_(id,raw) {
+   const key=raw.replace(/^\/done(?:\s+|$)/,'').trim();
+@@ -789,3 +888,37 @@
+     return {status:'api_confirmed',delivered:null};
+   });
+ }
++
++/** Read-only metadata probe for the installed legacy bot, NOT a poller or setup.
++ * Read only expected header cells. Never use tab_ (it can create/repair sheets).
++ * No user rows, tokens, file operations, writes, triggers or Telegram calls.
++ */
++function probeKulaginaLegacySheetsReadOnly() {
++  const report={format_version:1,mode:'read_only_sheet_headers',status:'not_configured',
++    access_verified:false,schemas_verified:false,sheets:{},writes:0,messages_sent:0,polling_started:false};
++  if(typeof CFG==='undefined'||typeof CFG.spreadsheetId!=='string'||!CFG.spreadsheetId)return report;
++  const expected={students:['Студенты',CFG.studentHeaders],tasks:['Поручения',CFG.taskHeaders],replies:['Ответы',CFG.replyHeaders],
++    incoming:['Входящие',['Дата и время','Имя','Telegram username','Telegram chat ID','Тип сообщения','Текст / подпись','Telegram message ID','Ссылка на файл']],
++    updates:['Очередь updates',['Ключ','Статус','Попытки','Payload JSON','Обновлено','Ошибка']],
++    snapshots:['Снимки операций',['Ключ','Payload JSON','Создано']],
++    notifications:['Уведомления ответов',['Ключ','Payload JSON','Статус','Telegram message ID','Обновлено','Ошибка']]};
++  if(Object.keys(expected).some(k=>!Array.isArray(expected[k][1])||!expected[k][1].length))return report;
++  let book;
++  try{book=SpreadsheetApp.openById(CFG.spreadsheetId);report.access_verified=true;}
++  catch(error){report.status='access_or_resource_unavailable';return report;}
++  for(const key of Object.keys(expected)){
++    const [name,headers]=expected[key];
++    try{
++      const sh=book.getSheetByName(name);
++      if(!sh){report.sheets[key]='missing';continue;}
++      const actual=sh.getRange(1,1,1,headers.length).getValues();
++      report.sheets[key]=Array.isArray(actual)&&actual.length===1&&Array.isArray(actual[0])&&actual[0].length===headers.length&&headers.every((v,i)=>String(actual[0][i])===v)?'compatible':'schema_mismatch';
++    }catch(error){report.sheets[key]='unavailable';}
++  }
++  report.schemas_verified=Object.keys(expected).every(k=>report.sheets[k]==='compatible');
++  report.status=report.schemas_verified?'verified':'review_required';
++  return report;
++}
++function showKulaginaLegacySheetHealth() {
++  console.log(JSON.stringify(probeKulaginaLegacySheetsReadOnly()));
++}

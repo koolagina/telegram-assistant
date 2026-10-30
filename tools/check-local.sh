@@ -24,6 +24,8 @@ node --test tests/legacy-reply-notification-review.cjs
 node --test tests/legacy-sheet-health.cjs
 node --test tests/legacy-owner-add.cjs
 node --test tests/legacy-access-commands.cjs
+node --test tests/acceptance/task-workflow.cjs
+node --test tests/workflow-candidate.cjs
 node --test tests/sheet-literal-probe.cjs
 node --test tests/nvsu-approved-import.cjs
 node --test tests/google-actions-bridge.cjs
@@ -33,3 +35,4 @@ node --test tests/google-actions-bridge.cjs
 "${KULAGINA_PYTHON:-python3}" tools/consultation_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/consultation_execution_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/consultation_workflow_demo.py
+node tools/task_workflow_demo.cjs
