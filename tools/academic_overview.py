@@ -48,6 +48,11 @@ def prepare_overview_reply(service,context,command):
         result=service.read(match[2],context,purpose=purpose,page=int(match[3] or '1'))
     except OverviewError:
         return PreparedReply('unavailable','Сводка недоступна. Проверьте подтверждение доступа.')
+    return render_overview(result,purpose=purpose,next_command='/'+match[1]+' '+match[2])
+
+
+def render_overview(result,*,purpose,next_command):
+    """Internal renderer for an already authorized detached overview; no access grant."""
     lines=['Учебная сводка','Локальная копия: актуальность облачного журнала не подтверждена.','','Журнал']
     labels={'attendance':'Посещаемость','score':'Баллы','homework':'Домашняя работа','total':'Записанный итог'}
     states={'not_recorded':'нет записи','formula_unverified':'формула — нужен пересчёт в журнале','source_error':'ошибка исходной ячейки'}
@@ -61,6 +66,6 @@ def prepare_overview_reply(service,context,command):
         lines.append(('/progress ' if purpose=='progress.self' else '/report ')+_text(item['report_id']))
     if not result['reviews']['items']:lines.append('На этой странице нет сохранённых проверок. Это не означает отсутствие задолженности.')
     if result['reviews']['next_page'] is not None:
-        lines.append('Далее: /'+match[1]+' '+match[2]+' page '+str(result['reviews']['next_page']))
+        lines.append('Далее: '+next_command+' page '+str(result['reviews']['next_page']))
     lines.extend(['','Баллы не начислены. Отработка автоматически не принята.'])
     return PreparedReply('prepared',_bounded('\n'.join(lines)))

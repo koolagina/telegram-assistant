@@ -10,6 +10,7 @@ from dataclasses import dataclass,field
 import re
 from assistant_access import Context,identifier
 from decision_requests import prepare_decision_reply,prepare_decision_callback
+from academic_menu import AcademicMenu
 from academic_overview import AcademicOverview,prepare_overview_reply
 from report_access import ReportReader
 from report_requests import PreparedReply,prepare_report_reply,prepare_progress_callback
@@ -41,11 +42,13 @@ def _private_message(message,subject):
     return type(chat) is dict and chat.get('type')=='private' and _id(chat.get('id')) and chat['id']==subject
 
 class TelegramReportAdapter:
-    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None,overview_factory=None):
+    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None,overview_factory=None,academic_menu_factory=None):
         if not _id(bot_id) or not callable(reader_factory) or not callable(fetch_verified_updates):
             raise TelegramAdapterError('Trusted polling adapters and bot identity required')
         if decision_service_factory is not None and not callable(decision_service_factory):raise TelegramAdapterError('Invalid trusted decision service')
         if overview_factory is not None and not callable(overview_factory):raise TelegramAdapterError('Invalid trusted overview factory')
+        if academic_menu_factory is not None and not callable(academic_menu_factory):raise TelegramAdapterError('Invalid trusted academic menu factory')
+        self._academic_menu=academic_menu_factory
         self._overview=overview_factory
         self._decisions=decision_service_factory
         self._reader=reader_factory;self._bot_id=bot_id;self._fetch=fetch_verified_updates
@@ -85,6 +88,10 @@ class TelegramReportAdapter:
             if type(text) is not str or re.match(r'^/(progress|report|decisions|overview|student)(?: |$)',text) is None:return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
             if text.startswith(('/overview','/student')):
+                if self._academic_menu is not None and re.fullmatch(r'/(overview|student)(?: page [^ ]+)?',text):
+                    menu=self._academic_menu()
+                    if type(menu) is not AcademicMenu:raise TelegramAdapterError('Trusted academic menu required')
+                    return TelegramPreparation(update['update_id'],sender,menu.prepare(context,text))
                 if self._overview is None:return None
                 service=self._overview()
                 if type(service) is not AcademicOverview:raise TelegramAdapterError('Trusted overview required')
@@ -101,8 +108,13 @@ class TelegramReportAdapter:
             if sender==self._bot_id or not _private_message(message,sender):return None
             if not _user(message.get('from'),bot=True) or message['from']['id']!=self._bot_id:return None
             data=query.get('data')
-            if type(data) is not str or not data.startswith(('progress:','dec:')):return None
+            if type(data) is not str or not data.startswith(('progress:','dec:','acad:')):return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
+            if data.startswith('acad:'):
+                if self._academic_menu is None:return None
+                menu=self._academic_menu()
+                if type(menu) is not AcademicMenu:raise TelegramAdapterError('Trusted academic menu required')
+                return TelegramPreparation(update['update_id'],sender,menu.callback(context,data),query['id'])
             if data.startswith('dec:'):
                 if self._decisions is None:return None
                 return TelegramPreparation(update['update_id'],sender,prepare_decision_callback(self._decisions(),context,data),query['id'])

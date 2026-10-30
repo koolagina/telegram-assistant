@@ -1,3 +1,5 @@
+Последний локальный блок: [меню дисциплин и студентов](docs/ACADEMIC_MENU_ACCEPTANCE.md) — 695 Python +448 Node PASS; не развёрнуто.
+
 Актуальный локальный блок: [единая учебная сводка](docs/ACADEMIC_OVERVIEW_ACCEPTANCE.md) — 673 Python +448 Node PASS, 10 offline демонстраций; не развёрнут.
 
 Последний локальный блок: [защищённое чтение прогресса из журнала](docs/ACADEMIC_PROGRESS_ACCEPTANCE.md). 649 Python +448 Node PASS; не подключён к рабочим ресурсам.

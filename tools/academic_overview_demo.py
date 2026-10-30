@@ -6,6 +6,7 @@ from assistant_access import AccessPolicy,Student,Binding,Enrollment,Context
 from gradebook_read import Workbook,Sheet,Cell
 from academic_progress import ProgressReader,JournalMap,JournalField
 from report_access import ReportReader,ReportLink
+from academic_menu import AcademicMenu,MenuEntry
 from academic_overview import AcademicOverview,OverviewError,prepare_overview_reply
 
 def main():
@@ -18,12 +19,16 @@ def main():
     service=AcademicOverview(journal,reviews);context=Context('telegram','103',authenticated=True,private=True)
     result=service.read('synthetic-enrollment',context,purpose='progress.self')
     reply=prepare_overview_reply(service,context,'/overview synthetic-enrollment')
+    menu=AcademicMenu([MenuEntry('synthetic-enrollment','Учебная дисциплина','Искусственный студент · Дисциплина')],journal=journal,overview=service,policy_provider=lambda:policy,clock=lambda:now)
+    selection=menu.prepare(context,'/overview')
+    opened=menu.callback(context,selection.buttons[0][0].callback_data)
+    assert opened.status=='prepared'
     policy=AccessPolicy()
     denied=False
     try:service.read('synthetic-enrollment',context,purpose='progress.self')
     except OverviewError:denied=True
     assert reply.status=='prepared' and denied
-    output={'mode':'synthetic_offline','journal_entries':len(result['journal']['entries']),'reviews':len(result['reviews']['items']),'formula_cache_withheld':result['journal']['entries'][1]['state']=='formula_unverified','revocation_blocks_view':denied,'credit_written':False,'live_verified':False,'real_messages_sent':0,'real_journal_writes':0}
+    output={'mode':'synthetic_offline','journal_entries':len(result['journal']['entries']),'reviews':len(result['reviews']['items']),'formula_cache_withheld':result['journal']['entries'][1]['state']=='formula_unverified','revocation_blocks_view':denied,'menu_selection_prepared':opened.status=='prepared','menu_revocation_blocks_click':menu.callback(context,selection.buttons[0][0].callback_data).status=='unavailable','credit_written':False,'live_verified':False,'real_messages_sent':0,'real_journal_writes':0}
     print(json.dumps(output,ensure_ascii=False,indent=2))
 
 if __name__=='__main__':main()
