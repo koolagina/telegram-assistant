@@ -1,3 +1,5 @@
+Актуальная локальная проверка: [готовность runtime](ACADEMIC_READINESS_ACCEPTANCE.md) и [условия подключения](ACADEMIC_CONNECTION_CHECKLIST.md). 731 Python +448 Node PASS; live не подтверждено.
+
 Последний локальный блок: [академические ответы через очередь](ACADEMIC_DISPATCH_ACCEPTANCE.md) — 713 Python +448 Node PASS; не развёрнуто.
 
 Последний локальный блок: [меню дисциплин и студентов](ACADEMIC_MENU_ACCEPTANCE.md) — 695 Python +448 Node PASS; не развёрнуто.

@@ -3,6 +3,7 @@ import datetime as dt
 import json
 import tempfile
 from pathlib import Path
+from academic_readiness import inspect_academic_runtime
 from report_worker import ReportWorker
 from report_dispatch import DispatchLedger
 from telegram_inbox import TelegramInbox
@@ -14,7 +15,7 @@ from report_access import ReportReader,ReportLink
 from academic_menu import AcademicMenu,MenuEntry
 from academic_overview import AcademicOverview,OverviewError,prepare_overview_reply
 
-def synthetic_dispatch(*,reviews,service,menu,revoke):
+def synthetic_dispatch(*,reviews,service,menu,revoke,policy_snapshot):
     """Temporary actual SQLite stores; send is an in-memory fake only."""
     with tempfile.TemporaryDirectory() as directory:
         root=Path(directory);calls=[]
@@ -26,13 +27,19 @@ def synthetic_dispatch(*,reviews,service,menu,revoke):
             worker=ReportWorker(inbox,ledger,reader_factory=lambda:reviews,send=send,overview_factory=lambda:service,academic_menu_factory=lambda:menu)
             def store(number,text):
                 inbox.store_batch({'ok':True,'result':[{'update_id':number,'message':{'message_id':number,'date':1793160000,'from':{'id':103,'is_bot':False},'chat':{'id':103,'type':'private'},'text':text}}]},expected_offset=inbox.offset())
+            readiness=inspect_academic_runtime(worker,policy=policy_snapshot(),journal=service._journal,overview=service,menu=menu)
+            assert readiness['local_status']=='consistent' and readiness['ready_for_live'] is False
             store(1,'/overview');first=worker.step(dispatch_enabled=True)
             assert first[0]['status']=='api_confirmed' and worker.step(dispatch_enabled=True)==()
             store(2,'/overview synthetic-enrollment');second=worker.step(dispatch_enabled=True)
             assert second[0]['status']=='api_confirmed'
             revoke();store(3,'/overview');last=worker.step(dispatch_enabled=True)
             assert last[0]['status']=='cancelled' and len(calls)==2
-            return {'mock_api_confirmed':2,'replay_sends':0,'revoked_request_cancelled':True,'delivery_verified':False,'real_messages_sent':0}
+            after=inspect_academic_runtime(worker,policy=policy_snapshot(),journal=service._journal,overview=service,menu=menu)
+            assert after['local_status']=='blocked' and 'confirmed_bindings_missing' in after['blockers']
+            return {'mock_api_confirmed':2,'replay_sends':0,'revoked_request_cancelled':True,
+                    'readiness_before':'consistent','readiness_after_revocation':'blocked','ready_for_live':False,
+                    'delivery_verified':False,'real_messages_sent':0}
 
 def main():
     now=dt.datetime(2026,10,30,10,tzinfo=dt.timezone(dt.timedelta(hours=5)))
@@ -51,7 +58,7 @@ def main():
     def revoke():
         nonlocal policy
         policy=AccessPolicy()
-    dispatch=synthetic_dispatch(reviews=reviews,service=service,menu=menu,revoke=revoke)
+    dispatch=synthetic_dispatch(reviews=reviews,service=service,menu=menu,revoke=revoke,policy_snapshot=lambda:policy)
     denied=False
     try:service.read('synthetic-enrollment',context,purpose='progress.self')
     except OverviewError:denied=True

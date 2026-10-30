@@ -1,4 +1,9 @@
 
+# 30.10.2026 — локальная диагностика runtime и единый checklist подключения
+
+Добавлен academic_readiness.inspect_academic_runtime: SELECT-only metadata/schema/namespace/связи readers/mapping/report registry, агрегаты очереди и квитанций, фиксированные blockers/unverified. Не читает payload/журнал/имена, не вызывает фабрики/loader/send, не repair/retry. ready_for_live/live_verified=false всегда. 18 новых тестов, полный набор 731 Python +448 Node PASS, 10 offline демонстраций. Реальные ресурсы не затронуты. Reports: docs/ACADEMIC_READINESS_ACCEPTANCE.md и docs/ACADEMIC_CONNECTION_CHECKLIST.md. Callable/configuration и local consistent не доказывают реальную авторизацию/свежесть/одного poll owner; даже агрегаты только для доверенного контекста. Пользователь вне компьютера, ручных действий не требовать.
+
+
 # 30.10.2026 — меню/сводки подключены к локальному durable worker
 
 ReportWorker теперь принимает optional overview_factory/academic_menu_factory и передаёт их существующему TelegramReportAdapter. До send ответ заново готовится через existing DispatchLedger, старый routing text не используется; отмена при revoke/stale, unknown без retry, receipt recovery без resend. Схемы inbox/ledger не менялись, default-off сохранён. 18 новых actual SQLite + mock sender тестов; полный набор 713 Python +448 Node PASS, 10 offline демонстраций. Нет реальных отправок/данных/rollout. Factories/loaders local-only, не помещать network I/O в claim transaction. API confirmation не delivery; callback acknowledgement, runtime, единый poll owner, identity/mapping/provenance и unknown review остаются нужны. Отчёт docs/ACADEMIC_DISPATCH_ACCEPTANCE.md. Пользователь вне компьютера, действий не нужно.
