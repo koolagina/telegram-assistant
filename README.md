@@ -1,3 +1,5 @@
+Последний локальный блок: [обновление материалов и история проверок](docs/MATERIAL_UPDATE_ACCEPTANCE.md) — 747 Python +448 Node PASS, 11 offline демонстраций; не развёрнуто.
+
 Актуальная локальная проверка: [готовность runtime](docs/ACADEMIC_READINESS_ACCEPTANCE.md) и [условия подключения](docs/ACADEMIC_CONNECTION_CHECKLIST.md). 731 Python +448 Node PASS; live не подтверждено.
 
 Последний локальный блок: [академические ответы через очередь](docs/ACADEMIC_DISPATCH_ACCEPTANCE.md) — 713 Python +448 Node PASS; не развёрнуто.

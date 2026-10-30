@@ -71,7 +71,7 @@ class SyntheticAssistantSession:
         return link.id
     def reader(self):
         # Fresh durable ownership snapshot for each new request/click.
-        return ReportReader(self.registry.snapshot(),policy_provider=lambda:self.policy,load_result=self.catalog.result,clock=lambda:NOW)
+        return ReportReader(self.registry.snapshot(),policy_provider=lambda:self.policy,load_result=self.catalog.result,clock=lambda:NOW,criteria_provider=self.catalog.criteria_snapshot)
     def request(self,subject,command):
         return prepare_report_reply(self.reader(),Context('telegram',{'student-a':'103','student-b':'104','owner':'101'}.get(subject,subject),authenticated=True,private=True),command)
     def callback(self,subject,data):

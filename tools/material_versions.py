@@ -53,6 +53,16 @@ class CheckPlan:
         return rules['number'] if rules['kind'] == 'lecture_makeup' else None
 
 
+@dataclass(frozen=True)
+class CriteriaSnapshot:
+    """Local catalog comparison only, never proof of current remote bytes."""
+    check_id: str = field(repr=False)
+    assignment_id: str
+    checked_version: str = field(repr=False)
+    catalog_version: str = field(repr=False)
+    assignment_present: bool
+
+
 class MaterialCatalog:
     def __init__(self, path, *, namespace):
         if not identifier(namespace):
@@ -169,6 +179,21 @@ class MaterialCatalog:
         if row is None:
             raise MaterialError('Unknown check')
         return dict(status=row['status'], result=json.loads(row['result']) if row['result'] else None, version=row['version'])
+
+    def criteria_snapshot(self, check_id):
+        """SELECT-only immutable check vs latest locally published source head.
+
+        Does not refresh sources, alter history or certify remote freshness.
+        Single joined query avoids mixing heads from separate SELECT snapshots.
+        """
+        try:
+            if not identifier(check_id):raise ValueError()
+            row=self.db.execute('SELECT c.id,c.assignment_id,c.version,h.version AS current_version,v.rubrics AS current_rules,p.rubrics AS checked_rules FROM checks c JOIN heads h ON h.material_id=c.material_id JOIN versions v ON v.material_id=h.material_id AND v.version=h.version JOIN versions p ON p.material_id=c.material_id AND p.version=c.version WHERE c.id=?',(check_id,)).fetchone()
+            if row is None or not all(identifier(row[k]) for k in ('id','assignment_id','version','current_version')):raise ValueError()
+            checked=json.loads(row['checked_rules']);current=json.loads(row['current_rules'])
+            if type(checked) is not dict or type(current) is not dict or row['assignment_id'] not in checked:raise ValueError()
+            return CriteriaSnapshot(row['id'],row['assignment_id'],row['version'],row['current_version'],row['assignment_id'] in current)
+        except Exception:raise MaterialError('Local criteria state unavailable') from None
 
     def finish(self, check_id, result, *, fetch_current):
         if type(result) is not dict or not result:

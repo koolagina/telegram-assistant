@@ -8,7 +8,7 @@ Telegram/ChatGPT/email endpoint or sending here.
 from dataclasses import dataclass
 import json
 import re
-from material_versions import digest
+from material_versions import digest, CriteriaSnapshot
 from types import MappingProxyType
 from assistant_access import AccessPolicy, Context, identifier, live, aware
 
@@ -30,7 +30,7 @@ def _pick(value,keys):
 
 
 class ReportReader:
-    def __init__(self, links, *, policy_provider, load_result, clock):
+    def __init__(self, links, *, policy_provider, load_result, clock, criteria_provider=None):
         records={}
         for link in links:
             if (type(link) is not ReportLink or any(not identifier(value) for value in vars(link).values())
@@ -39,6 +39,8 @@ class ReportReader:
             records[link.id]=link
         if not all(callable(value) for value in (policy_provider,load_result,clock)):
             raise ReportAccessError('Trusted runtime adapters required')
+        if criteria_provider is not None and not callable(criteria_provider):raise ReportAccessError('Trusted local criteria provider required')
+        self._criteria=criteria_provider
         self._links=MappingProxyType(records)
         self._policy=policy_provider;self._load=load_result;self._clock=clock
 
@@ -75,11 +77,27 @@ class ReportReader:
                     or not identifier(row.get('version')) or report.get('status')!='needs_teacher_review'
                     or report.get('credit_written') is not False or type(report.get('requirements')) is not list):
                 raise ReportAccessError('Report unavailable')
+            criteria_state='not_checked'
+            if self._criteria is not None:
+                try:snapshot=self._criteria(link.check_id)
+                except Exception:snapshot=None;criteria_state='unavailable'
+                if snapshot is not None:
+                    if (type(snapshot) is not CriteriaSnapshot or snapshot.check_id!=link.check_id
+                            or snapshot.assignment_id!=report.get('assignment_id')
+                            or snapshot.checked_version!=row['version'] or not identifier(snapshot.catalog_version)
+                            or type(snapshot.assignment_present) is not bool):
+                        raise ReportAccessError('Report unavailable')
+                    criteria_state=('assignment_removed' if not snapshot.assignment_present else
+                                    ('catalog_matches' if snapshot.checked_version==snapshot.catalog_version else 'catalog_changed'))
+                elif criteria_state!='unavailable':
+                    raise ReportAccessError('Report unavailable')
             # Recheck current binding/grants after storage access, including role downgrade.
             mode=self._mode(link,context)
             if required_mode is not None and mode!=required_mode:
                 raise ReportAccessError('Report unavailable')
             result=_pick(report,('assignment_id','status','credit_written'))
+            result['criteria_state']=criteria_state
+            result['criteria_live_verified']=False
             result['requirements']=[]
             for item in report['requirements']:
                 if (type(item) is not dict or not isinstance(item.get('requirement'),str)

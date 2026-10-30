@@ -38,6 +38,18 @@ def _bounded(text):
     return text
 
 
+def criteria_notice(report):
+    """No catalog state is proof that the cloud source is current."""
+    labels={
+        'not_checked':'Актуальность критериев не проверена.',
+        'unavailable':'Сведения об актуальности критериев недоступны.',
+        'catalog_matches':'Критерии совпадают с последней загруженной версией; свежесть источника не подтверждена.',
+        'catalog_changed':'Материалы обновлены после этой проверки. Результат сохранён по прежним критериям; нужна сверка преподавателя.',
+        'assignment_removed':'Задания нет в последней загруженной версии. Старый результат сохранён; нужна сверка преподавателя.',
+    }
+    return labels.get(report.get('criteria_state'),'Актуальность критериев не проверена.')
+
+
 def prepare_report_reply(reader,context,command):
     if (type(command) is not str or len(command)>300
             or any(c in command for c in ('\r','\n'))):
@@ -55,6 +67,7 @@ def prepare_report_reply(reader,context,command):
             if item['available']:
                 assignment=_text(item['report'].get('assignment_id','Работа'))[:80]
                 lines.append(assignment+' — нужна проверка преподавателя')
+                lines.append(criteria_notice(item['report']))
             else:
                 lines.append('Результат пока недоступен')
             lines.append('/progress '+_text(item['report_id']))
@@ -75,7 +88,7 @@ def prepare_report_reply(reader,context,command):
         report=reader.read(match.group(2),context,purpose=purpose)
     except ReportAccessError:
         return PreparedReply('unavailable','Отчёт недоступен. Проверьте ссылку и подтверждение доступа.')
-    lines=['Результат предварительной проверки','Нужна проверка преподавателя.','']
+    lines=['Результат предварительной проверки','Нужна проверка преподавателя.',criteria_notice(report),'']
     labels={'met':'выполнено по проверенному признаку','not_met':'не выполнено по проверенному признаку','needs_review':'нужна проверка'}
     for number,item in enumerate(report['requirements'],1):
         lines.append(f"{number}. {_text(item['requirement'])}: {labels[item['status']]}")

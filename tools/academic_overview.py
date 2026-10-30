@@ -7,7 +7,7 @@ All-or-unavailable: do not reveal half a view on failed authorization/source.
 import re
 from academic_progress import ProgressReader
 from report_access import ReportReader
-from report_requests import PreparedReply, _text, _bounded
+from report_requests import PreparedReply, _text, _bounded, criteria_notice
 
 class OverviewError(ValueError):
     pass
@@ -63,6 +63,7 @@ def render_overview(result,*,purpose,next_command):
     for item in result['reviews']['items']:
         report=item['report']
         lines.append(_text(report.get('assignment_id','Работа'))+' — нужна проверка преподавателя')
+        lines.append(criteria_notice(report))
         lines.append(('/progress ' if purpose=='progress.self' else '/report ')+_text(item['report_id']))
     if not result['reviews']['items']:lines.append('На этой странице нет сохранённых проверок. Это не означает отсутствие задолженности.')
     if result['reviews']['next_page'] is not None:
