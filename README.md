@@ -1,3 +1,5 @@
+Актуальный локальный блок: [единая учебная сводка](docs/ACADEMIC_OVERVIEW_ACCEPTANCE.md) — 673 Python +448 Node PASS, 10 offline демонстраций; не развёрнут.
+
 Последний локальный блок: [защищённое чтение прогресса из журнала](docs/ACADEMIC_PROGRESS_ACCEPTANCE.md). 649 Python +448 Node PASS; не подключён к рабочим ресурсам.
 
 # Kulagina Telegram Assistant

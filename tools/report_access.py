@@ -102,6 +102,32 @@ class ReportReader:
             raise ReportAccessError('Report unavailable') from None
 
 
+    def list_enrollment(self,enrollment_id,context,*,purpose,expected_identity,page=1):
+        """Internal paginated join with a separately authorized journal identity.
+
+        expected_identity is provided by trusted composition code, not a user.
+        No matching reports means no stored reviews, never no academic debt.
+        """
+        try:
+            if (not identifier(enrollment_id) or type(page) is not int or not 1<=page<=1000000
+                    or purpose not in ('progress.self','student.report')
+                    or type(expected_identity) is not tuple or len(expected_identity)!=3):
+                raise ReportAccessError('Report unavailable')
+            required='student' if purpose=='progress.self' else 'teacher'
+            links=sorted((l for l in self._links.values() if l.enrollment_id==enrollment_id),key=lambda l:l.id)
+            # Validate the entire enrollment join before loading any private result.
+            for link in links:
+                if (link.student_id,link.discipline_id,link.group_id)!=expected_identity or self._mode(link,context)!=required:
+                    raise ReportAccessError('Report unavailable')
+            offset=(page-1)*5;selected=links[offset:offset+5];items=[]
+            for link in selected:
+                report=self.read(link.id,context,purpose=purpose)
+                items.append({'report_id':link.id,'report':report})
+            for link in selected:
+                if self._mode(link,context)!=required:raise ReportAccessError('Report unavailable')
+            return {'page':page,'items':items,'next_page':page+1 if offset+5<len(links) else None}
+        except Exception:raise ReportAccessError('Report unavailable') from None
+
     def _self_student(self,context):
         policy=self._policy();now=self._clock()
         if type(policy) is not AccessPolicy or type(context) is not Context or not aware(now):

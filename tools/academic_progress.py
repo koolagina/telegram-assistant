@@ -62,6 +62,13 @@ class ProgressReader:
         else:allowed=False
         if not allowed:raise ValueError()
 
+    def authorize_enrollment(self,enrollment_id,context,*,purpose):
+        """Recheck a mapped identity without loading workbook data; not a token."""
+        try:
+            m=self._maps[enrollment_id];self._authorize(m,context,purpose)
+            return (m.student_id,m.discipline_id,m.group_id)
+        except Exception:raise ProgressError('Progress unavailable') from None
+
     def read(self,enrollment_id,context,*,purpose):
         """Explicit enrollment ID is checked before loading any journal payload.
 
