@@ -1,3 +1,8 @@
+
+# 30.10.2026 — локальный journal-view и права доступа
+
+Добавлен tools/academic_progress.py: ProgressReader соединяет существующий XLSX reader с академической policy; только явно подтверждённый mapping enrollment/строка/ячейки/SHA файла, проверка прав до/после загрузки. Студент — свои данные; преподаватель — по grant; ChatGPT — scope; email — чтение без отправки. Формулы не пересчитываются и кеш не выдаётся оценкой, пустое не становится нулём/пропуском. 20 новых offline тестов, включая настоящий parser на искусственном XLSX. Полный tools/check-local.sh: 649 Python +448 Node PASS, 9 offline демонстраций. Реальных чтений/записей/сообщений/rollout нет. Telegram /progress не подключён к journal-view. Mapping и provenance файла должны быть доверенными, объекты Context не являются аутентификацией. Отчёт: docs/ACADEMIC_PROGRESS_ACCEPTANCE.md. Пользователь вне компьютера, действий сейчас не нужно.
+
 # 30.10.2026 — большой блок расписания и консультаций завершён локально
 
 По просьбе владельца продолжена работа без его участия у компьютера. Существующие nvsu parser/planner/apply модель соединены с TeachingCoverageFeed → BusyFeed → slot preview → фактическими функциями Apps Script-кандидата 2.0.5 в offline межъязыковом стенде. Добавлен read-only tools/teaching_coverage.py; отдельный обратимый consultation-teaching-guard.cjs запрещает предлагать/бронировать слоты по одному ID календаря/глобальному флагу без свежего внутреннего proof. Пустой Calendar не считается отсутствием занятий; parsed-empty не заменяет явное «Расписание отсутствует». Наличие protected manual exact lesson учитывается без права его менять.
