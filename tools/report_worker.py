@@ -1,6 +1,9 @@
 """Bounded read-only report/optional owner-decision inbox step. No scheduler or live bootstrap.
 
-Default dispatch is disabled. Caller must supply approved trusted runtime
+Default dispatch and academic routes are disabled. All reader/factory callbacks
+run local-only, without network I/O; dispatch preparation runs under the ledger
+claim transaction. Preload approved remote sources outside that transaction.
+Caller must supply approved trusted runtime
 adapters; a flag is not permission to send. Unsupported updates stay pending for
 other bot handlers, so this is not a standalone replacement for the whole bot.
 """
@@ -14,12 +17,14 @@ class WorkerError(ValueError):
 FINAL=frozenset({'api_confirmed','api_rejected','cancelled','unknown'})
 
 class ReportWorker:
-    def __init__(self,inbox,ledger,*,reader_factory,send,decision_service_factory=None):
+    def __init__(self,inbox,ledger,*,reader_factory,send,decision_service_factory=None,overview_factory=None,academic_menu_factory=None):
         if (type(inbox) is not TelegramInbox or type(ledger) is not DispatchLedger
                 or inbox.bot_id!=ledger.bot_id or inbox.namespace!=ledger.namespace
                 or not callable(reader_factory) or not callable(send)):
             raise WorkerError('Matching trusted inbox/dispatch/runtime required')
         if decision_service_factory is not None and not callable(decision_service_factory):raise WorkerError('Invalid decision service factory')
+        if any(factory is not None and not callable(factory) for factory in (overview_factory,academic_menu_factory)):raise WorkerError('Invalid academic runtime factory')
+        self._overview=overview_factory;self._academic_menu=academic_menu_factory
         self._decisions=decision_service_factory
         self.inbox=inbox;self.ledger=ledger;self._reader=reader_factory;self._send=send
 
@@ -34,6 +39,7 @@ class ReportWorker:
                 outcome=self.ledger.result(update_id)
                 if outcome['status']=='not_attempted':
                     adapter=TelegramReportAdapter(reader_factory=self._reader,bot_id=self.inbox.bot_id,decision_service_factory=self._decisions,
+                        overview_factory=self._overview,academic_menu_factory=self._academic_menu,
                         fetch_verified_updates=lambda update=row['update']:{'ok':True,'result':[update]})
                     # Route only. Do not reuse this potentially stale reply for sending.
                     if not adapter.prepare_batch():

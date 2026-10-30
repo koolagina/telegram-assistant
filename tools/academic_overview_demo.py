@@ -1,6 +1,11 @@
 """Aggregate-only synthetic demonstration; no real file, network or identities."""
 import datetime as dt
 import json
+import tempfile
+from pathlib import Path
+from report_worker import ReportWorker
+from report_dispatch import DispatchLedger
+from telegram_inbox import TelegramInbox
 from decimal import Decimal
 from assistant_access import AccessPolicy,Student,Binding,Enrollment,Context
 from gradebook_read import Workbook,Sheet,Cell
@@ -8,6 +13,26 @@ from academic_progress import ProgressReader,JournalMap,JournalField
 from report_access import ReportReader,ReportLink
 from academic_menu import AcademicMenu,MenuEntry
 from academic_overview import AcademicOverview,OverviewError,prepare_overview_reply
+
+def synthetic_dispatch(*,reviews,service,menu,revoke):
+    """Temporary actual SQLite stores; send is an in-memory fake only."""
+    with tempfile.TemporaryDirectory() as directory:
+        root=Path(directory);calls=[]
+        with TelegramInbox(root/'inbox.db',namespace='synthetic-academic',bot_id=9001) as inbox, DispatchLedger(root/'dispatch.db',namespace='synthetic-academic',bot_id=9001) as ledger:
+            def send(method,payload):
+                assert not ledger.db.in_transaction and not inbox.db.in_transaction
+                calls.append(method)
+                return {'ok':True,'result':{'message_id':len(calls),'chat':{'id':103,'type':'private'},'from':{'id':9001,'is_bot':True}}}
+            worker=ReportWorker(inbox,ledger,reader_factory=lambda:reviews,send=send,overview_factory=lambda:service,academic_menu_factory=lambda:menu)
+            def store(number,text):
+                inbox.store_batch({'ok':True,'result':[{'update_id':number,'message':{'message_id':number,'date':1793160000,'from':{'id':103,'is_bot':False},'chat':{'id':103,'type':'private'},'text':text}}]},expected_offset=inbox.offset())
+            store(1,'/overview');first=worker.step(dispatch_enabled=True)
+            assert first[0]['status']=='api_confirmed' and worker.step(dispatch_enabled=True)==()
+            store(2,'/overview synthetic-enrollment');second=worker.step(dispatch_enabled=True)
+            assert second[0]['status']=='api_confirmed'
+            revoke();store(3,'/overview');last=worker.step(dispatch_enabled=True)
+            assert last[0]['status']=='cancelled' and len(calls)==2
+            return {'mock_api_confirmed':2,'replay_sends':0,'revoked_request_cancelled':True,'delivery_verified':False,'real_messages_sent':0}
 
 def main():
     now=dt.datetime(2026,10,30,10,tzinfo=dt.timezone(dt.timedelta(hours=5)))
@@ -23,12 +48,15 @@ def main():
     selection=menu.prepare(context,'/overview')
     opened=menu.callback(context,selection.buttons[0][0].callback_data)
     assert opened.status=='prepared'
-    policy=AccessPolicy()
+    def revoke():
+        nonlocal policy
+        policy=AccessPolicy()
+    dispatch=synthetic_dispatch(reviews=reviews,service=service,menu=menu,revoke=revoke)
     denied=False
     try:service.read('synthetic-enrollment',context,purpose='progress.self')
     except OverviewError:denied=True
     assert reply.status=='prepared' and denied
-    output={'mode':'synthetic_offline','journal_entries':len(result['journal']['entries']),'reviews':len(result['reviews']['items']),'formula_cache_withheld':result['journal']['entries'][1]['state']=='formula_unverified','revocation_blocks_view':denied,'menu_selection_prepared':opened.status=='prepared','menu_revocation_blocks_click':menu.callback(context,selection.buttons[0][0].callback_data).status=='unavailable','credit_written':False,'live_verified':False,'real_messages_sent':0,'real_journal_writes':0}
+    output={'mode':'synthetic_offline','dispatch':dispatch,'journal_entries':len(result['journal']['entries']),'reviews':len(result['reviews']['items']),'formula_cache_withheld':result['journal']['entries'][1]['state']=='formula_unverified','revocation_blocks_view':denied,'menu_selection_prepared':opened.status=='prepared','menu_revocation_blocks_click':menu.callback(context,selection.buttons[0][0].callback_data).status=='unavailable','credit_written':False,'live_verified':False,'real_messages_sent':0,'real_journal_writes':0}
     print(json.dumps(output,ensure_ascii=False,indent=2))
 
 if __name__=='__main__':main()

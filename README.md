@@ -1,3 +1,5 @@
+Последний локальный блок: [академические ответы через очередь](docs/ACADEMIC_DISPATCH_ACCEPTANCE.md) — 713 Python +448 Node PASS; не развёрнуто.
+
 Последний локальный блок: [меню дисциплин и студентов](docs/ACADEMIC_MENU_ACCEPTANCE.md) — 695 Python +448 Node PASS; не развёрнуто.
 
 Актуальный локальный блок: [единая учебная сводка](docs/ACADEMIC_OVERVIEW_ACCEPTANCE.md) — 673 Python +448 Node PASS, 10 offline демонстраций; не развёрнут.
