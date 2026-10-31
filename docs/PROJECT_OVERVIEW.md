@@ -1,3 +1,5 @@
+Последний локальный блок: [восстановление очередей и сверка квитанций](RECOVERY_REVIEW_ACCEPTANCE.md) — 797 Python +448 Node PASS; не развёрнуто.
+
 Последний локальный блок: [подтверждение кнопок Telegram](CALLBACK_ACK_ACCEPTANCE.md) — 773 Python +448 Node PASS; не включено в рабочем боте.
 
 Последний локальный блок: [обновление материалов и история проверок](MATERIAL_UPDATE_ACCEPTANCE.md) — 747 Python +448 Node PASS, 11 offline демонстраций; не развёрнуто.

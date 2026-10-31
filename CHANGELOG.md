@@ -1,4 +1,9 @@
 
+# Следующий локальный блок — сверка восстановления и повреждённые квитанции
+
+Воспроизведён дефект: api_confirmed без message ID закрывал pending inbox, rejected без error code принимался в business/ACK. DispatchLedger.result и CallbackAckLedger.result теперь строго проверяют metadata; invalid остаётся needs_recovery без send/mark. Добавлен SELECT-only recovery_review по отдельным metadata cases, без raw IDs/payload/repair/retry; snapshot hash advisory, ready_for_apply=false. 24 новых теста, полный набор 797 Python +448 Node PASS, 12 offline демонстраций; actual SQLite mark-only recovery без resend. Реальные ресурсы/rollout не затронуты. Отчёт docs/RECOVERY_REVIEW_ACCEPTANCE.md. Пользователь вне компьютера, действий не требуется.
+
+
 # 30.10.2026 — локальное техническое подтверждение Telegram callbacks
 
 Добавлены CallbackAckLedger (отдельный private SQLite, durable claim/query hash, unknown без retry), TelegramHTTP.acknowledge (fixed answerCallbackQuery, exact no-text payload, default-off) и optional paired worker callback_ledger/acknowledge. ACK после verified routing до send; после него fresh policy всё равно проверяется. Recovery не повторяет business message; diagnostics считает ACK отдельно. 26 новых тестов; полный набор 773 Python +448 Node PASS, 11 offline демонстраций. Реальных API/данных/rollout нет. ACK API confirmation не delivery/UI proof/доступ; namespace, backup/retention и bounded live-приёмка остаются нужны. Отчёт docs/CALLBACK_ACK_ACCEPTANCE.md. Пользователь вне компьютера, действий не нужно.

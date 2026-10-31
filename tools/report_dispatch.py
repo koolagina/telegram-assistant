@@ -82,6 +82,16 @@ class DispatchLedger:
         if not _id(update_id,zero=True):raise DispatchError('Invalid update identity')
         row=self.db.execute('SELECT phase,message_id,error_code FROM dispatch_attempts WHERE update_id=?',(update_id,)).fetchone()
         if row is None:return {'status':'not_attempted','delivered':None}
+        phase,message_id,error_code=row
+        if phase not in ('sending','api_confirmed','api_rejected','cancelled','unknown'):
+            raise DispatchError('Invalid dispatch receipt; review required')
+        if phase=='api_confirmed':
+            valid=_id(message_id) and error_code is None
+        elif phase=='api_rejected':
+            valid=message_id is None and type(error_code) is int and 100<=error_code<=599
+        else:
+            valid=message_id is None and error_code is None
+        if not valid:raise DispatchError('Invalid dispatch receipt; review required')
         status='inflight_or_unknown' if row[0]=='sending' else row[0]
         return {'status':status,'api_message_id':row[1],'api_error_code':row[2],'delivered':None}
     def _finalize(self,update_id,attempt,phase,message_id,error_code):

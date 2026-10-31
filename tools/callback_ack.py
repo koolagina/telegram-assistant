@@ -48,9 +48,13 @@ class CallbackAckLedger:
         try:yield;self.db.execute('COMMIT')
         except BaseException:self.db.execute('ROLLBACK');raise
     def result(self,update_id):
+        if type(update_id) is not int or not 0<=update_id<2**52:raise CallbackAckError('Invalid callback identity')
         row=self.db.execute('SELECT phase,error_code FROM callback_attempts WHERE update_id=?',(update_id,)).fetchone()
         if row is None:return {'status':'not_attempted'}
         if row[0] not in ('sending','api_confirmed','api_rejected','unknown'):raise CallbackAckError('Invalid callback receipt')
+        if row[0]=='api_rejected':
+            if type(row[1]) is not int or not 100<=row[1]<=599:raise CallbackAckError('Invalid callback receipt')
+        elif row[1] is not None:raise CallbackAckError('Invalid callback receipt')
         return {'status':'inflight_or_unknown' if row[0]=='sending' else row[0],'api_error_code':row[1]}
     def attempt(self,update_id,query_id,*,acknowledge,enabled=False):
         if enabled is not True:raise CallbackAckError('Callback acknowledgement disabled')
