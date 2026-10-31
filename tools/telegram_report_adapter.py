@@ -10,6 +10,7 @@ from dataclasses import dataclass,field
 import re
 from assistant_access import Context,identifier
 from decision_requests import prepare_decision_reply,prepare_decision_callback
+from lecture_menu import LectureMenu
 from lecture_requests import prepare_lecture_reply
 from lecture_windows import LectureWindows
 from academic_menu import AcademicMenu
@@ -58,13 +59,15 @@ def verified_callback_query_id(update,bot_id):
     return query['id']
 
 class TelegramReportAdapter:
-    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None,overview_factory=None,academic_menu_factory=None,lecture_service_factory=None):
+    def __init__(self,*,reader_factory,bot_id,fetch_verified_updates,decision_service_factory=None,overview_factory=None,academic_menu_factory=None,lecture_service_factory=None,lecture_menu_factory=None):
         if not _id(bot_id) or not callable(reader_factory) or not callable(fetch_verified_updates):
             raise TelegramAdapterError('Trusted polling adapters and bot identity required')
         if decision_service_factory is not None and not callable(decision_service_factory):raise TelegramAdapterError('Invalid trusted decision service')
         if overview_factory is not None and not callable(overview_factory):raise TelegramAdapterError('Invalid trusted overview factory')
         if academic_menu_factory is not None and not callable(academic_menu_factory):raise TelegramAdapterError('Invalid trusted academic menu factory')
         if lecture_service_factory is not None and not callable(lecture_service_factory):raise TelegramAdapterError('Invalid trusted lecture service factory')
+        if lecture_menu_factory is not None and not callable(lecture_menu_factory):raise TelegramAdapterError('Invalid trusted lecture menu factory')
+        self._lecture_menu=lecture_menu_factory
         self._lecture=lecture_service_factory
         self._academic_menu=academic_menu_factory
         self._overview=overview_factory
@@ -103,8 +106,13 @@ class TelegramReportAdapter:
             sender=message['from']['id']
             if sender==self._bot_id or not _private_message(message,sender):return None
             text=message.get('text')
-            if type(text) is not str or re.match(r'^/(progress|report|decisions|overview|student|lecturecode|attend)(?: |$)',text) is None:return None
+            if type(text) is not str or re.match(r'^/(progress|report|decisions|overview|student|lecturecode|attend|lectures)(?: |$)',text) is None:return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
+            if text.startswith('/lectures'):
+                if self._lecture_menu is None:return None
+                menu=self._lecture_menu()
+                if type(menu) is not LectureMenu:raise TelegramAdapterError('Trusted lecture menu required')
+                return TelegramPreparation(update['update_id'],sender,menu.prepare(context,text))
             if text.startswith(('/lecturecode','/attend')):
                 if self._lecture is None:return None
                 service=self._lecture()
@@ -132,8 +140,14 @@ class TelegramReportAdapter:
             if sender==self._bot_id or not _private_message(message,sender):return None
             if not _user(message.get('from'),bot=True) or message['from']['id']!=self._bot_id:return None
             data=query.get('data')
-            if type(data) is not str or not data.startswith(('progress:','dec:','acad:')):return None
+            if type(data) is not str or not data.startswith(('progress:','dec:','acad:','lect:')):return None
             context=Context('telegram',str(sender),authenticated=True,private=True,sender=str(sender))
+            if data.startswith('lect:'):
+                if self._lecture_menu is None:return None
+                menu=self._lecture_menu()
+                if type(menu) is not LectureMenu:raise TelegramAdapterError('Trusted lecture menu required')
+                request_id='telegram:'+str(self._bot_id)+':'+str(update['update_id'])
+                return TelegramPreparation(update['update_id'],sender,menu.callback(context,data,request_id=request_id),query['id'])
             if data.startswith('acad:'):
                 if self._academic_menu is None:return None
                 menu=self._academic_menu()

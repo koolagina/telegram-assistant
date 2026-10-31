@@ -211,12 +211,13 @@ class LectureWindows:
                            for g in policy.substitutions.values())
         return False
 
-    def open(self, context, lecture_id, request_id):
+    def open(self, context, lecture_id, request_id, *, expected_source=None):
         if not identifier(request_id):
             raise WindowError('Stable request identifier required')
         with self.store.transaction():
             now = self.clock()
             policy, lecture = self._authorized(context, 'lecture.code.read', lecture_id, now)
+            if expected_source is not None and expected_source!=source_digest(lecture):raise WindowError('Lecture source changed; open menu again')
             binding = policy.bindings[(context.channel, context.subject)]
             if 'lecture.open' not in binding.capabilities:
                 raise WindowError('Lecture operation unavailable')
