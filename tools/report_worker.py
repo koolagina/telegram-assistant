@@ -18,17 +18,18 @@ class WorkerError(ValueError):
 FINAL=frozenset({'api_confirmed','api_rejected','cancelled','unknown'})
 
 class ReportWorker:
-    def __init__(self,inbox,ledger,*,reader_factory,send,decision_service_factory=None,overview_factory=None,academic_menu_factory=None,callback_ledger=None,acknowledge=None):
+    def __init__(self,inbox,ledger,*,reader_factory,send,decision_service_factory=None,overview_factory=None,academic_menu_factory=None,callback_ledger=None,acknowledge=None,lecture_service_factory=None):
         if (type(inbox) is not TelegramInbox or type(ledger) is not DispatchLedger
                 or inbox.bot_id!=ledger.bot_id or inbox.namespace!=ledger.namespace
                 or not callable(reader_factory) or not callable(send)):
             raise WorkerError('Matching trusted inbox/dispatch/runtime required')
         if decision_service_factory is not None and not callable(decision_service_factory):raise WorkerError('Invalid decision service factory')
-        if any(factory is not None and not callable(factory) for factory in (overview_factory,academic_menu_factory)):raise WorkerError('Invalid academic runtime factory')
+        if any(factory is not None and not callable(factory) for factory in (overview_factory,academic_menu_factory,lecture_service_factory)):raise WorkerError('Invalid academic runtime factory')
         if (callback_ledger is None)!=(acknowledge is None):raise WorkerError('Callback ledger and API adapter must be paired')
         if callback_ledger is not None and (type(callback_ledger) is not CallbackAckLedger or not callable(acknowledge)
                 or callback_ledger.namespace!=inbox.namespace or callback_ledger.bot_id!=inbox.bot_id):raise WorkerError('Matching callback state required')
         self._callback_ledger=callback_ledger;self._acknowledge=acknowledge
+        self._lecture=lecture_service_factory
         self._overview=overview_factory;self._academic_menu=academic_menu_factory
         self._decisions=decision_service_factory
         self.inbox=inbox;self.ledger=ledger;self._reader=reader_factory;self._send=send
@@ -45,7 +46,7 @@ class ReportWorker:
                 outcome=self.ledger.result(update_id)
                 if outcome['status']=='not_attempted':
                     adapter=TelegramReportAdapter(reader_factory=self._reader,bot_id=self.inbox.bot_id,decision_service_factory=self._decisions,
-                        overview_factory=self._overview,academic_menu_factory=self._academic_menu,
+                        overview_factory=self._overview,academic_menu_factory=self._academic_menu,lecture_service_factory=self._lecture,
                         fetch_verified_updates=lambda update=row['update']:{'ok':True,'result':[update]})
                     # Route only. Do not reuse this potentially stale reply for sending.
                     routing=adapter.prepare_batch()

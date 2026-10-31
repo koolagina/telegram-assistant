@@ -19,7 +19,7 @@ import sqlite3
 
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from assistant_access import AccessPolicy, aware, identifier, live
+from assistant_access import AccessPolicy, Context, aware, identifier, live
 
 UTC = dt.timezone.utc
 EPOCH = dt.datetime(1970, 1, 1, tzinfo=UTC)
@@ -94,6 +94,9 @@ class WindowStore:
         self.db = sqlite3.connect(self.path, timeout=5, isolation_level=None)
         self.db.row_factory = sqlite3.Row
         try:
+            tables={row[0] for row in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            expected_tables={'meta','windows','requests','audit','attendance','attempts'}
+            if tables and tables!=expected_tables:raise WindowError('Foreign or incomplete lecture state')
             self.db.execute('PRAGMA journal_mode=WAL')
             self.db.execute('PRAGMA synchronous=FULL')
             with self.transaction():
@@ -104,17 +107,20 @@ class WindowStore:
                 self.db.execute('CREATE TABLE IF NOT EXISTS attendance(lecture_id TEXT,student_id TEXT,enrollment_id TEXT,window_id TEXT,created INTEGER,PRIMARY KEY(lecture_id,student_id))')
                 self.db.execute('CREATE TABLE IF NOT EXISTS attempts(lecture_id TEXT,student_id TEXT,bucket INTEGER,failed INTEGER,PRIMARY KEY(lecture_id,student_id,bucket))')
                 meta = dict(self.db.execute('SELECT key,value FROM meta'))
-                if not meta:
+                if not meta and not tables:
                     check = self.encrypt(b'lecture-state-v1', b'key-check')
                     self.db.executemany('INSERT INTO meta VALUES(?,?)', [('version', '1'), ('namespace', namespace), ('key_check', check), ('last_clock', '0')])
                 else:
+                    if set(meta)!={'version','namespace','key_check','last_clock'}:raise WindowError('Incomplete lecture metadata')
+                    raw_clock=meta['last_clock']
+                    if not isinstance(raw_clock,str) or not raw_clock.isascii() or not raw_clock.isdigit() or str(int(raw_clock))!=raw_clock:raise WindowError('Invalid lecture clock')
                     if meta.get('version') != '1' or meta.get('namespace') != namespace:
                         raise WindowError('State project/schema mismatch')
                     if self.decrypt(meta['key_check'], b'key-check') != b'lecture-state-v1':
                         raise WindowError('State key mismatch')
         except Exception:
             self.db.close()
-            raise
+            raise WindowError('Lecture state unavailable; review required') from None
 
     def __enter__(self):
         return self
@@ -269,7 +275,22 @@ class LectureWindows:
                 raise WindowError('Lecture operation unavailable')
             return self._window(row, lecture)
 
-    def register(self, lecture_id, student_id, code):
+    def register_authenticated(self, context, lecture_id, code):
+        """Confirmed self identity only; explicit Telegram write capability.
+
+        Not a public endpoint: Context must be made by a trusted transport. No
+        caller-selected student ID. Registry is checked again inside register.
+        """
+        try:
+            policy=self.policy_provider();now=self.clock()
+            if type(policy) is not AccessPolicy or type(context) is not Context:return REJECTED
+            binding=policy._principal(context)
+            if binding is None or not policy.authorize(context,'attendance.register',binding.entity_id,now=now).allowed:return REJECTED
+            return self.register(lecture_id,binding.entity_id,code,context=context)
+        except WindowError:raise
+        except Exception:raise WindowError('Attendance operation unavailable') from None
+
+    def register(self, lecture_id, student_id, code, *, context=None):
         """Only after trusted academic identity resolution, never raw form IDs.
 
         Records local attendance only, not physical-presence proof or a journal +.
@@ -281,6 +302,7 @@ class LectureWindows:
             policy = self.policy_provider()
             if not isinstance(policy, AccessPolicy) or not identifier(lecture_id) or not identifier(student_id):
                 return REJECTED
+            if context is not None and not policy.authorize(context,'attendance.register',student_id,now=now).allowed:return REJECTED
             lecture, student = policy.lectures.get(lecture_id), policy.students.get(student_id)
             if (lecture is None or student is None or not student.active or lecture.kind != 'lecture'
                     or lecture.status != 'confirmed' or not lecture.verified

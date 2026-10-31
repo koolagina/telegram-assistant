@@ -42,3 +42,4 @@ node tools/schedule_booking_demo.cjs
 "${KULAGINA_PYTHON:-python3}" tools/academic_overview_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/material_update_demo.py
 "${KULAGINA_PYTHON:-python3}" tools/recovery_demo.py
+"${KULAGINA_PYTHON:-python3}" tools/lecture_attendance_demo.py

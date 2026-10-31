@@ -15,7 +15,7 @@ import datetime as dt
 from types import MappingProxyType
 
 ACTIONS = frozenset({'schedule.read', 'student.report', 'progress.self',
-                     'personal.read', 'lecture.open', 'lecture.code.read'})
+                     'personal.read', 'lecture.open', 'lecture.code.read', 'attendance.register'})
 API_READS = frozenset({'schedule.read', 'student.report', 'progress.self'})
 CHANNELS = frozenset({'telegram', 'chatgpt', 'email'})
 
@@ -254,7 +254,8 @@ class AccessPolicy:
             return ALLOWED if binding.role == 'teacher' and target_id in self.teachers and (binding.entity_id == target_id or full_read) else DENIED
         if action == 'personal.read':
             return ALLOWED if binding.role == 'teacher' and binding.entity_id == target_id else DENIED
-        if action == 'progress.self':
+        if action in ('progress.self','attendance.register'):
+            if action=='attendance.register' and context.channel!='telegram':return DENIED
             if binding.role != 'student' or binding.entity_id != target_id:
                 return DENIED
             return ALLOWED if any(e.student_id == target_id and live(e, now) for e in self.enrollments.values()) else DENIED

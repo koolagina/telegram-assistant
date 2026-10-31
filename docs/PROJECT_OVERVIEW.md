@@ -1,3 +1,5 @@
+Последний локальный блок: [коды лекций и личная отметка посещаемости](LECTURE_ATTENDANCE_ACCEPTANCE.md) — 822 Python +448 Node PASS; не включено в рабочем боте.
+
 Последний локальный блок: [восстановление очередей и сверка квитанций](RECOVERY_REVIEW_ACCEPTANCE.md) — 797 Python +448 Node PASS; не развёрнуто.
 
 Последний локальный блок: [подтверждение кнопок Telegram](CALLBACK_ACK_ACCEPTANCE.md) — 773 Python +448 Node PASS; не включено в рабочем боте.
